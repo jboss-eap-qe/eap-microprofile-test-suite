@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+        <version>36</version>
+    </parent>
+
+    <groupId>org.jboss.eap.qe</groupId>
+    <artifactId>microprofile-test-suite</artifactId>
+    <version>1.0.0.Final-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Test suite for MicroProfile on WF/EAP</name>
+
+    <modules>
+        <module>microprofile-health</module>
+        <module>microprofile-metrics</module>
+    </modules>
+
+    <properties>
+        <jboss.home>IF-NOT-DEFINED-WILDFLY-WILL-BE-DOWNLOADED-UNZIPPED-AND-USED-AUTOMATICALLY</jboss.home>
+        <maven.test.redirectTestOutputToFile>false</maven.test.redirectTestOutputToFile>
+
+        <version.io.rest-assured>4.1.2</version.io.rest-assured>
+        <version.junit.vintage>5.5.2</version.junit.vintage>
+<!--        <version.org.eclipse.microprofile>2.0.1</version.org.eclipse.microprofile> -->
+        <version.org.eclipse.microprofile>3.0</version.org.eclipse.microprofile>
+        <version.org.jboss.arquillian>1.5.0.Final</version.org.jboss.arquillian>
+        <version.org.jboss.wildfly.dist>18.0.0.Final</version.org.jboss.wildfly.dist>
+        <version.org.wildfly.arquillian>2.2.0.Final</version.org.wildfly.arquillian>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.microprofile</groupId>
+            <artifactId>microprofile</artifactId>
+            <version>${version.org.eclipse.microprofile}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${version.junit.vintage}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${version.io.rest-assured}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>${version.org.wildfly.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-dist</artifactId>
+            <version>${version.org.jboss.wildfly.dist}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <jboss.home>${jboss.home}</jboss.home>
+                        <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>download-wildfly</id>
+            <activation>
+                <property><name>!jboss.home</name></property>
+            </activation>
+            <properties>
+                <jboss.home>${basedir}/target/jboss-as</jboss.home>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-jboss-as</id>
+                                <phase>generate-test-resources</phase>
+                                <goals><goal>unpack</goal></goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.wildfly</groupId>
+                                            <artifactId>wildfly-dist</artifactId>
+                                            <version>${version.org.jboss.wildfly.dist}</version>
+                                            <type>zip</type>
+                                            <overWrite>true</overWrite>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>rename-unpacked-jboss-as</id>
+                                <phase>process-test-resources</phase>
+                                <goals><goal>run</goal></goals>
+                                <configuration>
+                                    <target>
+                                        <delete dir="${project.build.directory}/jboss-as"/>
+                                        <move todir="${project.build.directory}/jboss-as">
+                                            <fileset dir="${project.build.directory}">
+                                                <include name="jboss*/**/*"/>
+                                                <include name="wildfly*/**/*"/>
+                                            </fileset>
+                                            <cutdirsmapper dirs="1"/>
+                                        </move>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
