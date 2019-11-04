@@ -20,6 +20,13 @@
         <module>tooling-server-configuration</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
+<<<<<<< HEAD
+=======
+        <module>microprofile-open-api</module>
+        <module>microprofile-jwt</module>
+        <module>server-utilities</module>
+        <module>microprofile-jwt-auth-tool</module>
+>>>>>>> Created initial stub for microprofile-jwt
     </modules>
 
     <properties>
@@ -39,6 +46,7 @@
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
+        <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
     </properties>
 
     <dependencyManagement>
@@ -127,6 +135,12 @@
                 <groupId>org.jboss.eap.qe</groupId>
                 <artifactId>tooling-server-configuration</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <!--implementation of javax.json:javax.json-api-->
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${version.org.glassfish.javax.json}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
