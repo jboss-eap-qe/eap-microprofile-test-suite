@@ -1,0 +1,137 @@
+package org.jboss.eap.qe.microprofile.jwt.security.publickeylocation;
+
+import io.restassured.RestAssured;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.input.Tailer;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
+import org.jboss.eap.qe.microprofile.jwt.tools.JsonWebToken;
+import org.jboss.eap.qe.microprofile.jwt.tools.JwtHelper;
+import org.jboss.eap.qe.microprofile.jwt.tools.LogListener;
+import org.jboss.eap.qe.microprofile.jwt.tools.RsaKeyTool;
+import org.jboss.eap.qe.microprofile.jwt.tools.Waiter;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+
+/**
+ * Set of tests verifying functionality of {@code mp.jwt.verify.publickey} property.
+ */
+@Slf4j
+@RunWith(Arquillian.class)
+public class PublicKeyPropertyTestCase {
+
+    private static final String DEPLOYMENT_WITH_VALID_KEY = "valid-key-deployment";
+    private static final String DEPLOYMENT_WITH_INVALID_KEY = "invalid-key-deployment";
+
+    private static RsaKeyTool keyTool;
+
+    @BeforeClass
+    public static void beforeClass() throws URISyntaxException {
+        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("foobar.private");
+        if (privateKeyUrl == null) {
+            throw new IllegalStateException("Private key wasn't found in resources!");
+        }
+        keyTool = RsaKeyTool.newKeyTool(privateKeyUrl.toURI());
+    }
+
+    /**
+     * A deployment with valid key. This means, that it is correct key which can be used to verify the JWT signature.
+     * @return a deployment
+     */
+    @Deployment(name = DEPLOYMENT_WITH_VALID_KEY)
+    public static WebArchive createValidKeyDeployment() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(JaxRsTestApplication.class)
+                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-valid.properties"),
+                        "microprofile-config.properties");
+    }
+
+    /**
+     * A deployment with invalid key. The verification fails when this key is used.
+     * @return a deployment
+     */
+    @Deployment(name = DEPLOYMENT_WITH_INVALID_KEY)
+    public static WebArchive createInvalidKeyDeployment() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(JaxRsTestApplication.class)
+                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-invalid.properties"),
+                        "microprofile-config.properties");
+    }
+
+    /**
+     * @tpTestDetails A request with proper JWT is sent on server which has configured bad public key. The server fails
+     * to verify the JWT signature and won't authorize the client.
+     * @tpPassCrit "Unauthorized" message is shown to user and warning is present in log specifying the cause of fail.
+     * @tpSince EAP 7.3.0.CD19
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(DEPLOYMENT_WITH_INVALID_KEY)
+    public void testJwkVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws InterruptedException {
+        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+
+        final LogListener listener = new LogListener(Pattern.compile(".*WARN.*Token is invalid: JWT rejected due to invalid signature.*"));
+        final Tailer tailer = new Tailer(getPathToLogFile(), listener, 500);
+        final Thread thread = new Thread(tailer);
+        thread.start();
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + token.getRawValue())
+                .when().get(url.toExternalForm() + "basic-endpoint")
+                .then()
+                .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"));
+
+       final boolean lineFound = Waiter.waitFor(() -> listener.getFound().get(), 10, TimeUnit.SECONDS);
+
+        tailer.stop();
+        thread.join();
+
+        Assert.assertTrue("Expected warning wasn't found in log!", lineFound);
+    }
+
+    /**
+     * @tpTestDetails A request with proper JWT is sent on server which has configured bad public key. The server
+     * verifies the signature and authorizes user.
+     * @tpPassCrit Token which was sent on server is sent back to client in response.
+     * @tpSince EAP 7.3.0.CD19
+     */
+    @Test
+    @RunAsClient
+    @OperateOnDeployment(DEPLOYMENT_WITH_VALID_KEY)
+    public void testJwkVerificationSucceedsWithValidKey(@ArquillianResource URL url) {
+        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + token.getRawValue())
+                .when().get(url.toExternalForm() + "basic-endpoint").then().body(equalTo(token.getRawValue()));
+
+    }
+
+    private File getPathToLogFile() {
+        final Path path = Paths.get(System.getProperty("jboss.home"), "standalone", "log", "server.log");
+        return path.toFile();
+    }
+
+}

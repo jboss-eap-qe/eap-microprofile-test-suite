@@ -19,6 +19,7 @@
         <module>tooling-docker</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
+        <module>microprofile-jwt</module>
     </modules>
 
     <properties>
@@ -32,7 +33,11 @@
         <version.org.jboss.wildfly.dist>18.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>2.2.0.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
+        <version.commons-io.commons-io>2.6</version.commons-io.commons-io>
+        <version.org.projectlombok.lombok>1.18.10</version.org.projectlombok.lombok>
+        <version.org.slf4j.slf4j-simple>1.7.29</version.org.slf4j.slf4j-simple>
     </properties>
+
 
     <dependencyManagement>
         <dependencies>
@@ -76,8 +81,70 @@
                 <artifactId>jansi</artifactId>
                 <version>${version.org.fusesource.jansi}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${version.commons-io.commons-io}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.microprofile</groupId>
+            <artifactId>microprofile</artifactId>
+            <version>${version.org.eclipse.microprofile}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${version.io.rest-assured}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>${version.org.jboss.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>${version.org.wildfly.arquillian}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-dist</artifactId>
+            <version>${version.org.jboss.wildfly.dist}</version>
+        </dependency>
+        <!-- used in tooling-docker module for ANSI escape characters output from docker container  -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>${version.org.fusesource.jansi}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${version.org.projectlombok.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.org.slf4j.slf4j-simple}</version>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <plugins>
