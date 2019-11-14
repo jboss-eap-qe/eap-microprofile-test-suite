@@ -1,0 +1,11 @@
+install:
+ - mvn -B clean; java -version
+script:
+ - mvn -B verify -DskipTests
+language: java
+jdk:
+  - openjdk8
+  - openjdk11
+cache:
+ directories:
+  - $HOME/.m2
