@@ -14,7 +14,7 @@ public interface ContainerReadyCondition {
         long startTime = System.currentTimeMillis();
         while (!(new CompletableFuture().supplyAsync(() -> isReady())).get()) {
             if (System.currentTimeMillis() - startTime > timeoutInMillis) {
-                throw new Exception("Container was not ready in timeout : " + timeoutInMillis + " ms");
+                throw new Exception("Container was not ready in timeout : " + (timeoutInMillis / 1000) + " s");
             }
         }
     }
