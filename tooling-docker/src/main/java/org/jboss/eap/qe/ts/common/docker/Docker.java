@@ -120,7 +120,7 @@ public class Docker extends ExternalResource {
         private List<String> ports = new ArrayList<>();
         private Map<String, String> environmentVariables = new HashMap<>();
         private List<String> commandArguments = new ArrayList<>();
-        private long containerReadyTimeoutInMillis = 60_000; // 1 minutes
+        private long containerReadyTimeoutInMillis = 120_000; // 2 minutes
 
         // by default - do not make any check
         private ContainerReadyCondition containerReadyCondition = () -> true;
