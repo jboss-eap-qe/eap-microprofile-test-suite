@@ -1,5 +1,5 @@
 install:
- - mvn -B clean; java -version
+ - java -version; mvn -version; docker version; mvn -B clean
 script:
  - mvn -B verify -DskipTests
 language: java
