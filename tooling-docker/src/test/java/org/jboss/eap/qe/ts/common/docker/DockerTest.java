@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,7 +26,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
-            .setContainerReadyTimeout(120_000)
+            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
             .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
             .wihtPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
             .wihtPortMapping(WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + ":9990")
@@ -36,7 +37,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
-            .setContainerReadyTimeout(120_000)
+            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
             .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
             .wihtPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
             .wihtPortMapping(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + ":9990")

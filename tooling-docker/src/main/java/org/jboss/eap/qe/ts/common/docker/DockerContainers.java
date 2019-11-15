@@ -2,6 +2,7 @@ package org.jboss.eap.qe.ts.common.docker;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Purpose of this class is to have single place for configuration of docker containers which are used and started in tests.
@@ -14,17 +15,14 @@ public class DockerContainers {
     public static Docker jaeger() {
         return new Docker.Builder("jaeger", "jaegertracing/all-in-one:latest")
                 .setContainerReadyCondition(() -> {
-                    String address = "127.0.0.1";
-                    int port = 16686;
                     try {
-                        new Socket(address, port).close();
+                        new Socket("127.0.0.1", 16686).close();
                         return true;
                     } catch (IOException e) {
-                        // exception means port is not up
                         return false;
                     }
                 })
-                .setContainerReadyTimeout(180000) // 3 min
+                .setContainerReadyTimeout(3, TimeUnit.MINUTES)
                 .wihtPortMapping("5775:5775/udp")
                 .wihtPortMapping("6831:6831/udp")
                 .wihtPortMapping("6832:6832/udp")
