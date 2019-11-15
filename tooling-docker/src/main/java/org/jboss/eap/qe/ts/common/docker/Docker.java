@@ -134,10 +134,11 @@ public class Docker extends ExternalResource {
         /**
          * Timeout in millis to wait until container is ready/starts
          *
-         * @param timeoutInMillis timeout in millis         *
+         * @param timeout the maximum time to wait
+         * @param unit the time unit of the {@code timeout} argument
          */
-        public Builder setContainerReadyTimeout(long timeoutInMillis) {
-            this.containerReadyTimeoutInMillis = timeoutInMillis;
+        public Builder setContainerReadyTimeout(long timeout, TimeUnit unit) {
+            this.containerReadyTimeoutInMillis = unit.toMillis(timeout);
             return this;
         }
 
