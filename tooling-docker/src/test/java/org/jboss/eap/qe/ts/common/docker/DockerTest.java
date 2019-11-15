@@ -25,7 +25,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
-            .setContainerReadyTimeout(60000)
+            .setContainerReadyTimeout(120_000)
             .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
             .wihtPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
             .wihtPortMapping(WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + ":9990")
@@ -36,7 +36,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
-            .setContainerReadyTimeout(60000)
+            .setContainerReadyTimeout(120_000)
             .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
             .wihtPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
             .wihtPortMapping(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + ":9990")
@@ -99,25 +99,25 @@ public class DockerTest {
     }
 
     @Test
-    public void testWildlfy1WelcomePage() {
+    public void welcomePageAvailableForWildFlyOne() {
         get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_ONE_EXPOSED_HTTP_PORT).then()
                 .body(containsString("Welcome to WildFly"));
     }
 
     @Test
-    public void testWildlfy2WelcomePage() {
+    public void welcomePageAvailableForWildFlyTwo() {
         get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_TWO_EXPOSED_HTTP_PORT).then()
                 .body(containsString("Welcome to WildFly"));
     }
 
     @Test
-    public void testWildlfy1HealthCheck() {
+    public void healthCheckAvailableForWildFlyOne() {
         get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + "/health").then()
                 .body(containsString("UP"));
     }
 
     @Test
-    public void testWildlfy2HealthCheck() {
+    public void healthCheckAvailableForWildFlyTwo() {
         get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + "/health").then()
                 .body(containsString("UP"));
     }
