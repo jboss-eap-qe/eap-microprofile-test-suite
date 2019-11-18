@@ -3,7 +3,7 @@
 
 ## Run the testsuite
 ```
-mvn clean verify -Darquillian.deploymentExportPath=target/deployments/
+mvn clean verify
 ```
 
 ## Export testing deployments
@@ -21,3 +21,9 @@ mvn clean verify -pl microprofile-health -Djboss.home=/Users/rsvoboda/Downloads/
 mvn clean verify -pl microprofile-health
 ```
 Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
+
+## Quick compilation of the code
+Can be used to ensure code changes are compilable, `-Djboss.home=foo` is workaround to skip unpacking of WildFly zip.
+```
+mvn clean verify -DskipTests -DskipITs -Djboss.home=foo
+```
