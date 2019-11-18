@@ -132,7 +132,7 @@ public class Docker extends ExternalResource {
         }
 
         /**
-         * Timeout in millis to wait until container is ready/starts
+         * Timeout to wait until container is ready/starts
          *
          * @param timeout the maximum time to wait
          * @param unit the time unit of the {@code timeout} argument
@@ -148,7 +148,7 @@ public class Docker extends ExternalResource {
          *
          * @param portMapping port mapping as defined by docker command, for exampple "8080:80" or "8080:80/tcp"
          */
-        public Builder wihtPortMapping(String portMapping) {
+        public Builder withPortMapping(String portMapping) {
             this.ports.add(portMapping);
             return this;
         }
