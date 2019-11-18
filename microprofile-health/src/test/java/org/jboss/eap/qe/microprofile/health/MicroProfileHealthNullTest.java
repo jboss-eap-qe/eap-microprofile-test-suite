@@ -1,6 +1,5 @@
 package org.jboss.eap.qe.microprofile.health;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -14,6 +13,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.*;
 
 @RunAsClient
@@ -35,14 +35,14 @@ public class MicroProfileHealthNullTest {
     public void testDeprecatedHealthCheck() {
         final String healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/health";
 
-        RestAssured.when().get(healthURL).then()
+        get(healthURL).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks.status", contains("DOWN"),
                         "checks.name", contains(NullLivenessHealthCheck.class.getCanonicalName()));
 
-        RestAssured.when().get(healthURL + "/live").then()
+        get(healthURL + "/live").then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"));
