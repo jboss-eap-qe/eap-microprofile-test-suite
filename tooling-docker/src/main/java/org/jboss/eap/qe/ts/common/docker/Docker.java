@@ -11,9 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Utility class for starting docker containers. This class allows to start any docker container.
@@ -31,11 +33,15 @@ public class Docker extends ExternalResource {
     private ContainerReadyCondition containerReadyCondition;
     private long containerReadyTimeout;
     private final ExecutorService outputPrinter = Executors.newSingleThreadExecutor();
+    private Process dockerRunProcess;
 
     private Docker() {
     } // avoid instantiation, use Builder
 
     protected void start() throws Exception {
+
+        checkDockerPresent();
+
         List<String> cmd = new ArrayList<>();
 
         cmd.add("docker");
@@ -60,7 +66,7 @@ public class Docker extends ExternalResource {
         System.out.println(Ansi.ansi().reset().a("Starting container ").fgCyan().a(name).reset()
                 .a(" with ID ").fgYellow().a(uuid).reset());
 
-        Process dockerRunProcess = new ProcessBuilder()
+        dockerRunProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
                 .command(cmd)
                 .start();
@@ -77,7 +83,70 @@ public class Docker extends ExternalResource {
             }
         });
 
-        containerReadyCondition.waitUntilReady(containerReadyTimeout);
+        long startTime = System.currentTimeMillis();
+        while (!isContainerReady()) {
+            if (System.currentTimeMillis() - startTime > containerReadyTimeout) {
+                stop();
+                throw new DockerTimeoutException(uuid + "- Container was not ready in timeout : " + containerReadyTimeout + " ms");
+            }
+            // fail fast mechanism in case of malformed docker command, for example bad arguments, invalid format of port mapping, image version,...
+            if (!dockerRunProcess.isAlive() && dockerRunProcess.exitValue() != 0) {
+                throw new DockerException(uuid + "- Starting of docker container using command: \"" + String.join(" ", cmd)
+                        + "\" failed. Check that provided command is correct.");
+            }
+        }
+    }
+
+    private boolean isContainerReady() throws Exception {
+        CompletableFuture<Boolean> condition = new CompletableFuture().supplyAsync(() -> containerReadyCondition.isReady());
+        try {
+            return condition.get(containerReadyTimeout, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException ex) {
+            stop();
+            // in case condition hangs interrupt it so there are no zombie threads
+            condition.cancel(true);
+
+            throw new ContainerReadyConditionException(uuid + "- Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout: "
+                    + containerReadyTimeout + " ms. Check it does not hang and does not take longer then containerReadyTimeout. " +
+                    "It's expected that ContainerReadyCondition.isReady() method is short lived (takes less than 1 second).", ex);
+        }
+    }
+
+    private void checkDockerPresent() throws Exception {
+        Process dockerInfoProcess = new ProcessBuilder()
+                .redirectErrorStream(true)
+                .command(new String[] {"docker", "info"})
+                .start();
+        dockerInfoProcess.waitFor();
+        if (dockerInfoProcess.exitValue() != 0)   {
+            throw new DockerException("Docker is either not present or not installed on this machine. It must be installed " +
+                    "and started up for executing tests with docker container.");
+        }
+    }
+
+    /**
+     * @return Returns true if docker container is running. It does NOT check whether container is ready.
+     */
+    protected boolean isRunning() throws Exception {
+        Process dockerRunProcess = new ProcessBuilder()
+                .redirectErrorStream(true)
+                .command(new String[] {"docker", "ps"})
+                .start();
+
+        dockerRunProcess.waitFor();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(dockerRunProcess.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(uuid))    {
+                    return true;
+                }
+            }
+        } catch (IOException ignored) {
+            // ignore as any stop of docker container breaks the reader stream
+            // note that shutdown of docker would be already logged
+        }
+        return false;
     }
 
     protected void stop() throws Exception {
@@ -126,7 +195,7 @@ public class Docker extends ExternalResource {
         private ContainerReadyCondition containerReadyCondition = () -> true;
 
         public Builder(String name, String image) {
-            this.uuid = UUID.randomUUID().toString();
+            this.uuid = name + "-" + UUID.randomUUID().toString();
             this.name = name;
             this.image = image;
         }
@@ -135,7 +204,7 @@ public class Docker extends ExternalResource {
          * Timeout to wait until container is ready/starts
          *
          * @param timeout the maximum time to wait
-         * @param unit the time unit of the {@code timeout} argument
+         * @param unit    the time unit of the {@code timeout} argument
          */
         public Builder setContainerReadyTimeout(long timeout, TimeUnit unit) {
             this.containerReadyTimeoutInMillis = unit.toMillis(timeout);
