@@ -10,12 +10,12 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.common.utilities.LogListener;
 import org.jboss.eap.qe.microprofile.common.utilities.Waiter;
 import org.jboss.eap.qe.microprofile.common.utilities.WildFlyServerHelper;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
-import org.jboss.eap.qe.microprofile.jwt.tools.JsonWebToken;
-import org.jboss.eap.qe.microprofile.jwt.tools.JwtHelper;
-import org.jboss.eap.qe.microprofile.jwt.tools.RsaKeyTool;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
@@ -23,11 +23,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 

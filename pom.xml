@@ -21,6 +21,7 @@
         <module>microprofile-metrics</module>
         <module>microprofile-jwt</module>
         <module>microprofile-utilities</module>
+        <module>microprofile-jwt-auth-tool</module>
     </modules>
 
     <properties>

@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.jwt.tools;
+package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
