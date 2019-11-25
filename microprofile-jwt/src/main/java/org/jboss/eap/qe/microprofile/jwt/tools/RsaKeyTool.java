@@ -107,8 +107,8 @@ public final class RsaKeyTool {
                 file.append(line.trim());
             }
 
-            final String base64Key = file.toString().replace("-----BEGIN RSA PRIVATE KEY-----", "")
-                    .replace("-----END RSA PRIVATE KEY-----", "")
+            final String base64Key = file.toString().replace("-----BEGIN PRIVATE KEY-----", "")
+                    .replace("-----END PRIVATE KEY-----", "")
                     .replace("\n", "")
                     .replace("\r", "");
 

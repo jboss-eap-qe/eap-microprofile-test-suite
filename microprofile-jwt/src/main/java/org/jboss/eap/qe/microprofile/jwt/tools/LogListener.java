@@ -1,6 +1,6 @@
 package org.jboss.eap.qe.microprofile.jwt.tools;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.jbosslog.JBossLog;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListener;
 
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Basic tailer log listener, base on waiting on pattern to appear.
  */
-@Slf4j
+@JBossLog
 public final class LogListener implements TailerListener {
     private final AtomicBoolean found;
 
@@ -35,12 +35,12 @@ public final class LogListener implements TailerListener {
 
     @Override
     public void fileNotFound() {
-        log.error("File {} for tailer wasn't found!", tailer.getFile().getAbsolutePath());
+        log.error(String.format("File '%s' for tailer wasn't found!", tailer.getFile().getAbsolutePath()));
     }
 
     @Override
     public void fileRotated() {
-        log.warn("File {} for tailer was rotated!", tailer.getFile().getAbsolutePath());
+        log.warn(String.format("File '%s' for tailer was rotated!", tailer.getFile().getAbsolutePath()));
     }
 
     @Override

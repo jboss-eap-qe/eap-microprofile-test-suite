@@ -12,13 +12,13 @@ import javax.ws.rs.core.Response;
  * A servlet which uses RBAC to control who can execute its methods
  */
 @Path("/rbac-endpoint")
-@DeclareRoles({Roles.USER1, Roles.USER2, Roles.ADMIN})
+@DeclareRoles({Roles.MONITOR, Roles.DIRECTOR, Roles.ADMIN})
 public class JwtRbacTestEndpoint {
 
-    @RolesAllowed({Roles.USER1})
+    @RolesAllowed({Roles.MONITOR})
     @GET
-    @Path("/user1")
-    public Response getResponseOnlyForUser1() {
+    @Path(Roles.MONITOR)
+    public Response getResponseOnlyForMonitor() {
         return null;
     }
 

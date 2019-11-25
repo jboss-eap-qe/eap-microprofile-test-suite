@@ -33,7 +33,7 @@ public class BasicCdiTest {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("foobar.private");
+        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -46,22 +46,22 @@ public class BasicCdiTest {
                 .addClass(JaxRsBasicEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("foobar.public"), "foobar.public");
+                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("pki/key.public.pem"), "key.public.pem");
     }
 
     /**
-     * @tpTestDetails basic smoke test verifying the CDI works
+     * @tpTestDetails Testing CDI specification compatibility
      * @tpPassCrit Same token which was sent on server is received in response.
      * @tpSince EAP 7.3.0.CD19
      */
     @Test
     @RunAsClient
-    public void defaultTest(@ArquillianResource URL url) {
+    public void testSameTokenReceived(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
-        RestAssured.given()
-                    .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint").then().body(equalTo(token.getRawValue()));
+        RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
+                .when().get(url.toExternalForm() + "basic-endpoint")
+                .then().body(equalTo(token.getRawValue()));
     }
 
 }

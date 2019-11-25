@@ -36,7 +36,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 /**
  * Set of tests verifying functionality of {@code mp.jwt.verify.publickey} property.
  */
-@Slf4j
 @RunWith(Arquillian.class)
 public class PublicKeyPropertyTestCase {
 
@@ -47,7 +46,7 @@ public class PublicKeyPropertyTestCase {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("foobar.private");
+        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -82,7 +81,7 @@ public class PublicKeyPropertyTestCase {
 
     /**
      * @tpTestDetails A request with proper JWT is sent on server which has configured bad public key. The server fails
-     * to verify the JWT signature and won't authorize the client.
+     * to verify the JWT signature and won't authorize the client. Test specification compatibility.
      * @tpPassCrit "Unauthorized" message is shown to user and warning is present in log specifying the cause of fail.
      * @tpSince EAP 7.3.0.CD19
      */
@@ -112,8 +111,8 @@ public class PublicKeyPropertyTestCase {
     }
 
     /**
-     * @tpTestDetails A request with proper JWT is sent on server which has configured bad public key. The server
-     * verifies the signature and authorizes user.
+     * @tpTestDetails A negative scenario where request with proper JWT is sent on server which has configured bad
+     * public key. The server verifies the signature and authorizes user.
      * @tpPassCrit Token which was sent on server is sent back to client in response.
      * @tpSince EAP 7.3.0.CD19
      */
@@ -125,7 +124,8 @@ public class PublicKeyPropertyTestCase {
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint").then().body(equalTo(token.getRawValue()));
+                .when().get(url.toExternalForm() + "basic-endpoint")
+                .then().body(equalTo(token.getRawValue()));
 
     }
 
