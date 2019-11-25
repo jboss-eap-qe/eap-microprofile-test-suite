@@ -1,0 +1,1 @@
+/subsystem=datasources/data-source=testDS:add(driver-name=h2,jndi-name="java:/info/datasources/testDS",connection-url="jdbc:h2:test:mane")
