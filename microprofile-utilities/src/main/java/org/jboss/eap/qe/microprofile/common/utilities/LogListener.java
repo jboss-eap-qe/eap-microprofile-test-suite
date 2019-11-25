@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.jwt.tools;
+package org.jboss.eap.qe.microprofile.common.utilities;
 
 import lombok.extern.jbosslog.JBossLog;
 import org.apache.commons.io.input.Tailer;

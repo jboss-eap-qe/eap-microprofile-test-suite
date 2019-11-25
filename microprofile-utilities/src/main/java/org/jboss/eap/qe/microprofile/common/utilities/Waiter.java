@@ -1,9 +1,16 @@
-package org.jboss.eap.qe.microprofile.jwt.tools;
+package org.jboss.eap.qe.microprofile.common.utilities;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class implementing waiting on condition functionality
+ */
 public final class Waiter {
+
+    private Waiter() {
+        //intentionally left empty
+    }
 
     /**
      * Wait for condition to become true

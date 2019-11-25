@@ -1,21 +1,21 @@
 package org.jboss.eap.qe.microprofile.jwt.security.publickeylocation;
 
 import io.restassured.RestAssured;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.eap.qe.microprofile.common.utilities.LogListener;
+import org.jboss.eap.qe.microprofile.common.utilities.Waiter;
+import org.jboss.eap.qe.microprofile.common.utilities.WildFlyServerHelper;
 import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.tools.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.tools.JwtHelper;
-import org.jboss.eap.qe.microprofile.jwt.tools.LogListener;
 import org.jboss.eap.qe.microprofile.jwt.tools.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.tools.Waiter;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
@@ -92,7 +92,7 @@ public class PublicKeyPropertyTestCase {
         final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         final LogListener listener = new LogListener(Pattern.compile(".*WARN.*Token is invalid: JWT rejected due to invalid signature.*"));
-        final Tailer tailer = new Tailer(getPathToLogFile(), listener, 500);
+        final Tailer tailer = new Tailer(WildFlyServerHelper.getPathToLogFile(), listener, 500);
         final Thread thread = new Thread(tailer);
         thread.start();
 
@@ -128,10 +128,4 @@ public class PublicKeyPropertyTestCase {
                 .then().body(equalTo(token.getRawValue()));
 
     }
-
-    private File getPathToLogFile() {
-        final Path path = Paths.get(System.getProperty("jboss.home"), "standalone", "log", "server.log");
-        return path.toFile();
-    }
-
 }
