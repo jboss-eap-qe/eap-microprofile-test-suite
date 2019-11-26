@@ -33,3 +33,7 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+
+docker-images.tar.gz
+local-repo/*
+eap-microprofile-test-suite-dist.zip

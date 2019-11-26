@@ -27,3 +27,22 @@ Can be used to ensure code changes are compilable, `-Djboss.home=foo` is workaro
 ```
 mvn clean verify -DskipTests -DskipITs -Djboss.home=foo
 ```
+
+## Zip distribution bundle
+Distribution bundle contains this testsuite, pre-loaded local maven repository and dump of Docker images used in tests.
+Creation of the `eap-microprofile-test-suite-dist.zip` bundle is managed via `./mp-ts.sh` script.
+This script assumes that all the necessary artifacts present in `${user.home}/.m2/repository/`, in other words that the TS was compiled and executed on local machine prior the bundle creation.
+
+Bundle creation:
+```
+./mp-ts.sh dist-zip
+```
+
+Execution on target machine:
+```
+unzip -q eap-microprofile-test-suite-dist.zip
+./mp-ts.sh dist-run
+```
+Tests output is redirected into `${TEST_FQCN}-output.txt` files in `target/surefire-reports/` directory.
+
+For more details consult with `mp-ts.sh` script
