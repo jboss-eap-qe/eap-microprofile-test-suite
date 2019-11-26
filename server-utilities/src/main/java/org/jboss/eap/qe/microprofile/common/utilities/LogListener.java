@@ -9,7 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Basic tailer log listener, base on waiting on pattern to appear.
+ * Tailer log listener, based on waiting on pattern to appear. {@link org.apache.commons.io.input.Tailer} itself mimics
+ * {@code tail -f} Unix util functionality. This listener is an implementation of
+ * {@link org.apache.commons.io.input.TailerListener} interface so it can be reused on various occasions.
+ *
+ * @see org.apache.commons.io.input.TailerListener
  */
 @JBossLog
 public final class LogListener implements TailerListener {

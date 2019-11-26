@@ -20,12 +20,18 @@ public final class JwtHelper {
         this.issuer = issuer;
     }
 
+    /**
+     * Generates a spec compliant base64-encoded signed JWT that expires after one hour and has the claims "sub" and
+     * "preferred_username" set to "FAKE_USER".
+     *
+     * @return a base64-encoded signed JWT token.
+     */
     public JsonWebToken generateProperSignedJwt() {
         return generateProperSignedJwt("FAKE_USER");
     }
 
     /**
-     * Generates a base64-encoded signed JWT that expires after one hour and has the claims "sub" and
+     * Generates a spec compliant base64-encoded signed JWT that expires after one hour and has the claims "sub" and
      * "preferred_username" set to the provided subject string.
      *
      * @param subject string to use for "sub" and "preferred_username".

@@ -89,9 +89,7 @@ public class PublicKeyPropertyTestCase {
         final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         final LogListener listener = new LogListener(Pattern.compile(".*WARN.*Token is invalid: JWT rejected due to invalid signature.*"));
-        final Tailer tailer = new Tailer(WildFlyServerHelper.getPathToLogFile(), listener, 500);
-        final Thread thread = new Thread(tailer);
-        thread.start();
+        final Tailer tailer = Tailer.create(WildFlyServerHelper.getPathToLogFile(), listener, 500);
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
@@ -99,10 +97,9 @@ public class PublicKeyPropertyTestCase {
                 .then()
                 .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"));
 
-       final boolean lineFound = Waiter.waitFor(() -> listener.getFound().get(), 10, TimeUnit.SECONDS);
+        final boolean lineFound = Waiter.waitFor(() -> listener.getFound().get(), 2, TimeUnit.SECONDS);
 
         tailer.stop();
-        thread.join();
 
         Assert.assertTrue("Expected warning wasn't found in log!", lineFound);
     }

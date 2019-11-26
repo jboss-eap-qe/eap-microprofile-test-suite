@@ -13,14 +13,14 @@ public class WaiterTestCase {
     public void testWaitingForConditionSucceeds() throws InterruptedException {
         final Date timeAtStart = new Date();
 
-        final boolean conditionSatisfied = Waiter.waitFor(() -> new Date().getTime() - timeAtStart.getTime() > 4000, 5, TimeUnit.SECONDS);
+        final boolean conditionSatisfied = Waiter.waitFor(() -> new Date().getTime() - timeAtStart.getTime() > 1200, 2, TimeUnit.SECONDS);
 
         Assert.assertTrue("Condition was not satisfied within time frame!", conditionSatisfied);
     }
 
     @Test
     public void testWaitingForConditionFails() throws InterruptedException {
-        final boolean conditionSatisfied = Waiter.waitFor(() -> false, 3, TimeUnit.SECONDS);
+        final boolean conditionSatisfied = Waiter.waitFor(() -> false, 600, TimeUnit.MILLISECONDS);
 
         Assert.assertFalse("Condition was satisfied - weird, huh?", conditionSatisfied);
     }

@@ -49,13 +49,13 @@
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
             <artifactId>server-utilities</artifactId>
-            <version>1.0.0.Final-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
             <artifactId>microprofile-jwt-auth-tool</artifactId>
-            <version>1.0.0.Final-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

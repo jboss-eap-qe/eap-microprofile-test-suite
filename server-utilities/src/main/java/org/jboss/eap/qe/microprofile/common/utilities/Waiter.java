@@ -13,7 +13,8 @@ public final class Waiter {
     }
 
     /**
-     * Wait for condition to become true
+     * Wait for condition to become true. First check is done without additional wait and there is delay of 500
+     * milliseconds between checks.
      * @param condition condition which will be checked
      * @param time time for which it will be waited. The wait will take this amount or less if condition is
      *             satisfied.
