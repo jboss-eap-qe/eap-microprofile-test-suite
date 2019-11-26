@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  
+  <profiles>
+    <profile>
+      <id>local-m2-repository</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>file://${user.home}/.m2/repository/</url>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>central</id>
+          <url>file://${user.home}/.m2/repository/</url>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
+    <profile>
+      <id>jboss-nexus</id>
+      <repositories>
+        <repository>
+          <id>jboss-nexus-public</id>
+          <name>JBoss Nexus Public Repository</name>
+          <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+            <id>jboss-nexus-public</id>
+            <name>JBoss Nexus Public Repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+              <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+      <!-- <activeProfile>local-m2-repository</activeProfile> -->
+      <!-- <activeProfile>jboss-nexus</activeProfile> -->
+  </activeProfiles>
+
+</settings>
