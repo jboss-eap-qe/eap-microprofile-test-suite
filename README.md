@@ -1,6 +1,14 @@
 # eap-microprofile-test-suite
  a small standalone test suite for MicroProfile on WF/EAP
 
+## Requirements for the testsuite
+ - JDK 8+
+ - Docker
+ 
+ Maven is not a hard requirement as `mvnw` is delivered with this repository.
+
+ Podman with docker command bridge can be used as a Docker alternative.
+
 ## Run the testsuite
 ```
 mvn clean verify
