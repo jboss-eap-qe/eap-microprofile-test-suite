@@ -37,7 +37,7 @@ public class MicroProfileHealth21Test {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "MicroProfileHealthCheckDeprecatedTest.war")
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "MicroProfileHealth21Test.war")
                 .addClasses(DeprecatedHealthCheck.class, BothHealthCheck.class, LivenessHealthCheck.class, ReadinessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return war;
