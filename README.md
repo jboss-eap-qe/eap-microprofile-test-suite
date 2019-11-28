@@ -12,21 +12,25 @@
 ## Run the testsuite
 ```
 mvn clean verify
+./mvnw clean verify
 ```
 
 ## Export testing deployments
 ```
 mvn clean verify -Darquillian.deploymentExportPath=target/deployments/
+./mvnw clean verify -Darquillian.deploymentExportPath=target/deployments/
 ```
 
 ## Run one module against custom build
 ```
 mvn clean verify -pl microprofile-health -Djboss.home=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
+./mvnw clean verify -pl microprofile-health -Djboss.home=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
 ```
 
 ## Run one module against running server
 ```
 mvn clean verify -pl microprofile-health
+./mvnw clean verify -pl microprofile-health
 ```
 Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 
@@ -34,6 +38,7 @@ Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 Can be used to ensure code changes are compilable, `-Djboss.home=foo` is workaround to skip unpacking of WildFly zip.
 ```
 mvn clean verify -DskipTests -DskipITs -Djboss.home=foo
+./mvnw clean verify -DskipTests -DskipITs -Djboss.home=foo
 ```
 
 ## Zip distribution bundle
