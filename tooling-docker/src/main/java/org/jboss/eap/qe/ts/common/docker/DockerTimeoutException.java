@@ -9,4 +9,3 @@ public class DockerTimeoutException extends RuntimeException {
         super(message, cause);
     }
 }
-

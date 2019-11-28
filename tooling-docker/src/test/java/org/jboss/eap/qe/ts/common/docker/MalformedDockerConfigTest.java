@@ -1,18 +1,17 @@
 package org.jboss.eap.qe.ts.common.docker;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class MalformedDockerConfigTest {
 
@@ -48,13 +47,15 @@ public class MalformedDockerConfigTest {
                 .build();
 
         thrown.expect(ContainerReadyConditionException.class);
-        thrown.expectMessage(containsString("Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout"));
+        thrown.expectMessage(
+                containsString("Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout"));
         // throws expected Exception
         try {
             containerWithHangingReadyCondition.start();
         } finally {
             assertThat("ContainerReadyConditionException was thrown and starting container is expected to be stopped/killed. " +
-                    "However this did not happen and there is still container running which is bug.", not(containerWithHangingReadyCondition.isRunning()));
+                    "However this did not happen and there is still container running which is bug.",
+                    not(containerWithHangingReadyCondition.isRunning()));
         }
 
     }
@@ -88,7 +89,8 @@ public class MalformedDockerConfigTest {
             containerWithShortTimeout.start(); // will timeout after 1 sec
         } finally {
             assertThat("DockerTimeoutException was thrown and starting container is expected to be stopped/killed. " +
-                    "However this did not happen and there is still container running which is bug.", not(containerWithShortTimeout.isRunning()));
+                    "However this did not happen and there is still container running which is bug.",
+                    not(containerWithShortTimeout.isRunning()));
         }
     }
 }

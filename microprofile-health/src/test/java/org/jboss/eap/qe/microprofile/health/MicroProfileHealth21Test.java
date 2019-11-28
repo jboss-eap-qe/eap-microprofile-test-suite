@@ -1,6 +1,13 @@
 package org.jboss.eap.qe.microprofile.health;
 
-import io.restassured.http.ContentType;
+import static io.restassured.RestAssured.get;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -14,13 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static io.restassured.RestAssured.get;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import io.restassured.http.ContentType;
 
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -30,6 +31,7 @@ public class MicroProfileHealth21Test {
     ManagementClient managementClient;
 
     String healthURL;
+
     @Before
     public void composeHealthEndpointURL() {
         healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/health";
@@ -38,7 +40,8 @@ public class MicroProfileHealth21Test {
     @Deployment(testable = false)
     public static Archive<?> deployment() {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "MicroProfileHealth21Test.war")
-                .addClasses(DeprecatedHealthCheck.class, BothHealthCheck.class, LivenessHealthCheck.class, ReadinessHealthCheck.class)
+                .addClasses(DeprecatedHealthCheck.class, BothHealthCheck.class, LivenessHealthCheck.class,
+                        ReadinessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return war;
     }
@@ -70,6 +73,7 @@ public class MicroProfileHealth21Test {
                         "checks.data", hasSize(2),
                         "checks.data[0..1].key", hasItems("value"));
     }
+
     @Test
     public void testReadinessEndpoint() {
         get(healthURL + "/ready").then()

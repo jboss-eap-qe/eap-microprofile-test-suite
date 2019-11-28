@@ -64,3 +64,12 @@ unzip -q eap-microprofile-test-suite-dist.zip
 Tests output is redirected into `${TEST_FQCN}-output.txt` files in `target/surefire-reports/` directory.
 
 For more details consult with `mp-ts.sh` script
+
+## Code format and imports order
+Code gets formatted and imports ordered during the build time (process-sources phase) automatically.
+
+```
+mvn process-sources
+
+./mvnw process-sources
+```
