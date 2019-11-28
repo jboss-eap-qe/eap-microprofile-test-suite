@@ -20,13 +20,10 @@
         <module>tooling-server-configuration</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
-<<<<<<< HEAD
-=======
         <module>microprofile-open-api</module>
         <module>microprofile-jwt</module>
         <module>server-utilities</module>
         <module>microprofile-jwt-auth-tool</module>
->>>>>>> Created initial stub for microprofile-jwt
     </modules>
 
     <properties>
@@ -47,6 +44,7 @@
         <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
+        <version.org.glassfish.javax.json>1.1</version.org.glassfish.javax.json>
     </properties>
 
     <dependencyManagement>
