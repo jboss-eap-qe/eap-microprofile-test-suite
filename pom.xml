@@ -17,8 +17,10 @@
 
     <modules>
         <module>tooling-docker</module>
+        <module>tooling-server-configuration</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
+        <module>microprofile-open-api</module>
     </modules>
 
     <properties>
@@ -32,6 +34,8 @@
         <version.org.jboss.wildfly.dist>18.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>2.2.0.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
+        <version.org.wildfly.core>10.0.3.Final</version.org.wildfly.core>
+        <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
     </properties>
 
     <dependencyManagement>
@@ -75,6 +79,29 @@
                 <groupId>org.fusesource.jansi</groupId>
                 <artifactId>jansi</artifactId>
                 <version>${version.org.fusesource.jansi}</version>
+            </dependency>
+            <!-- Arquillian container test SPI for extension -->
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-container-test-spi</artifactId>
+                <version>${version.org.jboss.arquillian}</version>
+            </dependency>
+            <!-- Wildfly CLI references used by tooling-server-config -->
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-controller-client</artifactId>
+                <version>${version.org.wildfly.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-cli</artifactId>
+                <version>${version.org.wildfly.core}</version>
+            </dependency>
+            <!-- Creaper by tooling-server-config -->
+            <dependency>
+                <groupId>org.wildfly.extras.creaper</groupId>
+                <artifactId>creaper-core</artifactId>
+                <version>${version.org.wildfly.extras.creaper}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
