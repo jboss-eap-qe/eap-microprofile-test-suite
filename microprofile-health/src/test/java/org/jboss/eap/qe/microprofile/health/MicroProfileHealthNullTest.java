@@ -1,6 +1,10 @@
 package org.jboss.eap.qe.microprofile.health;
 
-import io.restassured.http.ContentType;
+import static io.restassured.RestAssured.get;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -13,10 +17,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static io.restassured.RestAssured.get;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import io.restassured.http.ContentType;
 
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -35,7 +36,8 @@ public class MicroProfileHealthNullTest {
 
     @Test
     public void testDeprecatedHealthCheck() {
-        final String healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/health";
+        final String healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort()
+                + "/health";
 
         get(healthURL).then()
                 .contentType(ContentType.JSON)

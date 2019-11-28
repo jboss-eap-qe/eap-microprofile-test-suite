@@ -1,8 +1,5 @@
 package org.jboss.eap.qe.ts.common.docker;
 
-import org.fusesource.jansi.Ansi;
-import org.junit.rules.ExternalResource;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.fusesource.jansi.Ansi;
+import org.junit.rules.ExternalResource;
 
 /**
  * Utility class for starting docker containers. This class allows to start any docker container.
@@ -87,11 +87,11 @@ public class Docker extends ExternalResource {
         while (!isContainerReady()) {
             if (System.currentTimeMillis() - startTime > containerReadyTimeout) {
                 stop();
-                throw new DockerTimeoutException(uuid + "- Container was not ready in timeout : " + containerReadyTimeout + " ms");
+                throw new DockerTimeoutException(uuid + " - Container was not ready in " + containerReadyTimeout + " ms");
             }
             // fail fast mechanism in case of malformed docker command, for example bad arguments, invalid format of port mapping, image version,...
             if (!dockerRunProcess.isAlive() && dockerRunProcess.exitValue() != 0) {
-                throw new DockerException(uuid + "- Starting of docker container using command: \"" + String.join(" ", cmd)
+                throw new DockerException(uuid + " - Starting of docker container using command: \"" + String.join(" ", cmd)
                         + "\" failed. Check that provided command is correct.");
             }
         }
@@ -106,19 +106,20 @@ public class Docker extends ExternalResource {
             // in case condition hangs interrupt it so there are no zombie threads
             condition.cancel(true);
 
-            throw new ContainerReadyConditionException(uuid + "- Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout: "
-                    + containerReadyTimeout + " ms. Check it does not hang and does not take longer then containerReadyTimeout. " +
-                    "It's expected that ContainerReadyCondition.isReady() method is short lived (takes less than 1 second).", ex);
+            throw new ContainerReadyConditionException(uuid + " - Provided ContainerReadyCondition.isReady() method took " +
+                    "longer than containerReadyTimeout: " + containerReadyTimeout + " ms. Check it does not hang and does " +
+                    "not take longer then containerReadyTimeout. It's expected that ContainerReadyCondition.isReady() method " +
+                    "is short lived (takes less than 1 second).", ex);
         }
     }
 
     private void checkDockerPresent() throws Exception {
         Process dockerInfoProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
-                .command(new String[] {"docker", "info"})
+                .command(new String[] { "docker", "info" })
                 .start();
         dockerInfoProcess.waitFor();
-        if (dockerInfoProcess.exitValue() != 0)   {
+        if (dockerInfoProcess.exitValue() != 0) {
             throw new DockerException("Docker is either not present or not installed on this machine. It must be installed " +
                     "and started up for executing tests with docker container.");
         }
@@ -130,7 +131,7 @@ public class Docker extends ExternalResource {
     protected boolean isRunning() throws Exception {
         Process dockerRunProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
-                .command(new String[] {"docker", "ps"})
+                .command(new String[] { "docker", "ps" })
                 .start();
 
         dockerRunProcess.waitFor();
@@ -138,7 +139,7 @@ public class Docker extends ExternalResource {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(dockerRunProcess.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains(uuid))    {
+                if (line.contains(uuid)) {
                     return true;
                 }
             }
@@ -204,7 +205,7 @@ public class Docker extends ExternalResource {
          * Timeout to wait until container is ready/starts
          *
          * @param timeout the maximum time to wait
-         * @param unit    the time unit of the {@code timeout} argument
+         * @param unit the time unit of the {@code timeout} argument
          */
         public Builder setContainerReadyTimeout(long timeout, TimeUnit unit) {
             this.containerReadyTimeoutInMillis = unit.toMillis(timeout);
@@ -225,7 +226,7 @@ public class Docker extends ExternalResource {
         /**
          * Adds environment variable passed to docker container
          *
-         * @param key   name of environment variable
+         * @param key name of environment variable
          * @param value value of environment variable
          */
         public Builder withEnvVar(String key, String value) {

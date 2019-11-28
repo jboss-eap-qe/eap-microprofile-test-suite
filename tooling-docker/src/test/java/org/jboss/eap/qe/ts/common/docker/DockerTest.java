@@ -1,28 +1,29 @@
 package org.jboss.eap.qe.ts.common.docker;
 
-import org.junit.ClassRule;
-import org.junit.Test;
+import static io.restassured.RestAssured.get;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import static io.restassured.RestAssured.get;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.containsString;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DockerTest {
 
     private static final String DEFAULT_SERVER_BIND_ADDRESS = "127.0.0.1";
 
     private static final String WILDFLY_ONE_CONTAINER_NAME = "wildfly-server-one";
-    private static final int    WILDFLY_ONE_EXPOSED_HTTP_PORT = 11111;
-    private static final int    WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT = 11990;
+    private static final int WILDFLY_ONE_EXPOSED_HTTP_PORT = 11111;
+    private static final int WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT = 11990;
 
     private static final String WILDFLY_TWO_CONTAINER_NAME = "wildfly-server-two";
-    private static final int    WILDFLY_TWO_EXPOSED_HTTP_PORT = 22222;
-    private static final int    WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT = 22990;
+    private static final int WILDFLY_TWO_EXPOSED_HTTP_PORT = 22222;
+    private static final int WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT = 22990;
 
     @ClassRule
     public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
@@ -69,7 +70,7 @@ public class DockerTest {
     private static boolean portOpened(int port) {
         try {
             new Socket(DEFAULT_SERVER_BIND_ADDRESS, port).close();
-        } catch (Exception ex)  {
+        } catch (Exception ex) {
             return false;
         }
         return true;
