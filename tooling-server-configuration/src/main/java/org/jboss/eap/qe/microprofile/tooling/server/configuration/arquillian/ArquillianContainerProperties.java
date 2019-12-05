@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian;
 
+import java.util.Optional;
+
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.config.descriptor.api.ContainerDef;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
-
-import java.util.Optional;
 
 /**
  * Provides access to Arquillian container configuration properties
@@ -39,7 +39,7 @@ public class ArquillianContainerProperties {
      * Gets the value for a property for a named Arquillian container
      *
      * @param container The name of the container
-     * @param key       The name of the property
+     * @param key The name of the property
      * @return The value for the requested property
      * @throws {@link ConfigurationException} instance if no container for given name is found
      */
@@ -47,7 +47,8 @@ public class ArquillianContainerProperties {
         Optional<ContainerDef> containerDefinition = getNamedContainerDefinition(container);
         if (!containerDefinition.isPresent()) {
             throw new ConfigurationException(
-                    String.format("Definition for container with name [%s] was not found in arquillian.xml descriptor", container));
+                    String.format("Definition for container with name [%s] was not found in arquillian.xml descriptor",
+                            container));
         }
         return containerDefinition.get().getContainerProperty(key);
     }
@@ -56,18 +57,19 @@ public class ArquillianContainerProperties {
      * Gets the value for a property of a given Arquillian container and returns the default value passed when the
      * given property value is null or empty
      *
-     * @param container    The name of the container
-     * @param key          The name of the property
+     * @param container The name of the container
+     * @param key The name of the property
      * @param defaultValue The default value to be returned when the given property name is not found
      * @return The value for the requested property or the given default value when the given property value is null or
-     * empty
+     *         empty
      * @throws {@link ConfigurationException} instance if no container for given name is found
      */
     public String getContainerProperty(String container, String key, String defaultValue) throws ConfigurationException {
         Optional<ContainerDef> containerDefinition = getNamedContainerDefinition(container);
         if (!containerDefinition.isPresent()) {
             throw new ConfigurationException(
-                    String.format("Definition for container with name [%s] was not found in arquillian.xml descriptor", container));
+                    String.format("Definition for container with name [%s] was not found in arquillian.xml descriptor",
+                            container));
         }
         String result = containerDefinition.get().getContainerProperty(key);
         return (result == null) || result.isEmpty() ? defaultValue : result;

@@ -73,7 +73,8 @@ public class Docker extends ExternalResource {
                 .start();
 
         outputPrinter.execute(() -> {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     System.out.println(Ansi.ansi().fgCyan().a(name).reset().a("> ").a(line));
@@ -137,7 +138,8 @@ public class Docker extends ExternalResource {
 
         dockerRunProcess.waitFor();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains(uuid)) {

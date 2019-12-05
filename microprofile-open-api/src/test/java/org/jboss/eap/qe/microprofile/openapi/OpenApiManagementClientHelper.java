@@ -1,5 +1,8 @@
 package org.jboss.eap.qe.microprofile.openapi;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientHelper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.wildfly.extras.creaper.core.online.ModelNodeResult;
@@ -8,9 +11,6 @@ import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.OperationException;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
-
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Helper that provides operations to manage the OpenAPI extension configuration via
@@ -24,9 +24,10 @@ public class OpenApiManagementClientHelper {
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @return {@link ModelNodeResult} instance to represent the command execution outcome
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
-    public static ModelNodeResult removeOpenApiExtension(OnlineManagementClient client) throws ManagementClientRelatedException {
+    public static ModelNodeResult removeOpenApiExtension(OnlineManagementClient client)
+            throws ManagementClientRelatedException {
         return ManagementClientHelper.executeCliCommand(client,
                 "/extension=org.wildfly.extension.microprofile.openapi-smallrye:remove");
     }
@@ -37,9 +38,10 @@ public class OpenApiManagementClientHelper {
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @return {@link ModelNodeResult} instance to represent the command execution outcome
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
-    public static ModelNodeResult removeOpenApiSubsystem(OnlineManagementClient client) throws ManagementClientRelatedException {
+    public static ModelNodeResult removeOpenApiSubsystem(OnlineManagementClient client)
+            throws ManagementClientRelatedException {
         return ManagementClientHelper.executeCliCommand(client,
                 "/subsystem=microprofile-openapi-smallrye:remove");
     }
@@ -50,7 +52,7 @@ public class OpenApiManagementClientHelper {
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @return {@link ModelNodeResult} instance to represent the command execution outcome
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static ModelNodeResult addOpenApiSubsystem(OnlineManagementClient client) throws ManagementClientRelatedException {
         return ManagementClientHelper.executeCliCommand(client,
@@ -63,7 +65,7 @@ public class OpenApiManagementClientHelper {
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @return {@link ModelNodeResult} instance to represent the command execution outcome
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static ModelNodeResult addOpenApiExtension(OnlineManagementClient client) throws ManagementClientRelatedException {
         return ManagementClientHelper.executeCliCommand(client,
@@ -75,7 +77,7 @@ public class OpenApiManagementClientHelper {
      *
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static void enableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
         try {
@@ -94,7 +96,7 @@ public class OpenApiManagementClientHelper {
      *
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static void disableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
         try {
@@ -114,7 +116,7 @@ public class OpenApiManagementClientHelper {
      * @param client {@link OnlineManagementClient} instance used to execute the command
      * @return True if subsystem is already present,false otherwise
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static Boolean openapiSubsystemExists(OnlineManagementClient client) throws ManagementClientRelatedException {
         Operations ops = new Operations(client);

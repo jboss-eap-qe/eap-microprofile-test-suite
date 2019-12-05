@@ -22,7 +22,7 @@ public class ArquillianDescriptorWrapper {
      * ArquillianConfiguration
      * extension
      *
-     * @param event      {@link BeforeSuite} instance of Arquillian event the method listens to
+     * @param event {@link BeforeSuite} instance of Arquillian event the method listens to
      * @param descriptor {@link ArquillianDescriptor} instance that will be assigned to the internal static field
      */
     public static void setArquillianDescriptor(@Observes BeforeSuite event, ArquillianDescriptor descriptor) {

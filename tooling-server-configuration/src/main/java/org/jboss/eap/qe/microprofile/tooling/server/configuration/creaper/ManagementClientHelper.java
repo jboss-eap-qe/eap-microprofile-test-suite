@@ -11,14 +11,14 @@ public class ManagementClientHelper {
     /**
      * Executes a valid CLI command through the given {@link OnlineManagementClient} instance.
      *
-     * @param client  {@link OnlineManagementClient} instance used to execute the command
+     * @param client {@link OnlineManagementClient} instance used to execute the command
      * @param command A valid CLI command
      * @return {@link ModelNodeResult} instance to represent the command execution outcome
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
-     *                                          {@link OnlineManagementClient} API
+     *         {@link OnlineManagementClient} API
      */
     public static ModelNodeResult executeCliCommand(OnlineManagementClient client,
-                                                    String command) throws ManagementClientRelatedException {
+            String command) throws ManagementClientRelatedException {
         try {
             return client.execute(command);
         } catch (Exception e) {
