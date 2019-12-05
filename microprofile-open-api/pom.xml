@@ -54,8 +54,15 @@
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
             <artifactId>tooling-server-configuration</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 </project>

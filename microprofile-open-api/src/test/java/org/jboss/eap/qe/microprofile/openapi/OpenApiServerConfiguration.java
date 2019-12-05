@@ -16,7 +16,7 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
  * Helper that provides operations to manage the OpenAPI extension configuration via
  * {@link OnlineManagementClient} API.
  */
-public class OpenApiManagementClientHelper {
+public class OpenApiServerConfiguration {
 
     /**
      * Executes CLI command to remove MP OpenAPI extension

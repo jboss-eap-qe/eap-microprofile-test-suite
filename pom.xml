@@ -35,6 +35,8 @@
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.org.wildfly.core>10.0.3.Final</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
+        <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
+        <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
     </properties>
 
     <dependencyManagement>
@@ -101,6 +103,24 @@
                 <groupId>org.wildfly.extras.creaper</groupId>
                 <artifactId>creaper-core</artifactId>
                 <version>${version.org.wildfly.extras.creaper}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${version.org.yaml.snakeyaml}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${version.com.fasterxml.jackson.core.jackson-databind}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.eap.qe</groupId>
+                <artifactId>tooling-server-configuration</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

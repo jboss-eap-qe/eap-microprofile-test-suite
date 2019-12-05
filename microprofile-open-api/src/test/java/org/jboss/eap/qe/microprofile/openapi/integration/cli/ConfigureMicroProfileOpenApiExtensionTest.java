@@ -3,7 +3,7 @@ package org.jboss.eap.qe.microprofile.openapi.integration.cli;
 import java.io.IOException;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiManagementClientHelper;
+import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
@@ -40,9 +40,9 @@ public class ConfigureMicroProfileOpenApiExtensionTest {
             throws ManagementClientRelatedException, IOException, ConfigurationException {
         //  MP OpenAPI up & down
         try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone(arquillianContainerProperties)) {
-            if (!OpenApiManagementClientHelper.openapiSubsystemExists(client)) {
-                OpenApiManagementClientHelper.enableOpenApi(client);
-                OpenApiManagementClientHelper.disableOpenApi(client);
+            if (!OpenApiServerConfiguration.openapiSubsystemExists(client)) {
+                OpenApiServerConfiguration.enableOpenApi(client);
+                OpenApiServerConfiguration.disableOpenApi(client);
             }
         }
     }
