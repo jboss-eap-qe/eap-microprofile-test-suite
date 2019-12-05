@@ -9,6 +9,7 @@ import org.wildfly.extras.creaper.core.online.operations.Values;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -51,26 +52,46 @@ public final class ModelNodeLogReader implements LogReader {
 
     @Override
     public boolean wasLineLogged(Pattern pattern) {
-        final Operations ops = new Operations(this.client);
         try {
-            final ModelNodeResult result = ops.invoke(READ_LOG_FILE_OPERATION, DEFAULT_STANDALONE_LOG_ADDRESS,
-                    Values.of("lines", this.countOfLines)
-                            .and("tail", this.readLogFromEnd));
-
-            result.assertSuccess("Reading log file failed!");
-
-            final Optional<String> optionalMatch = result.value()
-                    .asList()
-                    .stream()
-                    .map(ModelNode::asString)
-                    .filter((final String line) -> pattern.matcher(line).matches())
-                    .findFirst();
-
-            return optionalMatch.isPresent();
+            return anyLineMatchesPredicate(readLogFileFromManagementModel(),
+                    (final String line) -> pattern.matcher(line).matches());
 
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public boolean wasLineLogged(String subString) {
+        try {
+            return anyLineMatchesPredicate(readLogFileFromManagementModel(),
+                    (final String line) -> line.contains(subString));
+
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private ModelNode readLogFileFromManagementModel() throws IOException {
+        final Operations ops = new Operations(this.client);
+
+        final ModelNodeResult result = ops.invoke(READ_LOG_FILE_OPERATION, DEFAULT_STANDALONE_LOG_ADDRESS,
+                Values.of("lines", this.countOfLines)
+                        .and("tail", this.readLogFromEnd));
+
+        result.assertSuccess("Reading log file failed!");
+
+        return result.value();
+    }
+
+    private boolean anyLineMatchesPredicate(final ModelNode logLines, final Predicate<String> predicate) {
+        final Optional<String> optionalMatch = logLines.asList()
+                .stream()
+                .map(ModelNode::asString)
+                .filter(predicate)
+                .findFirst();
+
+        return optionalMatch.isPresent();
     }
 
 }
