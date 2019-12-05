@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * Log Watcher based on accessing messages through {@link org.jboss.dmr.ModelNode} returned from {@code :read-log-file}
  * operation.
  */
-public final class ModelNodeLogWatcher implements LogWatcher {
+public final class ModelNodeLogReader implements LogReader {
 
     private static final String READ_LOG_FILE_OPERATION = "read-log-file";
 
@@ -29,26 +29,28 @@ public final class ModelNodeLogWatcher implements LogWatcher {
     /**
      * Create an instance of log watcher. File will be read from the end (tail).
      * @param client client which will be used to invoke log file reading operation on server
-     * @param countOfLines number of lines which will be read
+     * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
+     *                     files can get pretty big and reading whole file may lead to serious memory issues.
      */
-    public ModelNodeLogWatcher(final OnlineManagementClient client, final int countOfLines) {
+    public ModelNodeLogReader(final OnlineManagementClient client, final int countOfLines) {
         this(client, countOfLines, true);
     }
 
     /**
      * Create an instance of log watcher
      * @param client client which will be used to invoke log file reading operation on server
-     * @param countOfLines number of lines which will be read
+     * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
+     *                     files can get pretty big and reading whole file may lead to serious memory issues.
      * @param readFromEnd true if log file should be read in tail mode
      */
-    public ModelNodeLogWatcher(final OnlineManagementClient client, final int countOfLines, final boolean readFromEnd) {
+    public ModelNodeLogReader(final OnlineManagementClient client, final int countOfLines, final boolean readFromEnd) {
         this.client = client;
         this.countOfLines = countOfLines;
         this.readLogFromEnd = readFromEnd;
     }
 
     @Override
-    public boolean wasLineWithPatternLogged(Pattern pattern) {
+    public boolean wasLineLogged(Pattern pattern) {
         final Operations ops = new Operations(this.client);
         try {
             final ModelNodeResult result = ops.invoke(READ_LOG_FILE_OPERATION, DEFAULT_STANDALONE_LOG_ADDRESS,
@@ -62,7 +64,7 @@ public final class ModelNodeLogWatcher implements LogWatcher {
                     .stream()
                     .map(ModelNode::asString)
                     .filter((final String line) -> pattern.matcher(line).matches())
-                    .findAny();
+                    .findFirst();
 
             return optionalMatch.isPresent();
 
