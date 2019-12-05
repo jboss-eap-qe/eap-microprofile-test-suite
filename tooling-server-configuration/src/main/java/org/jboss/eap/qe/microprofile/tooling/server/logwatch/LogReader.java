@@ -14,4 +14,11 @@ public interface LogReader {
      */
     boolean wasLineLogged(final Pattern pattern);
 
+    /**
+     * Perform search in log or its excerpt and find if a line contains a sub string.
+     * @param subString a sub string which will be used to perform search among lines
+     * @return true if log line containing a sub string was found in log, false otherwise
+     */
+    boolean wasLineLogged(final String subString);
+
 }

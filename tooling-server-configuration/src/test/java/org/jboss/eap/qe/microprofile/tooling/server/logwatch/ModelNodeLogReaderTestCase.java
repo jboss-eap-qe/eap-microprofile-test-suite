@@ -22,7 +22,7 @@ public class ModelNodeLogReaderTestCase {
 
     @Test
     @RunAsClient
-    public void testLineMatchedClient() throws ConfigurationException, IOException, TimeoutException, InterruptedException {
+    public void testLineMatchedPatternClient() throws ConfigurationException, IOException, TimeoutException, InterruptedException {
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             final LogReader logReader = new ModelNodeLogReader(client, 10, true);
 
@@ -34,11 +34,33 @@ public class ModelNodeLogReaderTestCase {
 
     @Test
     @RunAsClient
-    public void testLineNotMatchedClient() throws ConfigurationException, IOException {
+    public void testLineNotMatchedPatternClient() throws ConfigurationException, IOException {
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             final LogReader logReader = new ModelNodeLogReader(client, 10, true);
 
             Assert.assertFalse(logReader.wasLineLogged(Pattern.compile(".*Foooqux 42.*")));
+        }
+    }
+
+    @Test
+    @RunAsClient
+    public void testLineContainedSubstringClient() throws ConfigurationException, IOException, TimeoutException, InterruptedException {
+        try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            final LogReader logReader = new ModelNodeLogReader(client, 10, true);
+
+            new Administration(client).reload();
+
+            Assert.assertTrue(logReader.wasLineLogged("WFLYSRV0025"));
+        }
+    }
+
+    @Test
+    @RunAsClient
+    public void testLineNotContainedSubstringClient() throws ConfigurationException, IOException {
+        try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            final LogReader logReader = new ModelNodeLogReader(client, 10, true);
+
+            Assert.assertFalse(logReader.wasLineLogged("Foooqux 42"));
         }
     }
 
