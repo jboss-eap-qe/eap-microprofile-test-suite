@@ -30,16 +30,17 @@ public class Docker extends ExternalResource {
     private String image;
     private List<String> ports = new ArrayList<>();
     private Map<String, String> environmentVariables = new HashMap<>();
+    private List<String> options = new ArrayList<>();
     private List<String> commandArguments = new ArrayList<>();
     private ContainerReadyCondition containerReadyCondition;
     private long containerReadyTimeout;
-    private final ExecutorService outputPrinter = Executors.newSingleThreadExecutor();
+    private ExecutorService outputPrinter;
     private Process dockerRunProcess;
 
     private Docker() {
     } // avoid instantiation, use Builder
 
-    protected void start() throws Exception {
+    public void start() throws Exception {
 
         checkDockerPresent();
 
@@ -60,6 +61,8 @@ public class Docker extends ExternalResource {
             cmd.add(envVar.getKey() + "=" + envVar.getValue());
         }
 
+        cmd.addAll(options);
+
         cmd.add(image);
 
         cmd.addAll(commandArguments);
@@ -71,7 +74,7 @@ public class Docker extends ExternalResource {
                 .redirectErrorStream(true)
                 .command(cmd)
                 .start();
-
+        outputPrinter = Executors.newSingleThreadExecutor();
         outputPrinter.execute(() -> {
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
@@ -130,7 +133,7 @@ public class Docker extends ExternalResource {
     /**
      * @return Returns true if docker container is running. It does NOT check whether container is ready.
      */
-    protected boolean isRunning() throws Exception {
+    public boolean isRunning() throws Exception {
         Process dockerRunProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
                 .command(new String[] { "docker", "ps" })
@@ -153,7 +156,7 @@ public class Docker extends ExternalResource {
         return false;
     }
 
-    protected void stop() throws Exception {
+    public void stop() throws Exception {
         System.out.println(Ansi.ansi().reset().a("Stopping container ").fgCyan().a(name).reset()
                 .a(" with ID ").fgYellow().a(uuid).reset());
 
@@ -161,10 +164,28 @@ public class Docker extends ExternalResource {
                 .command("docker", "stop", uuid)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
+        terminateThreadPools();
+        removeDockerContainter();
+    }
 
+    public void kill() throws Exception {
+        System.out.println(Ansi.ansi().reset().a("Killing container ").fgCyan().a(name).reset()
+                .a(" with ID ").fgYellow().a(uuid).reset());
+
+        new ProcessBuilder()
+                .command("docker", "kill", uuid)
+                .start()
+                .waitFor(10, TimeUnit.SECONDS);
+        terminateThreadPools();
+        removeDockerContainter();
+    }
+
+    private void terminateThreadPools() throws Exception {
         outputPrinter.shutdown();
         outputPrinter.awaitTermination(10, TimeUnit.SECONDS);
+    }
 
+    private void removeDockerContainter() throws Exception {
         new ProcessBuilder()
                 .command("docker", "rm", uuid)
                 .start()
@@ -192,6 +213,7 @@ public class Docker extends ExternalResource {
         private String image;
         private List<String> ports = new ArrayList<>();
         private Map<String, String> environmentVariables = new HashMap<>();
+        private List<String> options = new ArrayList<>();
         private List<String> commandArguments = new ArrayList<>();
         private long containerReadyTimeoutInMillis = 120_000; // 2 minutes
 
@@ -238,6 +260,18 @@ public class Docker extends ExternalResource {
         }
 
         /**
+         * Adds options into starting docker command.
+         * <p>
+         * See "docker run --help" for full list of options
+         *
+         * @param option additional docker parameters
+         */
+        public Builder withCmdOption(String option) {
+            options.add(option);
+            return this;
+        }
+
+        /**
          * Adds parameters into starting docker command
          *
          * @param commandArgument additional docker parameters
@@ -268,6 +302,7 @@ public class Docker extends ExternalResource {
             docker.name = this.name;
             docker.image = this.image;
             docker.ports = this.ports;
+            docker.options = this.options;
             docker.environmentVariables = this.environmentVariables;
             docker.commandArguments = this.commandArguments;
             docker.containerReadyCondition = containerReadyCondition;
