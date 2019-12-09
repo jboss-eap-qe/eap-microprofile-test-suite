@@ -18,8 +18,8 @@ public class MalformedDockerConfigTest {
 
     @Test
     public void testFailFastWithMalformedDockerCommand() throws Exception {
-        Docker containerWithInvalidVersion = new Docker.Builder("wildfly", "jboss/wildfly:InvalidVersion")
-                .setContainerReadyTimeout(10, TimeUnit.SECONDS) // shorten timeout as this should fail fast
+        Docker containerWithInvalidVersion = new Docker.Builder("wildfly", "registry.hub.docker.com/jboss/wildfly:InvalidVersion")
+                .setContainerReadyTimeout(2, TimeUnit.SECONDS) // shorten timeout as this should fail fast
                 .setContainerReadyCondition(() -> false) // it's expected that server never starts and fails fast thus return false
                 .withPortMapping("bad:mapping")
                 .build();
@@ -33,7 +33,7 @@ public class MalformedDockerConfigTest {
 
     @Test
     public void testContainerWithHangingReadyCondition() throws Exception {
-        Docker containerWithHangingReadyCondition = new Docker.Builder("wildfly", "jboss/wildfly:18.0.0.Final")
+        Docker containerWithHangingReadyCondition = new Docker.Builder("wildfly", "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
                 .setContainerReadyTimeout(1, TimeUnit.SECONDS) // shorten timeout as this should fail fast
                 .setContainerReadyCondition(() -> { // simulate hanging isReady() condition
                     try {
@@ -61,7 +61,7 @@ public class MalformedDockerConfigTest {
 
     @Test
     public void testContainerReadyTimeout() throws Exception {
-        Docker containerWithShortTimeout = new Docker.Builder("wildlfy", "jboss/wildfly:18.0.0.Final")
+        Docker containerWithShortTimeout = new Docker.Builder("wildlfy", "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
                 .setContainerReadyTimeout(2, TimeUnit.SECONDS)
                 .setContainerReadyCondition(() -> false) // never ready
                 .build();
