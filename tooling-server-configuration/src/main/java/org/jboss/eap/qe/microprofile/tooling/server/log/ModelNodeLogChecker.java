@@ -1,16 +1,16 @@
 package org.jboss.eap.qe.microprofile.tooling.server.log;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+
 import org.jboss.dmr.ModelNode;
 import org.wildfly.extras.creaper.core.online.ModelNodeResult;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.Values;
-
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * Log checker based on accessing messages through {@link org.jboss.dmr.ModelNode} returned from {@code :read-log-file}
@@ -29,9 +29,10 @@ public final class ModelNodeLogChecker implements LogChecker {
 
     /**
      * Create an instance of log checker. File will be read from the end (tail).
+     * 
      * @param client client which will be used to invoke log file reading operation on server
      * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
-     *                     files can get pretty big and reading whole file may lead to serious memory issues.
+     *        files can get pretty big and reading whole file may lead to serious memory issues.
      */
     public ModelNodeLogChecker(final OnlineManagementClient client, final int countOfLines) {
         this(client, countOfLines, true);
@@ -39,9 +40,10 @@ public final class ModelNodeLogChecker implements LogChecker {
 
     /**
      * Create an instance of log checker
+     * 
      * @param client client which will be used to invoke log file reading operation on server
      * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
-     *                     files can get pretty big and reading whole file may lead to serious memory issues.
+     *        files can get pretty big and reading whole file may lead to serious memory issues.
      * @param readFromEnd true if log file should be read in tail mode
      */
     public ModelNodeLogChecker(final OnlineManagementClient client, final int countOfLines, final boolean readFromEnd) {

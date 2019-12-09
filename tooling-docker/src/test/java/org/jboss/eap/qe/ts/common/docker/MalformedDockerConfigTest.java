@@ -18,11 +18,12 @@ public class MalformedDockerConfigTest {
 
     @Test
     public void testFailFastWithMalformedDockerCommand() throws Exception {
-        Docker containerWithInvalidVersion = new Docker.Builder("wildfly", "registry.hub.docker.com/jboss/wildfly:InvalidVersion")
-                .setContainerReadyTimeout(2, TimeUnit.SECONDS) // shorten timeout as this should fail fast
-                .setContainerReadyCondition(() -> false) // it's expected that server never starts and fails fast thus return false
-                .withPortMapping("bad:mapping")
-                .build();
+        Docker containerWithInvalidVersion = new Docker.Builder("wildfly",
+                "registry.hub.docker.com/jboss/wildfly:InvalidVersion")
+                        .setContainerReadyTimeout(2, TimeUnit.SECONDS) // shorten timeout as this should fail fast
+                        .setContainerReadyCondition(() -> false) // it's expected that server never starts and fails fast thus return false
+                        .withPortMapping("bad:mapping")
+                        .build();
 
         thrown.expect(DockerException.class);
         thrown.expectMessage(containsString("Starting of docker container using command: \"docker run --name"));
@@ -33,17 +34,18 @@ public class MalformedDockerConfigTest {
 
     @Test
     public void testContainerWithHangingReadyCondition() throws Exception {
-        Docker containerWithHangingReadyCondition = new Docker.Builder("wildfly", "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
-                .setContainerReadyTimeout(1, TimeUnit.SECONDS) // shorten timeout as this should fail fast
-                .setContainerReadyCondition(() -> { // simulate hanging isReady() condition
-                    try {
-                        Thread.sleep(10000); // wait 10 s
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    return false;
-                }) // it's expected that server never starts and fails fast thus return false
-                .build();
+        Docker containerWithHangingReadyCondition = new Docker.Builder("wildfly",
+                "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
+                        .setContainerReadyTimeout(1, TimeUnit.SECONDS) // shorten timeout as this should fail fast
+                        .setContainerReadyCondition(() -> { // simulate hanging isReady() condition
+                            try {
+                                Thread.sleep(10000); // wait 10 s
+                            } catch (InterruptedException e) {
+                                // ignore
+                            }
+                            return false;
+                        }) // it's expected that server never starts and fails fast thus return false
+                        .build();
 
         thrown.expect(ContainerReadyConditionException.class);
         thrown.expectMessage(
