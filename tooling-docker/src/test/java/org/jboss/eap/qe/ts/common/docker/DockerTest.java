@@ -26,7 +26,7 @@ public class DockerTest {
     private static final int WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT = 22990;
 
     @ClassRule
-    public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
+    public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME, "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
             .setContainerReadyTimeout(2, TimeUnit.MINUTES)
             .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
             .withPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
@@ -37,7 +37,7 @@ public class DockerTest {
             .build();
 
     @ClassRule
-    public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME, "jboss/wildfly:18.0.0.Final")
+    public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME, "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
             .setContainerReadyTimeout(2, TimeUnit.MINUTES)
             .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
             .withPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
