@@ -20,8 +20,6 @@
         <module>tooling-server-configuration</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
-        <module>microprofile-open-api</module>
-        <module>microprofile-jwt</module>
         <module>server-utilities</module>
         <module>microprofile-jwt-auth-tool</module>
     </modules>
@@ -276,11 +274,17 @@
         </profile>
 
         <!--This section contains module activation profiles. These modules are activated separately because features
-        they are testing was not yet included in released WildFly distribution.-->
+        they are testing were not yet included in released WildFly distribution.-->
         <profile>
             <id>mp-open-api</id>
             <modules>
                 <module>microprofile-open-api</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mp-jwt</id>
+            <modules>
+                <module>microprofile-jwt</module>
             </modules>
         </profile>
     </profiles>
