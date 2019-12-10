@@ -12,12 +12,18 @@ import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -78,7 +84,7 @@ public class PublicKeyPropertyTestCase {
     @Test
     @RunAsClient
     @OperateOnDeployment(DEPLOYMENT_WITH_INVALID_KEY)
-    public void testJwkVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws InterruptedException {
+    public void testJwkVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws ConfigurationException, IOException {
         final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         RestAssured.given()
@@ -87,7 +93,11 @@ public class PublicKeyPropertyTestCase {
                 .then()
                 .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"));
 
-        //TODO add check for expected log message with correct reason
+        try(final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            //TODO switch to logging ID based check when https://issues.redhat.com/browse/WFWIP-280 is resolved
+            Assert.assertTrue(new ModelNodeLogChecker(client, 100)
+                    .logContains("Token is invalid: JWT rejected due to invalid signature."));
+        }
     }
 
     /**
