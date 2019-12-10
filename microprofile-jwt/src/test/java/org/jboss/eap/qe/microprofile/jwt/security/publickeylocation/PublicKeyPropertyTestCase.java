@@ -91,7 +91,9 @@ public class PublicKeyPropertyTestCase {
                 .header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + "basic-endpoint")
                 .then()
-                .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"));
+                .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"))
+                .and()
+                .statusCode(equalTo(401));
 
         try(final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             //TODO switch to logging ID based check when https://issues.redhat.com/browse/WFWIP-280 is resolved

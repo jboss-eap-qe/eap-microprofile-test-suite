@@ -56,11 +56,11 @@ public final class JwtHelper {
                 .build();
 
         try {
-            return new JsonWebToken.Builder()
+            return JsonWebToken.Builder.newInstance()
                     .joseHeader(joseHeader)
                     .jwtClaims(jwtClaims)
-                    .privateKey(this.keyTool.getPrivateKey())
                     .signature(Signature.getInstance("SHA256withRSA"))
+                    .privateKey(this.keyTool.getPrivateKey())
                     .build();
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA256 algorithm is not supported by JVM!", e);

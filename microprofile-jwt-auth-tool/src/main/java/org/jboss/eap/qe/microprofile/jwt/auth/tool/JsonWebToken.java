@@ -18,10 +18,9 @@ public class JsonWebToken {
     }
 
     /**
-     * Generates a base64-encoded signed JWT that expires after one hour and has the claims "sub" and
-     * "preferred_username" set to the provided subject string.
+     * Generates a base64-encoded signed JWT
      *
-     * @return a base64-encoded signed JWT token.
+     * @return a base64-encoded signed JWT.
      */
     private String composeSignedRawValue(final JoseHeader joseHeader, final JwtClaims jwtClaims, final Signature signature, final PrivateKey privateKey) {
         try {
@@ -42,6 +41,26 @@ public class JsonWebToken {
         }
     }
 
+    interface JwtJoseHeader {
+        JwtJwtClaims joseHeader(JoseHeader joseHeader);
+    }
+
+    interface JwtJwtClaims {
+        JwtSignature jwtClaims(JwtClaims jwtClaims);
+    }
+
+    interface JwtSignature {
+        JwtPrivateKey signature(Signature signature);
+    }
+
+    interface JwtPrivateKey {
+        JwtBuilder privateKey(PrivateKey privateKey);
+    }
+
+    interface JwtBuilder {
+        JsonWebToken build();
+    }
+
     /**
      * Return raw token value (header.payload.signature)
      * @return Raw token value
@@ -53,19 +72,31 @@ public class JsonWebToken {
     /**
      * A builder for {@link JsonWebToken}
      */
-    public static final class Builder {
+    public static final class Builder implements JwtJoseHeader, JwtJwtClaims, JwtSignature, JwtPrivateKey, JwtBuilder {
 
         private JoseHeader joseHeader;
         private JwtClaims jwtClaims;
         private Signature signature;
         private PrivateKey privateKey;
 
+        private Builder() {
+            //prevent no-argument initialization
+        }
+
+        /**
+         * Create new instance of JWT builder to utilize fluent API.
+         * @return new instance of {@link JwtJoseHeader}.
+         */
+        public static JwtJoseHeader newInstance() {
+            return new Builder();
+        }
+
         /**
          * Token header
          * @param joseHeader token header specifying information about key and algorithm used to sign this token
-         * @return instance of this builder
+         * @return instance of {@link JwtJwtClaims}
          */
-        public Builder joseHeader(JoseHeader joseHeader) {
+        public JwtJwtClaims joseHeader(JoseHeader joseHeader) {
             this.joseHeader = joseHeader;
             return this;
         }
@@ -73,9 +104,9 @@ public class JsonWebToken {
         /**
          * Set claims values
          * @param jwtClaims claim values
-         * @return instance of this builder
+         * @return instance of {@link JwtSignature}
          */
-        public Builder jwtClaims(JwtClaims jwtClaims) {
+        public JwtSignature jwtClaims(JwtClaims jwtClaims) {
             this.jwtClaims = jwtClaims;
             return this;
         }
@@ -83,9 +114,9 @@ public class JsonWebToken {
         /**
          * Set signature algorithm implementation which will be used to sign the token
          * @param signature an algorithm implementation - fresh instance with no initialized key or set payload
-         * @return instance of this builder
+         * @return instance of {@link JwtPrivateKey}
          */
-        public Builder signature(Signature signature) {
+        public JwtPrivateKey signature(Signature signature) {
             this.signature = signature;
             return this;
         }
@@ -93,9 +124,9 @@ public class JsonWebToken {
         /**
          * Set private key which will be used for signing the JWT
          * @param privateKey private key instance used for signing
-         * @return instance of this builder
+         * @return instance of {@link JwtBuilder}
          */
-        public Builder privateKey(PrivateKey privateKey) {
+        public JwtBuilder privateKey(PrivateKey privateKey) {
             this.privateKey = privateKey;
             return this;
         }

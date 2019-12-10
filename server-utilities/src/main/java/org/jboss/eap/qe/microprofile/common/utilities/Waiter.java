@@ -2,6 +2,7 @@ package org.jboss.eap.qe.microprofile.common.utilities;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 
 /**
  * Class implementing waiting on condition functionality
@@ -22,27 +23,16 @@ public final class Waiter {
      * @return true if condition was satisfied anytime during wait, false otherwise
      * @throws InterruptedException
      */
-    public static boolean waitFor(final Condition condition, final long time, final TimeUnit timeUnit) throws InterruptedException {
+    public static boolean waitFor(final BooleanSupplier condition, final long time, final TimeUnit timeUnit) throws InterruptedException {
         final long start = new Date().getTime();
         final long timeout = timeUnit.toMillis(time);
         while (new Date().getTime() - start < timeout) {
-            if (condition.check()) {
+            if (condition.getAsBoolean()) {
                 return true;
             }
             Thread.sleep(500);
         }
         return false;
-    }
-
-    @FunctionalInterface
-    public interface Condition {
-
-        /**
-         * Check a condition
-         * @return true if a condition was satisfied, false otherwise.
-         */
-        boolean check();
-
     }
 
 }
