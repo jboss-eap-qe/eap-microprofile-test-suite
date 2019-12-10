@@ -18,6 +18,8 @@
     <modules>
         <module>tooling-docker</module>
         <module>tooling-server-configuration</module>
+        <module>microprofile-health</module>
+        <module>microprofile-metrics</module>
     </modules>
 
     <properties>
@@ -226,31 +228,12 @@
             </build>
         </profile>
 
-        <!--module activation profiles-->
-        <profile>
-            <id>all-modules</id>
-            <modules>
-                <module>microprofile-health</module>
-                <module>microprofile-open-api</module>
-                <module>microprofile-metrics</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>mp-health</id>
-            <modules>
-                <module>microprofile-health</module>
-            </modules>
-        </profile>
+        <!--This section contains module activation profiles. These modules are activated separately because features
+        they are testing was not yet included in released WildFly distribution.-->
         <profile>
             <id>mp-open-api</id>
             <modules>
                 <module>microprofile-open-api</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>mp-metrics</id>
-            <modules>
-                <module>microprofile-metrics</module>
             </modules>
         </profile>
     </profiles>
