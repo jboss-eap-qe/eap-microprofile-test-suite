@@ -55,7 +55,7 @@ public class PublicKeyPropertyTestCase {
      */
     @Deployment(name = DEPLOYMENT_WITH_VALID_KEY)
     public static WebArchive createValidKeyDeployment() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_WITH_VALID_KEY + ".war")
                 .addClass(JaxRsBasicEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-valid.properties"),
@@ -68,7 +68,7 @@ public class PublicKeyPropertyTestCase {
      */
     @Deployment(name = DEPLOYMENT_WITH_INVALID_KEY)
     public static WebArchive createInvalidKeyDeployment() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_WITH_INVALID_KEY + ".war")
                 .addClass(JaxRsBasicEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-invalid.properties"),

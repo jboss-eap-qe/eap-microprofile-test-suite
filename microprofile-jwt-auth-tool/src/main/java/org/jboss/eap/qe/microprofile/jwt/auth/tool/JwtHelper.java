@@ -41,7 +41,7 @@ public final class JwtHelper {
         final Instant now = Instant.now();
         final Instant later = now.plus(1, ChronoUnit.HOURS);
 
-        final JoseHeader joseHeader = JoseHeader.validWithKeyId(keyTool.getJwkKeyId());
+        final JoseHeader joseHeader = new JoseHeader(keyTool.getJwkKeyId());
 
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
