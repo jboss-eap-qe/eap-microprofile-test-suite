@@ -9,8 +9,8 @@ import static org.hamcrest.Matchers.is;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ContainerResource;
-import org.jboss.as.arquillian.container.ManagementClient;
+import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -22,39 +22,38 @@ import io.restassured.http.ContentType;
 
 @RunAsClient
 @RunWith(Arquillian.class)
-public class MicroProfileHealthDeprecatedTest {
-
-    @ContainerResource
-    ManagementClient managementClient;
+public class HealthDeprecatedTest {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "MicroProfileHealthDeprecatedTest.war")
+        return ShrinkWrap.create(WebArchive.class, HealthDeprecatedTest.class.getSimpleName() + ".war")
                 .addClasses(DeprecatedHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return war;
     }
 
+    /**
+     * @tpTestDetails backward compatibility scenario - test for deprecated however still supported annotation {@code @Health}.
+     * @tpPassCrit Overall and the health check status is up.
+     * @tpSince EAP 7.4.0.CD19
+     */
     @Test
-    public void testDeprecatedHealthCheck() {
-        final String healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort()
-                + "/health";
+    public void testDeprecatedHealthAnnotation() throws ConfigurationException {
 
-        get(healthURL).then()
+        get(HealthUrlProvider.healthEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks.status", containsInAnyOrder("UP"),
                         "checks.name", containsInAnyOrder("deprecated-health"));
 
-        get(healthURL + "/live").then()
+        get(HealthUrlProvider.liveEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks.status", is(empty()),
                         "checks.name", is(empty()));
 
-        get(healthURL + "/ready").then()
+        get(HealthUrlProvider.readyEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
