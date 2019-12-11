@@ -39,5 +39,10 @@
             <artifactId>wildfly-arquillian-container-managed</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <artifactId>tooling-server-configuration</artifactId>
+            <groupId>org.jboss.eap.qe</groupId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

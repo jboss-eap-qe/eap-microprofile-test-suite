@@ -8,8 +8,8 @@ import static org.hamcrest.Matchers.is;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ContainerResource;
-import org.jboss.as.arquillian.container.ManagementClient;
+import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -21,32 +21,30 @@ import io.restassured.http.ContentType;
 
 @RunAsClient
 @RunWith(Arquillian.class)
-public class MicroProfileHealthNullTest {
-
-    @ContainerResource
-    ManagementClient managementClient;
+public class HealthNullTest {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "MicroProfileHealthNullTest.war")
+        return ShrinkWrap.create(WebArchive.class, HealthNullTest.class.getSimpleName() + ".war")
                 .addClasses(NullLivenessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return war;
     }
 
+    /**
+     * @tpTestDetails Negative scenario - health check returns null.
+     * @tpPassCrit Overall and the health check status is down.
+     * @tpSince EAP 7.4.0.CD19
+     */
     @Test
-    public void testDeprecatedHealthCheck() {
-        final String healthURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort()
-                + "/health";
-
-        get(healthURL).then()
+    public void testNullHealthCheck() throws ConfigurationException {
+        get(HealthUrlProvider.healthEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks.status", contains("DOWN"),
                         "checks.name", contains(NullLivenessHealthCheck.class.getCanonicalName()));
 
-        get(healthURL + "/live").then()
+        get(HealthUrlProvider.liveEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"));
