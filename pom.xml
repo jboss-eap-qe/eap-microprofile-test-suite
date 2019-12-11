@@ -36,7 +36,7 @@
         <version.org.wildfly.core>10.0.3.Final</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
-        <version.com.fasterxml.jackson.core.jackson-databind>2.9.10.1</version.com.fasterxml.jackson.core.jackson-databind>
+        <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
     </properties>
 
     <dependencyManagement>
@@ -111,9 +111,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${version.com.fasterxml.jackson.core.jackson-databind}</version>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${version.com.google.code.gson}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
