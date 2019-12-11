@@ -36,7 +36,7 @@
         <version.org.wildfly.core>10.0.3.Final</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
-        <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
+        <version.com.fasterxml.jackson.core.jackson-databind>2.9.10.1</version.com.fasterxml.jackson.core.jackson-databind>
     </properties>
 
     <dependencyManagement>
