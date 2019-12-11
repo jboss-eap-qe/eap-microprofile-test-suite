@@ -12,10 +12,17 @@ public class JoseHeader {
     private final String type;
     private final String algorithm;
 
-    private JoseHeader(Builder builder) {
-        this.keyId = builder.keyId;
-        this.type = builder.type;
-        this.algorithm = builder.algorithm;
+    /**
+     * Create a new instance of {@link JoseHeader} using provided values.
+     * @param keyId ID of key which identifies key used to verify the signature. This ID is used by server to select
+     *              correct key among several.
+     * @param type Identifies the token as an RFC7519 and must be "JWT" RFC7519, Section 5.1 to satisfy the spec.
+     * @param algorithm Identifies the cryptographic algorithm used to secure the JWT. E.g. RS256
+     */
+    public JoseHeader(final String keyId, final String type, final String algorithm) {
+        this.keyId = keyId;
+        this.type = type;
+        this.algorithm = algorithm;
     }
 
     /**
@@ -23,12 +30,8 @@ public class JoseHeader {
      * @param keyId ID of key which will be propagated in this header.
      * @return new instance of valid header
      */
-    public static JoseHeader validWithKeyId(final String keyId) {
-        return new JoseHeader.Builder()
-                .keyId(keyId)
-                .algorithm("RS256")
-                .type("JWT")
-                .build();
+    public JoseHeader(final String keyId) {
+        this(keyId, "JWT", "RS256");
     }
 
     /**
@@ -41,51 +44,6 @@ public class JoseHeader {
                 .add("typ", this.type)
                 .add("alg", this.algorithm)
                 .build();
-    }
-
-    public static final class Builder {
-        private String keyId;
-        private String type;
-        private String algorithm;
-
-        /**
-         * Set ID of key which identifies key used to verify the signature. This ID is used by server to select correct
-         * key among several.
-         * @param keyId Key ID
-         * @return instance of this builder
-         */
-        public Builder keyId(String keyId) {
-            this.keyId = keyId;
-            return this;
-        }
-
-        /**
-         * Identifies the token as an RFC7519 and must be "JWT" RFC7519, Section 5.1 to satisfy the spec.
-         * @param type a type
-         * @return instance of this builder
-         */
-        public Builder type(String type) {
-            this.type = type;
-            return this;
-        }
-
-        /**
-         * Identifies the cryptographic algorithm used to secure the JWT.
-         * @param algorithm Cryptographic algorithm - e.g. RS256
-         * @return instance of this builder
-         */
-        public Builder algorithm(String algorithm) {
-            this.algorithm = algorithm;
-            return this;
-        }
-
-        /**
-         * Create a new instance of {@link JoseHeader} using values in this builder.
-         * @return new instance of {@link JoseHeader}
-         */
-        public JoseHeader build() {
-            return new JoseHeader(this);
-        }
     }
 
 }
