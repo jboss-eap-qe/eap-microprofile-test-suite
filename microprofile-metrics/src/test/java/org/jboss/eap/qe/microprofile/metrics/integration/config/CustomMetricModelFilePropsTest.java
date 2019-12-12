@@ -43,7 +43,7 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
     private byte[] bytes;
 
     File incrementFile = new File(
-            CustomMetricModelFilePropsTest.class.getResource("file-props/" + INCREMENT_CONFIG_PROPERTY).getFile());
+            CustomMetricModelFilePropsTest.class.getResource("file-props/" + INCREMENT_CONFIG_PROPERTY).getPath());
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -79,7 +79,7 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
         @Override
         public void setup(ManagementClient managementClient, String s) throws Exception {
             ModelNode dir = new ModelNode();
-            dir.get("path").set(SetupTask.class.getResource("file-props").getFile());
+            dir.get("path").set(SetupTask.class.getResource("file-props").getPath());
             ModelNode add = Util.createAddOperation(CONFIG_SOURCE_PROPS_ADDRESS);
             add.get("dir").set(dir);
             Assert.assertEquals(ClientConstants.SUCCESS, managementClient

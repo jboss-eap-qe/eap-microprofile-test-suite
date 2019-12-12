@@ -23,7 +23,7 @@ import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.operations.common.Util;
-import org.jboss.eap.qe.microprofile.metrics.integration.ModuleUtil;
+import org.jboss.eap.qe.microprofile.tooling.server.ModuleUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,7 +34,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.wildfly.extras.creaper.commands.modules.RemoveModule;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
@@ -178,7 +177,7 @@ public class FTMetricTest {
     static class SetupTask implements ServerSetupTask {
         private static final String TEST_MODULE_NAME = "test.ft-custom-config-source";
         private static final String PROPERTY_FILENAME = "ft-custom-metric.properties";
-        public static final File propertyFile = new File(SetupTask.class.getResource(PROPERTY_FILENAME).getFile());
+        public static final File propertyFile = new File(SetupTask.class.getResource(PROPERTY_FILENAME).getPath());
         private static final PathAddress FT_EXTENSION_ADDRESS = PathAddress.pathAddress().append(EXTENSION,
                 "org.wildfly.extension.microprofile.fault-tolerance-smallrye");
         private static final PathAddress FT_SUBSYSTEM_ADDRESS = PathAddress.pathAddress().append(SUBSYSTEM,
@@ -186,26 +185,29 @@ public class FTMetricTest {
 
         @Override
         public void setup(ManagementClient managementClient, String s) throws Exception {
-            OnlineManagementClient client = ManagementClientProvider.onlineStandalone();
-            client.execute(String.format("/system-property=%s:add(value=%s)", FTCustomConfigSource.FILEPATH_PROPERTY,
-                    SetupTask.class.getResource(PROPERTY_FILENAME).getFile()));
-            ModuleUtil.setupModule(client, new File(SetupTask.class.getResource("module.xml").toURI()),
-                    TEST_MODULE_NAME, "ft-config-source", FTCustomConfigSource.class);
-            client.execute(String.format(
-                    "/subsystem=microprofile-config-smallrye/config-source=cs-from-class:add(class={module=%s, name=%s})",
-                    TEST_MODULE_NAME, FTCustomConfigSource.class.getName()));
-            client.execute(Util.createAddOperation(FT_EXTENSION_ADDRESS));
-            client.execute(Util.createAddOperation(FT_SUBSYSTEM_ADDRESS));
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                client.execute(String.format("/system-property=%s:add(value=%s)", FTCustomConfigSource.FILEPATH_PROPERTY,
+                        SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
+                ModuleUtil.add(TEST_MODULE_NAME)
+                        .moduleXMLPath(SetupTask.class.getResource("module.xml").getPath())
+                        .resource("ft-config-source", FTCustomConfigSource.class)
+                        .executeOn(client);
+                client.execute(String.format(
+                        "/subsystem=microprofile-config-smallrye/config-source=cs-from-class:add(class={module=%s, name=%s})",
+                        TEST_MODULE_NAME, FTCustomConfigSource.class.getName()));
+                client.execute(Util.createAddOperation(FT_EXTENSION_ADDRESS));
+                client.execute(Util.createAddOperation(FT_SUBSYSTEM_ADDRESS));
+            }
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String s) throws Exception {
-            OnlineManagementClient client = ManagementClientProvider.onlineStandalone();
-            client.execute(String.format("/system-property=%s:remove", FTCustomConfigSource.FILEPATH_PROPERTY));
-            client.execute("/subsystem=microprofile-config-smallrye/config-source=cs-from-class:remove");
-            ManagementClientProvider.onlineStandalone().apply(new RemoveModule(TEST_MODULE_NAME));
-            client.execute(Util.createRemoveOperation(FT_EXTENSION_ADDRESS));
-            client.execute(Util.createRemoveOperation(FT_SUBSYSTEM_ADDRESS));
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                client.execute("/subsystem=microprofile-config-smallrye/config-source=cs-from-class:remove");
+                ModuleUtil.remove(TEST_MODULE_NAME).executeOn(client);
+                client.execute(Util.createRemoveOperation(FT_EXTENSION_ADDRESS));
+                client.execute(Util.createRemoveOperation(FT_SUBSYSTEM_ADDRESS));
+            }
         }
     }
 }

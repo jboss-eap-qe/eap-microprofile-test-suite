@@ -10,7 +10,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;
-import org.jboss.eap.qe.microprofile.metrics.integration.ModuleUtil;
+import org.jboss.eap.qe.microprofile.tooling.server.ModuleUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -18,7 +18,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.wildfly.extras.creaper.commands.modules.RemoveModule;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
 /**
@@ -33,7 +32,7 @@ public class CustomMetricCustomConfigSourceProviderTest extends CustomMetricDyna
     private byte[] bytes;
 
     private File propertyFile = new File(
-            CustomMetricCustomConfigSourceProviderTest.class.getResource(PROPERTY_FILENAME).getFile());
+            CustomMetricCustomConfigSourceProviderTest.class.getResource(PROPERTY_FILENAME).getPath());
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
@@ -68,22 +67,26 @@ public class CustomMetricCustomConfigSourceProviderTest extends CustomMetricDyna
 
         @Override
         public void setup(ManagementClient managementClient, String s) throws Exception {
-            OnlineManagementClient client = ManagementClientProvider.onlineStandalone();
-            client.execute(String.format("/system-property=%s:add(value=%s)", CustomConfigSource.FILEPATH_PROPERTY,
-                    SetupTask.class.getResource(PROPERTY_FILENAME).getFile()));
-            ModuleUtil.setupModule(client, new File(SetupTask.class.getResource("configSourceProviderModule.xml").toURI()),
-                    TEST_MODULE_NAME, "config-source-provider", CustomConfigSource.class, CustomConfigSourceProvider.class);
-            client.execute(String.format(
-                    "/subsystem=microprofile-config-smallrye/config-source-provider=cs-from-provider:add(class={module=%s, name=%s})",
-                    TEST_MODULE_NAME, CustomConfigSourceProvider.class.getName()));
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                client.execute(String.format("/system-property=%s:add(value=%s)", CustomConfigSource.FILEPATH_PROPERTY,
+                        SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
+                ModuleUtil.add(TEST_MODULE_NAME)
+                        .moduleXMLPath(SetupTask.class.getResource("configSourceProviderModule.xml").getPath())
+                        .resource("config-source-provider", CustomConfigSource.class, CustomConfigSourceProvider.class)
+                        .executeOn(client);
+                client.execute(String.format(
+                        "/subsystem=microprofile-config-smallrye/config-source-provider=cs-from-provider:add(class={module=%s, name=%s})",
+                        TEST_MODULE_NAME, CustomConfigSourceProvider.class.getName()));
+            }
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String s) throws Exception {
-            OnlineManagementClient client = ManagementClientProvider.onlineStandalone();
-            client.execute(String.format("/system-property=%s:remove", CustomConfigSource.FILEPATH_PROPERTY));
-            client.execute("/subsystem=microprofile-config-smallrye/config-source-provider=cs-from-provider:remove");
-            ManagementClientProvider.onlineStandalone().apply(new RemoveModule(TEST_MODULE_NAME));
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                client.execute(String.format("/system-property=%s:remove", CustomConfigSource.FILEPATH_PROPERTY));
+                client.execute("/subsystem=microprofile-config-smallrye/config-source-provider=cs-from-provider:remove");
+                ModuleUtil.remove(TEST_MODULE_NAME).executeOn(client);
+            }
         }
     }
 }
