@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module xmlns="urn:jboss:module:1.5" name="test.custom-config-source">
+    <resources>
+        <resource-root path="testJar1.jar"/>
+        <resource-root path="testJar2.jar"/>
+    </resources>
+</module>
