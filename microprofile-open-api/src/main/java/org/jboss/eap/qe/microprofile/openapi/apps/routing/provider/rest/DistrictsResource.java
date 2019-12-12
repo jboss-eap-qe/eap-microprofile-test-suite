@@ -1,5 +1,7 @@
 package org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest;
 
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -28,6 +30,14 @@ public class DistrictsResource {
     @Inject
     DistrictService districtService;
 
+    private DistrictEntity toEntity(District district) {
+        DistrictEntity result = new DistrictEntity();
+        result.setCode(district.getCode());
+        result.setName(district.getName());
+        result.setObsolete(district.getObsolete());
+        return result;
+    }
+
     /**
      * Returns all available districts
      *
@@ -37,7 +47,7 @@ public class DistrictsResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "All available districts", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(type = SchemaType.ARRAY, implementation = District.class))) })
+            @APIResponse(responseCode = "200", description = "All available districts", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(type = SchemaType.ARRAY, implementation = DistrictEntity.class))) })
     @Extensions({
             @Extension(name = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, value = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_DEFAULT_VALUE),
             @Extension(name = "x-string-property", value = "string-value"),
@@ -49,13 +59,13 @@ public class DistrictsResource {
     })
     @Operation(summary = "Get all districts", description = "Retrieves and returns the available districts", operationId = "getAllDistricts")
     public Response getAllDistricts() {
-        return Response.ok().entity(districtService.getAll()).build();
+        return Response.ok().entity(districtService.getAll().stream().map(this::toEntity).collect(Collectors.toList())).build();
     }
 
     /**
      * Returns the district identified by the given code
      *
-     * @param code String that uniquely identifies a District
+     * @param code String that uniquely identifies a district
      * @param excludeObsolete Whether the found entity has to be returned when marked as obsolete
      * @return Response containing the requested district data. HTTP 204 is returned when no item was found for the
      *         given code or - in case the given "excludeObsolete" parameter is set to True - an element was found but is marked
@@ -65,7 +75,7 @@ public class DistrictsResource {
     @Path("/{code}")
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Requested district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = District.class))),
+            @APIResponse(responseCode = "200", description = "Requested district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = DistrictEntity.class))),
             @APIResponse(responseCode = "204", description = "Requested district was not found") })
     @Extensions({
             @Extension(name = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, value = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_DEFAULT_VALUE)
@@ -77,22 +87,24 @@ public class DistrictsResource {
         if ((result == null) || (doExcludeObsolete && result.getObsolete())) {
             return Response.noContent().build();
         } else
-            return Response.ok().entity(result).build();
+            return Response.ok().entity(toEntity(result)).build();
     }
 
     /***
      * Updates a district data
      *
-     * @param {@link District} instance carrying data to update the stored entity
-     * @return District instance representing the updated stored entoty
+     * @param {@link {@link DistrictEntity}} instance carrying data to update the stored entity
+     * @return DistrictEntity instance representing the updated stored entity
      */
     @PATCH
     @Path("/{code}")
+    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Updated district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = District.class), example = "{'code': 'DW', 'name': 'Western district', 'obsolete': false}")),
+            @APIResponse(responseCode = "200", description = "Updated district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = DistrictEntity.class), example = "{'code': 'DW', 'name': 'Western district', 'obsolete': false}")),
             @APIResponse(responseCode = "404", description = "Requested district was not found") })
     @Extensions({
+            @Extension(name = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, value = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_DEFAULT_VALUE),
             @Extension(name = "x-string-property", value = "string-value"),
             @Extension(name = "x-boolean-property", value = "true", parseValue = true),
             @Extension(name = "x-number-property", value = "42", parseValue = true),
@@ -100,13 +112,14 @@ public class DistrictsResource {
             @Extension(name = "x-string-array-property", value = "[ \"one\", \"two\", \"three\" ]", parseValue = true),
             @Extension(name = "x-object-array-property", value = "[ { \"name\": \"item-1\" }, { \"name\" : \"item-2\" } ]", parseValue = true)
     })
+    @Operation(summary = "Updates a district data", description = "Retrieves, updates and returns the requested district data", operationId = "updateDistrict")
     public Response updateDistrict(@RequestBody DistrictEntity district) {
         District result = districtService.getByCode(district.getCode());
         if (result == null)
             return Response.status(Response.Status.NOT_FOUND).build();
         else {
 
-            return Response.ok().entity(districtService.update(district.getCode(), district)).build();
+            return Response.ok().entity(toEntity(districtService.update(district.getCode(), district))).build();
         }
     }
 }

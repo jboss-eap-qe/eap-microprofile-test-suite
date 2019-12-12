@@ -16,7 +16,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
-import org.jboss.eap.qe.microprofile.openapi.RestApplication;
+import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
@@ -72,7 +72,7 @@ public class ProgrammingModelTest {
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
-                .addClasses(RestApplication.class)
+                .addClasses(ProviderApplication.class)
                 .addClasses(
                         District.class,
                         DistrictEntity.class,
