@@ -13,7 +13,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiTestConstants;
-import org.jboss.eap.qe.microprofile.openapi.RestApplication;
+import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
@@ -75,7 +75,7 @@ public class OpenApi10OnJaxRsAnnotationsTest {
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
-                .addClasses(RestApplication.class)
+                .addClasses(ProviderApplication.class)
                 .addClasses(
                         District.class,
                         DistrictEntity.class,
@@ -204,9 +204,9 @@ public class OpenApi10OnJaxRsAnnotationsTest {
         Assert.assertNotNull("\"components/schemas\" property is null", components.get("schemas"));
 
         Map<String, Object> schemas = (Map<String, Object>) components.get("schemas");
-        Assert.assertNotNull("\"components/schemas/District\" property is null", schemas.get("District"));
+        Assert.assertNotNull("\"components/schemas/District\" property is null", schemas.get("DistrictEntity"));
 
-        Map<String, Object> responsePOJO = (Map<String, Object>) schemas.get("District");
+        Map<String, Object> responsePOJO = (Map<String, Object>) schemas.get("DistrictEntity");
         Assert.assertNotNull(responsePOJO.get("properties"));
 
         Map<String, Object> properties = (Map<String, Object>) responsePOJO.get("properties");

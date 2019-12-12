@@ -15,6 +15,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.openapi.*;
+import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
@@ -76,7 +77,7 @@ public class MicroProfileOpenApi11Test {
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
-                        RestApplication.class)
+                        ProviderApplication.class)
                 .addClasses(
                         District.class,
                         DistrictEntity.class,
@@ -144,8 +145,8 @@ public class MicroProfileOpenApi11Test {
         // 1.1 the addition of the JAXRS 2.1 PATCH method
         Map<String, Object> patchMethod = (Map<String, Object>) getDistrictByCodePath.get("patch");
         Assert.assertFalse("\"/districts/{code}\" \"patch\" property is empty", patchMethod.isEmpty());
-        Assert.assertTrue("\"/districts/{code}\" \"patch\" property should have exactly 8 keys",
-                patchMethod.keySet().size() == 8);
+        Assert.assertTrue("\"/districts/{code}\" \"patch\" property should have exactly 12 keys",
+                patchMethod.keySet().size() == 12);
 
         // 1.1 @Content now supports a singular example field
         Map<String, Object> responses = (Map<String, Object>) patchMethod.get("responses");
