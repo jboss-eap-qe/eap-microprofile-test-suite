@@ -71,8 +71,8 @@ public class CustomMetricCustomConfigSourceProviderTest extends CustomMetricDyna
                 client.execute(String.format("/system-property=%s:add(value=%s)", CustomConfigSource.FILEPATH_PROPERTY,
                         SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
                 ModuleUtil.add(TEST_MODULE_NAME)
-                        .moduleXMLPath(SetupTask.class.getResource("configSourceProviderModule.xml").getPath())
-                        .resource("config-source-provider", CustomConfigSource.class, CustomConfigSourceProvider.class)
+                        .setModuleXMLPath(SetupTask.class.getResource("configSourceProviderModule.xml").getPath())
+                        .addResource("config-source-provider", CustomConfigSource.class, CustomConfigSourceProvider.class)
                         .executeOn(client);
                 client.execute(String.format(
                         "/subsystem=microprofile-config-smallrye/config-source-provider=cs-from-provider:add(class={module=%s, name=%s})",

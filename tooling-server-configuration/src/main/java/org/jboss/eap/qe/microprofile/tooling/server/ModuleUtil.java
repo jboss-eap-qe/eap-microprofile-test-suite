@@ -2,6 +2,8 @@ package org.jboss.eap.qe.microprofile.tooling.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,13 +46,32 @@ public class ModuleUtil {
             this.resources = new ArrayList<>();
         }
 
-        public AddModuleHandler moduleXMLPath(String moduleXMLPath) {
+        /**
+         * Path to module.xml file to be used.
+         */
+        public AddModuleHandler setModuleXMLPath(String moduleXMLPath) {
             this.moduleXMLPath = moduleXMLPath;
             return this;
         }
 
-        public AddModuleHandler resource(String jarName, Class... classes) {
-            File testJar = new File(jarName + ".jar");
+        /**
+         * Add jar resource to the module. ShrinkWrap is used to create JAR archive. It create archive in temp directory
+         * if possible or in a project root directory. Archive is deleted at the end of
+         * {@link #executeOn(OnlineManagementClient)} execution.
+         * 
+         * @param jarName - desired name - shall lead to `{@param jarName}.jar`
+         * @param classes - classes to be added
+         * @return
+         */
+        public AddModuleHandler addResource(String jarName, Class... classes) {
+            File testJar;
+            try {
+                Path tempDirectory = Files.createTempDirectory(null);
+                testJar = new File(tempDirectory.toFile(), jarName + ".jar");
+            } catch (IOException e) {
+                e.printStackTrace();
+                testJar = new File(jarName + ".jar");
+            }
             ShrinkWrap.create(JavaArchive.class)
                     .addClasses(classes)
                     .as(ZipExporter.class)
@@ -59,6 +80,9 @@ public class ModuleUtil {
             return this;
         }
 
+        /**
+         * Execute the oppertaion on {@param client}. ENV property {@code JBOSS_HOME} must be set.
+         */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
             StringBuilder cmd = new StringBuilder("module add");
             cmd.append(" --name=").append(name);
@@ -87,6 +111,9 @@ public class ModuleUtil {
             this.name = name;
         }
 
+        /**
+         * Execute the oppertaion on {@param client}. ENV property {@code JBOSS_HOME} must be set.
+         */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
             client.executeCli("module remove --name=" + name);
         }

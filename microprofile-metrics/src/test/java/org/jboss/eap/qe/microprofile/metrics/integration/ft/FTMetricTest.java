@@ -189,8 +189,8 @@ public class FTMetricTest {
                 client.execute(String.format("/system-property=%s:add(value=%s)", FTCustomConfigSource.FILEPATH_PROPERTY,
                         SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
                 ModuleUtil.add(TEST_MODULE_NAME)
-                        .moduleXMLPath(SetupTask.class.getResource("module.xml").getPath())
-                        .resource("ft-config-source", FTCustomConfigSource.class)
+                        .setModuleXMLPath(SetupTask.class.getResource("module.xml").getPath())
+                        .addResource("ft-config-source", FTCustomConfigSource.class)
                         .executeOn(client);
                 client.execute(String.format(
                         "/subsystem=microprofile-config-smallrye/config-source=cs-from-class:add(class={module=%s, name=%s})",
