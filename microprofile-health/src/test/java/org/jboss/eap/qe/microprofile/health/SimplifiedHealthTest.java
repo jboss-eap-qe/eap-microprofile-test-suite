@@ -17,11 +17,13 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.restassured.http.ContentType;
 
+@Ignore("https://issues.redhat.com/browse/WFLY-12685")
 @RunAsClient
 @RunWith(Arquillian.class)
 public class SimplifiedHealthTest {

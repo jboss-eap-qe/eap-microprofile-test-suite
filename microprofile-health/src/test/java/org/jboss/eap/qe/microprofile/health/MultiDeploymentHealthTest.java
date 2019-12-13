@@ -30,7 +30,7 @@ public class MultiDeploymentHealthTest {
     @Deployment(name = "deployment1", order = 1, testable = false)
     public static Archive<?> deployment1() {
         return ShrinkWrap.create(WebArchive.class, MultiDeploymentHealthTest.class.getSimpleName() + "-1.war")
-                .addClasses(SimplifiedHealthCheck.class)
+                .addClasses(BothHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 

@@ -38,7 +38,7 @@ public class SubdeploymentHealthTest {
                 SubdeploymentHealthTest.class.getSimpleName() + ".ear");
 
         ear.addAsModule(ShrinkWrap.create(WebArchive.class, "dep1.war")
-                .addClasses(SimplifiedHealthCheck.class)
+                .addClasses(BothHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml"));
 
         ear.addAsModule(ShrinkWrap.create(JavaArchive.class, "dep2.jar")
