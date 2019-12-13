@@ -42,7 +42,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - application/yaml
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -56,7 +57,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - application/video
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -70,7 +72,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - audio/mpeg
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -84,7 +87,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - text/csv
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -98,7 +102,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - application/octet-stream
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -112,7 +117,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - text/html
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -126,7 +132,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - text/json
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -140,7 +147,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP OPTIONS method accept header contains wrong
+     *                MIME type - text/x-plain
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -154,7 +162,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - application/yaml
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -168,7 +177,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - application/video
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -182,7 +192,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - audio/mpeg
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -196,7 +207,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - text/csv
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -210,7 +222,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - application/octet-stream
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -224,7 +237,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - text/html
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -238,7 +252,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - text/json
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */
@@ -252,7 +267,8 @@ public class InvalidMimeTypeMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct response when wrong MIME type is used
+     * @tpTestDetails Negative scenario to verify correct response when HTTP GET method accept header contains wrong MIME
+     *                type - text/x-plain
      * @tpPassCrit HTTP return code is 406
      * @tpSince EAP 7.4.0.CD19
      */

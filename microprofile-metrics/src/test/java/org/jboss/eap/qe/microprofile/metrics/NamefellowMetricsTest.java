@@ -21,6 +21,15 @@ import org.junit.runner.RunWith;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
+/**
+ * Abstract test class expect two non-reusable metrics of the same name defined in different resources. Metrics shall
+ * be tagged by {@code mp.metrics.appName} MP Config property. No other metrics are expected. Type of metrics shall be Counter.
+ *
+ * The name shall be {@code ping-count}. Metrics shall be incremented by calling endpoints defined in by
+ * {@link #getPingOneTag()} and {@link #getPingTwoURL()} tagged by {@link #getPingOneTag()} and {@link #getPingTwoTag()}
+ *
+ * valid for multiple deployment / deployment with sub-deployments scenario
+ */
 @RunWith(Arquillian.class)
 public abstract class NamefellowMetricsTest {
 
@@ -54,7 +63,8 @@ public abstract class NamefellowMetricsTest {
 
     /**
      * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are registered
-     *                and tagged properly. Metrics are separate archives - multiple-deployment / subdeployment scenario.
+     *                and tagged properly. The informations are avalable under {@code /metrics} endpoint via HTTP OPTIONS.
+     *                Metrics are in separate archives - multiple-deployment / subdeployment scenario.
      * @tpPassCrit Metrics are tagged properly
      * @tpSince EAP 7.4.0.CD19
      */
@@ -75,8 +85,9 @@ public abstract class NamefellowMetricsTest {
     }
 
     /**
-     * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are used properly.
-     *                Metrics are separate archives - multiple-deployment / subdeployment scenario.
+     * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are incremented
+     *                properly according to the number of a CDI beans invocation.
+     *                Metrics are in separate archives - multiple-deployment / subdeployment scenario.
      * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in JSON and prometheus format.
      * @tpSince EAP 7.4.0.CD19
      */

@@ -42,7 +42,8 @@ public abstract class CustomMetricBaseTest {
     abstract void setConfigProperties(int number) throws Exception;
 
     /**
-     * @tpTestDetails Multi-component customer scenario to verify correct behaviour when custom counter metric is used.
+     * @tpTestDetails High-level multi-component customer scenario to verify custom counter metric is incremented
+     *                accordingly to the number of a CDI bean invocations.
      *                The metric increment depends on MP Config property value and is provided by a CDI bean.
      * @tpPassCrit Counter metric is incremented by configured value
      * @tpSince EAP 7.4.0.CD19
