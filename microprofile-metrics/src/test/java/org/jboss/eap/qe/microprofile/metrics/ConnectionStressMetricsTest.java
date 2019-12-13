@@ -59,8 +59,9 @@ public class ConnectionStressMetricsTest {
     }
 
     /**
-     * @tpTestDetails Negative scenario to verify correct behaviour when lots of connections are opened
-     * @tpPassCrit Counter metric is incremented according to number of invocation of the CDI bean
+     * @tpTestDetails Negative scenario to verify metrics are available when lots of connections are opened
+     * @tpPassCrit Counter metric is incremented according to number of invocation of the CDI bean even if there are lots
+     *             of opened connections.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test

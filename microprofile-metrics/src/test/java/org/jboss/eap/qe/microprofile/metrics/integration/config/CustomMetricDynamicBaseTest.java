@@ -5,7 +5,8 @@ import org.junit.Test;
 public abstract class CustomMetricDynamicBaseTest extends CustomMetricBaseTest {
 
     /**
-     * @tpTestDetails High level customer scenario to verify correct behaviour when custom counter metric is used.
+     * @tpTestDetails High-level multi-component customer scenario to verify custom counter metric is incremented
+     *                accordingly to the number of a CDI bean invocations.
      *                The counter increment is changed dynamically and depends on MP Config property value and is provided
      *                by a CDI bean.
      * @tpPassCrit Counter metric is incremented by configured value that is changed dynamically

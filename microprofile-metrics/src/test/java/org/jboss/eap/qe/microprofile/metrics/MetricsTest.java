@@ -68,7 +68,8 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of MP Metrics.
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify MP Metrics are registered - HTTP OPTIONS
+     *                method is used
      * @tpPassCrit metrics are registered and exposed via /metrics end-point.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -87,7 +88,9 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of MP Metrics.
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify application MP Metrics have correct
+     *                metadata acording to MP Metric specification.
+     *                Metadata are exposed under /metrics endpoint with HTTP OPTIONS method.
      * @tpPassCrit Correct metadata (against the specification) are provided for metrics.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -133,8 +136,9 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of MP Metrics.
-     * @tpPassCrit Metrics has correct values (according to number of invocations) in JSON and prometheus format.
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify CDI invocation are taken in account in
+     *                MP Metrics subsystem and values are correct according to number of invocations.
+     * @tpPassCrit Metrics has correct values (according to number of CDI bean invocations) in JSON and prometheus format.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -202,7 +206,7 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of MP Metrics.
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify WildFly provides vendor metrics.
      * @tpPassCrit Server provides at least one vendor metric.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -217,13 +221,14 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of injected MetricRegistry.
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify application is able to inject MetricRegistry
+     *                and get all MP metrics
      * @tpPassCrit Application is able to obtain base, vendor and application metrics from injected MetricRegistry.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @RunAsClient
-    public void metricRegistryInjection() {
+    public void getAllRegisteredMetrics() {
         given().baseUri(deploymentUrl.toString()).basePath("summary/all-registries").accept(ContentType.JSON).get().then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
@@ -251,13 +256,14 @@ public class MetricsTest {
     }
 
     /**
-     * @tpTestDetails MP Metrics specification compatibility scenario to verify correct behavior of injected MetricRegistry
+     * @tpTestDetails MP Metrics specification compatibility scenario to verify application is able to inject MetricRegistry
+     *                and get application MP metrics (counters, timers,...)
      * @tpPassCrit Application is able to obtain application metrics from injected MetricRegistry.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @RunAsClient
-    public void getAllRegisteredMetricsOfGivenType() {
+    public void getAppRegisteredMetrics() {
         given().baseUri(deploymentUrl.toString()).basePath("summary/app-registry").accept(ContentType.JSON).get().then()
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
