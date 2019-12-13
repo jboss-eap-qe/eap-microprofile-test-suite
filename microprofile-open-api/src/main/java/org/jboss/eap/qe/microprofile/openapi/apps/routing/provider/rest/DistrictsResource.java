@@ -3,7 +3,13 @@ package org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -47,7 +53,8 @@ public class DistrictsResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "All available districts", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(type = SchemaType.ARRAY, implementation = DistrictEntity.class))) })
+            @APIResponse(responseCode = "200", description = "All available districts", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(type = SchemaType.ARRAY, implementation = DistrictEntity.class)))
+    })
     @Extensions({
             @Extension(name = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, value = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_DEFAULT_VALUE),
             @Extension(name = "x-string-property", value = "string-value"),
@@ -59,7 +66,10 @@ public class DistrictsResource {
     })
     @Operation(summary = "Get all districts", description = "Retrieves and returns the available districts", operationId = "getAllDistricts")
     public Response getAllDistricts() {
-        return Response.ok().entity(districtService.getAll().stream().map(this::toEntity).collect(Collectors.toList())).build();
+        return Response.ok().entity(districtService.getAll().stream()
+                .map(this::toEntity)
+                .collect(Collectors.toList()))
+                .build();
     }
 
     /**

@@ -6,14 +6,16 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
-import java.io.IOException;
-
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
@@ -23,14 +25,11 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -39,36 +38,27 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
  * Test cases for MP OpenAPI programming model (migrated from RHOAR QE TS)
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ ProgrammingModelTest.OpenApiExtensionSetup.class })
 @RunAsClient
 public class ProgrammingModelTest {
+
+    @ArquillianResource
+    private ManagementClient managementClient;
 
     private final static String DEPLOYMENT_NAME = ProgrammingModelTest.class.getSimpleName();
 
     private static String openApiUrl;
     private static OnlineManagementClient onlineManagementClient;
 
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        if (!OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-        }
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
-
     @Deployment(testable = false)
     public static WebArchive createCentralDeployment() {
+
+        String mpConfigProperties = "mp.openapi.model.reader=org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader"
+                + "\n" +
+                "mp.openapi.filter=org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter"
+                + "\n" +
+                "mp.openapi.scan.disable=false";
+
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
@@ -80,9 +70,10 @@ public class ProgrammingModelTest {
                         InMemoryDistrictService.class,
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
-                .addClasses(OpenApiModelReader.class, OpenApiFilter.class)
-                .addAsResource(
-                        "META-INF/microprofile-config.properties")
+                .addClasses(
+                        OpenApiModelReader.class,
+                        OpenApiFilter.class)
+                .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return deployment;
     }
@@ -128,5 +119,30 @@ public class ProgrammingModelTest {
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
                 .body(containsString(OpenApiFilter.LOCAL_TEST_ROUTER_FQDN));
+    }
+
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            if (!OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
+                OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            }
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            if (OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
+                try {
+                    OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+                } finally {
+                    onlineManagementClient.close();
+                }
+            }
+        }
     }
 }
