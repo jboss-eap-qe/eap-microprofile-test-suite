@@ -45,9 +45,9 @@ public class AddRemoveModuleTest {
     @Test
     public void addRemoveModuleTest() throws IOException, CommandFailedException, CliException, SAXException {
         ModuleUtil.add(TEST_MODULE_NAME)
-                .resource("testJar1", AddRemoveModuleTest.class)
-                .resource("testJar2", AddRemoveModuleTest.class)
-                .moduleXMLPath(AddRemoveModuleTest.class.getResource("module.xml").getPath())
+                .addResource("testJar1", AddRemoveModuleTest.class)
+                .addResource("testJar2", AddRemoveModuleTest.class)
+                .setModuleXMLPath(AddRemoveModuleTest.class.getResource("module.xml").getPath())
                 .executeOn(client);
 
         // verify that module was added

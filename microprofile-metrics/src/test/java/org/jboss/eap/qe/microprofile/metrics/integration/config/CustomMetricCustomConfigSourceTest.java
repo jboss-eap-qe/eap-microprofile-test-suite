@@ -68,8 +68,8 @@ public class CustomMetricCustomConfigSourceTest extends CustomMetricDynamicBaseT
                 client.execute(String.format("/system-property=%s:add(value=%s)", CustomConfigSource.FILEPATH_PROPERTY,
                         CustomMetricCustomConfigSourceProviderTest.SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
                 ModuleUtil.add(TEST_MODULE_NAME)
-                        .moduleXMLPath(SetupTask.class.getResource("configSourceModule.xml").getPath())
-                        .resource("config-source", CustomConfigSource.class)
+                        .setModuleXMLPath(SetupTask.class.getResource("configSourceModule.xml").getPath())
+                        .addResource("config-source", CustomConfigSource.class)
                         .executeOn(client);
                 client.execute(String.format(
                         "/subsystem=microprofile-config-smallrye/config-source=cs-from-class:add(class={module=%s, name=%s})",
