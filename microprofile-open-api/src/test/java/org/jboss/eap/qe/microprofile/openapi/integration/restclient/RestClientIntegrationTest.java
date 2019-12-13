@@ -1,7 +1,9 @@
 package org.jboss.eap.qe.microprofile.openapi.integration.restclient;
 
 import static io.restassured.RestAssured.get;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
 
@@ -93,9 +95,14 @@ public class RestClientIntegrationTest {
     public static Archive<?> localServicesRouterDeployment() {
         //  OpenAPI doc here is exposing doc generated only from Local Service Provider "non-routed" JAX-RS endpoints
         //  as MP Config is used to tell MP OpenAPI to skip doc generation for exposed "routed" JAX-RS endpoints
+        //  Here we also add config properties to reach the Services Provider
         String mpConfigProperties = "mp.openapi.scan.exclude.packages=org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed"
                 + "\n" +
-                "mp.openapi.scan.disable=false";
+                "mp.openapi.scan.disable=false"
+                + "\n" +
+                "services.provider.host=localhost"
+                + "\n" +
+                "services.provider.port=8080";
 
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")

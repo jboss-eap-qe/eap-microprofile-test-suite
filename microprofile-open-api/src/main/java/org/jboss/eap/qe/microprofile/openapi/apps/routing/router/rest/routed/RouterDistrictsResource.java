@@ -3,10 +3,19 @@ package org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictObject;
@@ -21,9 +30,19 @@ public class RouterDistrictsResource {
 
     DistrictServiceClient serviceClient;
 
-    public RouterDistrictsResource() throws URISyntaxException {
+    @Inject
+    @ConfigProperty(name = "services.provider.host")
+    String servicesProviderHost;
+    @Inject
+    @ConfigProperty(name = "services.provider.port")
+    int servicesProviderPort;
+
+    @PostConstruct
+    private void initializeRestClient() throws URISyntaxException {
         serviceClient = RestClientBuilder.newBuilder()
-                .baseUri(new URI("http://localhost:8080/serviceProviderDeployment"))
+                .baseUri(new URI(
+                        String.format(
+                                "http://%s:%d/serviceProviderDeployment", servicesProviderHost, servicesProviderPort)))
                 .build(DistrictServiceClient.class);
     }
 
