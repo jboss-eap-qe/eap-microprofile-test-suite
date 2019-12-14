@@ -40,9 +40,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <artifactId>tooling-server-configuration</artifactId>
             <groupId>org.jboss.eap.qe</groupId>
-            <version>${project.version}</version>
+            <artifactId>tooling-server-configuration</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
