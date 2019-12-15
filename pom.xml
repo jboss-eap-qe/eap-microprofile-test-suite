@@ -31,7 +31,6 @@
         <version.io.rest-assured>4.1.2</version.io.rest-assured>
         <version.javax.servlet.javax.servlet-api>3.0.1</version.javax.servlet.javax.servlet-api>
         <version.junit>4.12</version.junit>
-        <version.org.apache.commons.commons-io>1.3.2</version.org.apache.commons.commons-io>
         <version.org.eclipse.microprofile>3.2</version.org.eclipse.microprofile>
         <version.org.jboss.arquillian>1.5.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>18.0.0.Final</version.org.jboss.wildfly.dist>
@@ -148,11 +147,6 @@
                 <artifactId>javax.json</artifactId>
                 <version>${version.org.glassfish.javax.json}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${version.org.apache.commons.commons-io}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

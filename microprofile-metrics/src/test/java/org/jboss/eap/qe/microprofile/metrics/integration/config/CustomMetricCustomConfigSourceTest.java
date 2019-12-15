@@ -2,8 +2,11 @@ package org.jboss.eap.qe.microprofile.metrics.integration.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,7 +31,8 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 @ServerSetup(CustomMetricCustomConfigSourceTest.SetupTask.class)
 public class CustomMetricCustomConfigSourceTest extends CustomMetricDynamicBaseTest {
     private static final String PROPERTY_FILENAME = "custom-metric.properties";
-    File propertyFile = new File(CustomMetricCustomConfigSourceTest.class.getResource(PROPERTY_FILENAME).getPath());
+    private Path propertyFilePath = Paths.get(
+            CustomMetricCustomConfigSourceTest.class.getResource(PROPERTY_FILENAME).getPath());
     private byte[] bytes;
 
     @Deployment(testable = false)
@@ -43,16 +47,17 @@ public class CustomMetricCustomConfigSourceTest extends CustomMetricDynamicBaseT
 
     @Before
     public void backup() throws IOException {
-        bytes = FileUtils.readFileToByteArray(propertyFile);
+        bytes = Files.readAllBytes(propertyFilePath);
     }
 
     @After
     public void restore() throws IOException {
-        FileUtils.writeByteArrayToFile(propertyFile, bytes);
+        Files.write(propertyFilePath, bytes);
     }
 
     void setConfigProperties(int increment) throws IOException {
-        FileUtils.writeStringToFile(propertyFile, INCREMENT_CONFIG_PROPERTY + "=" + Integer.toString(increment));
+        //      TODO Java 11 API way - Files.writeString(propertyFilePath, INCREMENT_CONFIG_PROPERTY + "=" + increment);
+        Files.write(propertyFilePath, (INCREMENT_CONFIG_PROPERTY + "=" + increment).getBytes(StandardCharsets.UTF_8));
     }
 
     /**
