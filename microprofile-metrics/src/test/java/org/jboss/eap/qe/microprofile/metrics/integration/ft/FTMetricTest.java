@@ -10,9 +10,12 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUB
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -70,12 +73,12 @@ public class FTMetricTest {
 
     @Before
     public void backup() throws IOException {
-        bytes = FileUtils.readFileToByteArray(SetupTask.propertyFile);
+        bytes = Files.readAllBytes(SetupTask.propertyFilePath);
     }
 
     @After
     public void restore() throws IOException {
-        FileUtils.writeByteArrayToFile(SetupTask.propertyFile, bytes);
+        Files.write(SetupTask.propertyFilePath, bytes);
     }
 
     /**
@@ -136,7 +139,8 @@ public class FTMetricTest {
                 FAULT_CTL_CONFIG_PROPERTY, providerCorrupted,
                 INCREMENT_CONFIG_PROPERTY, increment,
                 FAILSAFE_INCREMENT_CONFIG_PROPERTY, failSafeIncrement);
-        FileUtils.writeStringToFile(SetupTask.propertyFile, content);
+        //      TODO Java 11 API way - Files.writeString(SetupTask.propertyFilePath, content);
+        Files.write(SetupTask.propertyFilePath, content.getBytes(StandardCharsets.UTF_8));
     }
 
     private void testCustomMetricForValue(int value) {
@@ -177,7 +181,7 @@ public class FTMetricTest {
     static class SetupTask implements ServerSetupTask {
         private static final String TEST_MODULE_NAME = "test.ft-custom-config-source";
         private static final String PROPERTY_FILENAME = "ft-custom-metric.properties";
-        public static final File propertyFile = new File(SetupTask.class.getResource(PROPERTY_FILENAME).getPath());
+        static Path propertyFilePath = Paths.get(SetupTask.class.getResource(PROPERTY_FILENAME).getPath());
         private static final PathAddress FT_EXTENSION_ADDRESS = PathAddress.pathAddress().append(EXTENSION,
                 "org.wildfly.extension.microprofile.fault-tolerance-smallrye");
         private static final PathAddress FT_SUBSYSTEM_ADDRESS = PathAddress.pathAddress().append(SUBSYSTEM,

@@ -4,9 +4,12 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUB
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -42,7 +45,7 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
 
     private byte[] bytes;
 
-    File incrementFile = new File(
+    private Path incrementFilePath = Paths.get(
             CustomMetricModelFilePropsTest.class.getResource("file-props/" + INCREMENT_CONFIG_PROPERTY).getPath());
 
     @Deployment(testable = false)
@@ -57,16 +60,17 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
 
     @Before
     public void backup() throws IOException {
-        bytes = FileUtils.readFileToByteArray(incrementFile);
+        bytes = Files.readAllBytes(incrementFilePath);
     }
 
     @After
     public void restore() throws IOException {
-        FileUtils.writeByteArrayToFile(incrementFile, bytes);
+        Files.write(incrementFilePath, bytes);
     }
 
     void setConfigProperties(int increment) throws IOException, ConfigurationException, TimeoutException, InterruptedException {
-        FileUtils.writeStringToFile(incrementFile, Integer.toString(increment));
+        //      TODO Java 11 API way - Files.writeString(incrementFilePath, Integer.toString(increment));
+        Files.write(incrementFilePath, Integer.toString(increment).getBytes(StandardCharsets.UTF_8));
         new Administration(ManagementClientProvider.onlineStandalone()).reload();
     }
 
