@@ -16,14 +16,16 @@ public final class Waiter {
     /**
      * Wait for condition to become true. First check is done without additional wait and there is delay of 500
      * milliseconds between checks.
+     * 
      * @param condition condition which will be checked
      * @param time time for which it will be waited. The wait will take this amount or less if condition is
-     *             satisfied.
+     *        satisfied.
      * @param timeUnit time unit of wait
      * @return true if condition was satisfied anytime during wait, false otherwise
      * @throws InterruptedException
      */
-    public static boolean waitFor(final BooleanSupplier condition, final long time, final TimeUnit timeUnit) throws InterruptedException {
+    public static boolean waitFor(final BooleanSupplier condition, final long time, final TimeUnit timeUnit)
+            throws InterruptedException {
         final long start = new Date().getTime();
         final long timeout = timeUnit.toMillis(time);
         while (new Date().getTime() - start < timeout) {
