@@ -56,7 +56,7 @@ public final class JwtHelper {
                 .build();
 
         try {
-            return JsonWebToken.Builder.newInstance()
+            return new JsonWebToken.Builder()
                     .joseHeader(joseHeader)
                     .jwtClaims(jwtClaims)
                     .signature(Signature.getInstance("SHA256withRSA"))
