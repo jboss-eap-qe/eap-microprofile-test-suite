@@ -132,6 +132,16 @@
                 <artifactId>tooling-server-configuration</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.eap.qe</groupId>
+                <artifactId>microprofile-jwt-auth-tool</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.eap.qe</groupId>
+                <artifactId>server-utilities</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!--implementation of javax.json:javax.json-api-->
             <dependency>
                 <groupId>org.glassfish</groupId>
