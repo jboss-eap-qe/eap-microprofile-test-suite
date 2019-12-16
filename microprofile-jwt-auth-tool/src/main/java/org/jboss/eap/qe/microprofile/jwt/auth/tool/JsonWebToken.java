@@ -41,26 +41,6 @@ public class JsonWebToken {
         }
     }
 
-    interface JwtJoseHeader {
-        JwtJwtClaims joseHeader(JoseHeader joseHeader);
-    }
-
-    interface JwtJwtClaims {
-        JwtSignature jwtClaims(JwtClaims jwtClaims);
-    }
-
-    interface JwtSignature {
-        JwtPrivateKey signature(Signature signature);
-    }
-
-    interface JwtPrivateKey {
-        JwtBuilder privateKey(PrivateKey privateKey);
-    }
-
-    interface JwtBuilder {
-        JsonWebToken build();
-    }
-
     /**
      * Return raw token value (header.payload.signature)
      * @return Raw token value
@@ -72,31 +52,19 @@ public class JsonWebToken {
     /**
      * A builder for {@link JsonWebToken}
      */
-    public static final class Builder implements JwtJoseHeader, JwtJwtClaims, JwtSignature, JwtPrivateKey, JwtBuilder {
+    public static final class Builder {
 
         private JoseHeader joseHeader;
         private JwtClaims jwtClaims;
         private Signature signature;
         private PrivateKey privateKey;
 
-        private Builder() {
-            //prevent no-argument initialization
-        }
-
-        /**
-         * Create new instance of JWT builder to utilize fluent API.
-         * @return new instance of {@link JwtJoseHeader}.
-         */
-        public static JwtJoseHeader newInstance() {
-            return new Builder();
-        }
-
         /**
          * Token header
          * @param joseHeader token header specifying information about key and algorithm used to sign this token
-         * @return instance of {@link JwtJwtClaims}
+         * @return instance of this builder
          */
-        public JwtJwtClaims joseHeader(JoseHeader joseHeader) {
+        public Builder joseHeader(JoseHeader joseHeader) {
             this.joseHeader = joseHeader;
             return this;
         }
@@ -104,9 +72,9 @@ public class JsonWebToken {
         /**
          * Set claims values
          * @param jwtClaims claim values
-         * @return instance of {@link JwtSignature}
+         * @return instance of this builder
          */
-        public JwtSignature jwtClaims(JwtClaims jwtClaims) {
+        public Builder jwtClaims(JwtClaims jwtClaims) {
             this.jwtClaims = jwtClaims;
             return this;
         }
@@ -114,9 +82,9 @@ public class JsonWebToken {
         /**
          * Set signature algorithm implementation which will be used to sign the token
          * @param signature an algorithm implementation - fresh instance with no initialized key or set payload
-         * @return instance of {@link JwtPrivateKey}
+         * @return instance of this builder
          */
-        public JwtPrivateKey signature(Signature signature) {
+        public Builder signature(Signature signature) {
             this.signature = signature;
             return this;
         }
@@ -124,11 +92,26 @@ public class JsonWebToken {
         /**
          * Set private key which will be used for signing the JWT
          * @param privateKey private key instance used for signing
-         * @return instance of {@link JwtBuilder}
+         * @return instance of this builder
          */
-        public JwtBuilder privateKey(PrivateKey privateKey) {
+        public Builder privateKey(PrivateKey privateKey) {
             this.privateKey = privateKey;
             return this;
+        }
+
+        private void validate() {
+            if (this.joseHeader == null) {
+                throw new IllegalStateException("JOSE header must be set!");
+            }
+            if (this.jwtClaims == null) {
+                throw new IllegalStateException("Claims payload must be set!");
+            }
+            if (this.privateKey == null) {
+                throw new IllegalStateException("Private key must be set!");
+            }
+            if (this.signature == null) {
+                throw new IllegalStateException("Signature must be set!");
+            }
         }
 
         /**
@@ -136,6 +119,7 @@ public class JsonWebToken {
          * @return new instance of {@link JsonWebToken}
          */
         public JsonWebToken build() {
+            validate();
             return new JsonWebToken(this);
         }
 
