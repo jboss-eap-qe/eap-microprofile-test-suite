@@ -14,8 +14,9 @@ public class JoseHeader {
 
     /**
      * Create a new instance of {@link JoseHeader} using provided values.
+     * 
      * @param keyId ID of key which identifies key used to verify the signature. This ID is used by server to select
-     *              correct key among several.
+     *        correct key among several.
      * @param type Identifies the token as an RFC7519 and must be "JWT" RFC7519, Section 5.1 to satisfy the spec.
      * @param algorithm Identifies the cryptographic algorithm used to secure the JWT. E.g. RS256
      */
@@ -27,6 +28,7 @@ public class JoseHeader {
 
     /**
      * Shortcut for creating valid instance with custom key ID. Useful when you just need a header with valid values.
+     * 
      * @param keyId ID of key which will be propagated in this header.
      * @return new instance of valid header
      */
@@ -36,6 +38,7 @@ public class JoseHeader {
 
     /**
      * Format values to JSON
+     * 
      * @return JSON representation
      */
     public JsonObject toJson() {

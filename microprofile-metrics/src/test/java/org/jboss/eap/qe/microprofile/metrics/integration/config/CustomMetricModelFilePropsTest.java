@@ -2,7 +2,6 @@ package org.jboss.eap.qe.microprofile.metrics.integration.config;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

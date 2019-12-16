@@ -1,6 +1,5 @@
 package org.jboss.eap.qe.microprofile.metrics.integration.config;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

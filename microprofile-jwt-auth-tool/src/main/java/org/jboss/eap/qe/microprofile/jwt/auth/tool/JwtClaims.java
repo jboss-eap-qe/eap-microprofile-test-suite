@@ -1,12 +1,13 @@
 package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  * JWT claims as described in specification. See https://github.com/eclipse/microprofile-jwt-auth/releases
@@ -23,7 +24,6 @@ public class JwtClaims {
     private String audience;
 
     private final Map<String, Object> customClaims;
-
 
     private JwtClaims(Builder builder) {
         this.issuer = builder.issuer;

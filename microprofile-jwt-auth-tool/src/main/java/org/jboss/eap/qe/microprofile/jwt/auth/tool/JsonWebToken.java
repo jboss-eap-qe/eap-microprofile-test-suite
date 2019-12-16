@@ -14,7 +14,8 @@ public class JsonWebToken {
     private final String rawTokenValue;
 
     private JsonWebToken(Builder builder) {
-        this.rawTokenValue = this.composeSignedRawValue(builder.joseHeader, builder.jwtClaims, builder.signature, builder.privateKey);
+        this.rawTokenValue = this.composeSignedRawValue(builder.joseHeader, builder.jwtClaims, builder.signature,
+                builder.privateKey);
     }
 
     /**
@@ -22,7 +23,8 @@ public class JsonWebToken {
      *
      * @return a base64-encoded signed JWT.
      */
-    private String composeSignedRawValue(final JoseHeader joseHeader, final JwtClaims jwtClaims, final Signature signature, final PrivateKey privateKey) {
+    private String composeSignedRawValue(final JoseHeader joseHeader, final JwtClaims jwtClaims, final Signature signature,
+            final PrivateKey privateKey) {
         try {
             final byte[] joseBytes = joseHeader.toJson().toString().getBytes("UTF-8");
             final byte[] claimBytes = jwtClaims.toJson().toString().getBytes("UTF-8");
@@ -43,6 +45,7 @@ public class JsonWebToken {
 
     /**
      * Return raw token value (header.payload.signature)
+     * 
      * @return Raw token value
      */
     public String getRawValue() {
@@ -61,6 +64,7 @@ public class JsonWebToken {
 
         /**
          * Token header
+         * 
          * @param joseHeader token header specifying information about key and algorithm used to sign this token
          * @return instance of this builder
          */
@@ -71,6 +75,7 @@ public class JsonWebToken {
 
         /**
          * Set claims values
+         * 
          * @param jwtClaims claim values
          * @return instance of this builder
          */
@@ -81,6 +86,7 @@ public class JsonWebToken {
 
         /**
          * Set signature algorithm implementation which will be used to sign the token
+         * 
          * @param signature an algorithm implementation - fresh instance with no initialized key or set payload
          * @return instance of this builder
          */
@@ -91,6 +97,7 @@ public class JsonWebToken {
 
         /**
          * Set private key which will be used for signing the JWT
+         * 
          * @param privateKey private key instance used for signing
          * @return instance of this builder
          */
@@ -116,6 +123,7 @@ public class JsonWebToken {
 
         /**
          * Build a Java object representing a JWT using values set in this builder
+         * 
          * @return new instance of {@link JsonWebToken}
          */
         public JsonWebToken build() {

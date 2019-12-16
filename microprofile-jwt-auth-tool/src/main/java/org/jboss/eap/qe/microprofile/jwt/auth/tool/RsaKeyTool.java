@@ -15,6 +15,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -99,7 +100,7 @@ public final class RsaKeyTool {
 
     private void prepare(final URI pkcs8Key) {
         try (final FileReader fileReader = new FileReader(new File(pkcs8Key));
-             final BufferedReader bufferedFileReader = new BufferedReader(fileReader)) {
+                final BufferedReader bufferedFileReader = new BufferedReader(fileReader)) {
 
             final StringBuilder file = new StringBuilder();
             String line;
@@ -115,7 +116,8 @@ public final class RsaKeyTool {
             final PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(base64Key));
             final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             privateKey = (RSAPrivateCrtKey) keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            final RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(privateKey.getModulus(), privateKey.getPublicExponent());
+            final RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(privateKey.getModulus(),
+                    privateKey.getPublicExponent());
             publicKey = (RSAPublicKey) keyFactory.generatePublic(rsaPublicKeySpec);
         } catch (final IOException e) {
             throw new IllegalArgumentException("Unreadable PKCS8 Private Key", e);
