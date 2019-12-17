@@ -103,7 +103,7 @@ public class OpenApi10OnJaxRsAnnotationsTest {
 
     /**
      * @tpTestDetails Tests for proper OpenAPI documentation of application endpoint containing JAX-RS annotations
-     * @tpPassCrit Verifies that the returned YAML data has corresponding values for JAX-RS annotation
+     * @tpPassCrit Verifies that the returned YAML data has corresponding values for JAX-RS annotations
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -159,7 +159,7 @@ public class OpenApi10OnJaxRsAnnotationsTest {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForOfResponseTypeSchema() {
+    public void testOpenApiDocumentForResponseTypeSchema() {
 
         String responseContent = get(openApiUrl)
                 .then()
