@@ -1,6 +1,7 @@
 package org.jboss.eap.qe.microprofile.metrics;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.eap.qe.microprofile.metrics.namefellow.PingApplication;
 import org.jboss.eap.qe.microprofile.metrics.namefellow.PingOneResource;
 import org.jboss.eap.qe.microprofile.metrics.namefellow.PingOneService;
