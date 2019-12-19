@@ -9,9 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/basic-endpoint")
+@Path("/secured-endpoint")
 @ApplicationScoped
-public class JaxRsBasicEndpoint {
+public class SecuredJaxRsEndpoint {
 
     @Inject
     private JsonWebToken callerPrincipal;

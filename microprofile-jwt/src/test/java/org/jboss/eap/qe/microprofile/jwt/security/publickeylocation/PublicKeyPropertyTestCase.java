@@ -9,8 +9,8 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
-import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
+import org.jboss.eap.qe.microprofile.jwt.cdi.ActivationCompatibilityTest;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
@@ -42,7 +42,7 @@ public class PublicKeyPropertyTestCase {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = ActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -56,9 +56,9 @@ public class PublicKeyPropertyTestCase {
     @Deployment(name = DEPLOYMENT_WITH_VALID_KEY)
     public static WebArchive createValidKeyDeployment() {
         return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_WITH_VALID_KEY + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-valid.properties"),
+                .addAsManifestResource(ActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-pk-valid.properties"),
                         "microprofile-config.properties");
     }
 
@@ -69,9 +69,9 @@ public class PublicKeyPropertyTestCase {
     @Deployment(name = DEPLOYMENT_WITH_INVALID_KEY)
     public static WebArchive createInvalidKeyDeployment() {
         return ShrinkWrap.create(WebArchive.class, DEPLOYMENT_WITH_INVALID_KEY + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(BasicCdiTest.class.getClassLoader().getResource("mp-config-pk-invalid.properties"),
+                .addAsManifestResource(ActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-pk-invalid.properties"),
                         "microprofile-config.properties");
     }
 
@@ -89,7 +89,7 @@ public class PublicKeyPropertyTestCase {
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint")
+                .when().get(url.toExternalForm() + "secured-endpoint")
                 .then()
                 .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"))
                 .and()
@@ -116,7 +116,7 @@ public class PublicKeyPropertyTestCase {
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint")
+                .when().get(url.toExternalForm() + "secured-endpoint")
                 .then().body(equalTo(token.getRawValue()));
 
     }
