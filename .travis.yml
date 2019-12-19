@@ -1,11 +1,12 @@
-install:
- - java -version; mvn -version; docker version; mvn -B clean
-script:
- - mvn -B formatter:validate impsort:check && mvn -B verify -DskipTests -Djboss.home=foo
 language: java
 jdk:
   - openjdk8
   - openjdk11
+before_script:
+ - mvn -version; docker version
+script:
+ - mvn -B formatter:validate impsort:check
+ - mvn -B verify -DskipTests -Djboss.home=foo
 cache:
  directories:
   - $HOME/.m2
