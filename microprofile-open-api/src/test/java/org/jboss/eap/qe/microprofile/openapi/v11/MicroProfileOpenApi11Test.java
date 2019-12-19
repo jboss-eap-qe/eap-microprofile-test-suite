@@ -154,7 +154,7 @@ public class MicroProfileOpenApi11Test {
         Map<String, Object> responses = (Map<String, Object>) patchMethod.get("responses");
         Assert.assertFalse("\"/districts/{code}\" \"responses\" for PATCH verb is empty", responses.isEmpty());
 
-        Map<String, Object> http200Response = (Map<String, Object>) responses.get(200);
+        Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
         Assert.assertFalse("\"/districts/{code}\" \"response\" for PATCH verb and HTTP status 200 is empty",
                 http200Response.isEmpty());
 

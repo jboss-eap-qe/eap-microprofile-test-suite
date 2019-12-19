@@ -239,7 +239,7 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore
+    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     @SuppressWarnings("unchecked")
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeployedConfiguration() {
@@ -264,7 +264,7 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore
+    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeploymentInfo() {
         String responseContent = get(openApiUrl)
@@ -285,7 +285,7 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore
+    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     @SuppressWarnings("unchecked")
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeploymentServerRecords() {

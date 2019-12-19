@@ -124,9 +124,9 @@ public class IntegrationWithCDITest {
 
         Map<String, Object> responses = (Map<String, Object>) getMethod.get("responses");
         Assert.assertNotNull("\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 is null",
-                responses.get(200));
+                responses.get("200"));
 
-        Map<String, Object> http200Response = (Map<String, Object>) responses.get(200);
+        Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
         Assert.assertNotNull(
                 "\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 has null \"content\" property",
                 http200Response.get("content"));
