@@ -80,7 +80,8 @@ public class JoseHeaderAlgorithmTestCase {
      * @tpTestDetails JOSE header with {@code alg} set to {@code RS384} is not supported. Verify, such JWT is rejected.
      * @tpPassCrit JWT is rejected and client receives Unauthorized/401 message.
      * @tpSince EAP 7.4.0.CD19
-     */@Test
+     */
+    @Test
     public void testOutOfSpecAlgorithm(@ArquillianResource URL url) {
         final JsonWebToken token = prepareJwtWithCustomJoseHeaderSignedWithRS384(new JoseHeader(keyTool.getJwkKeyId(),
                 "JWT", "RS384"), keyTool);
