@@ -80,8 +80,9 @@ public class OpenApiServerConfiguration {
      *         {@link OnlineManagementClient} API
      */
     public static void enableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
-        if (openapiSubsystemExists(client))
+        if (openapiSubsystemExists(client)) {
             return;
+        }
         try {
             ModelNodeResult result = addOpenApiExtension(client);
             result.assertSuccess();
@@ -101,8 +102,9 @@ public class OpenApiServerConfiguration {
      *         {@link OnlineManagementClient} API
      */
     public static void disableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
-        if (!openapiSubsystemExists(client))
+        if (!openapiSubsystemExists(client)) {
             return;
+        }
         try {
             ModelNodeResult result = removeOpenApiSubsystem(client);
             result.assertSuccess();
