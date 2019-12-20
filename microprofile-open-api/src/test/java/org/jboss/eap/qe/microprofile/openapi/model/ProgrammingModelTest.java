@@ -28,6 +28,7 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.Distric
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -49,7 +50,7 @@ public class ProgrammingModelTest {
     private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(testable = false)
-    public static WebArchive createCentralDeployment() {
+    public static Archive<?> createCentralDeployment() {
 
         String mpConfigProperties = "mp.openapi.model.reader=org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader"
                 + "\n" +
@@ -57,7 +58,7 @@ public class ProgrammingModelTest {
                 + "\n" +
                 "mp.openapi.scan.disable=false";
 
-        WebArchive deployment = ShrinkWrap.create(
+        return ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
@@ -72,7 +73,26 @@ public class ProgrammingModelTest {
                         OpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
+    }
+
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
     }
 
     /**
@@ -117,25 +137,5 @@ public class ProgrammingModelTest {
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
                 .body(containsString(OpenApiFilter.LOCAL_TEST_ROUTER_FQDN));
-    }
-
-    static class OpenApiExtensionSetup implements ServerSetupTask {
-
-        @Override
-        public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-        }
-
-        @Override
-        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
-        }
     }
 }
