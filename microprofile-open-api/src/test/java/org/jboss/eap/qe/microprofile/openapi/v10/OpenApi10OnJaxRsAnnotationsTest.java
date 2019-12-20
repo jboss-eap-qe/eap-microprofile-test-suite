@@ -48,7 +48,7 @@ public class OpenApi10OnJaxRsAnnotationsTest {
 
     @Deployment(testable = false)
     public static Archive<?> createDeployment() {
-        WebArchive deployment = ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
+        return ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
                         ProviderApplication.class,
                         District.class,
@@ -58,7 +58,6 @@ public class OpenApi10OnJaxRsAnnotationsTest {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     static class OpenApiExtensionSetup implements ServerSetupTask {
@@ -149,12 +148,12 @@ public class OpenApi10OnJaxRsAnnotationsTest {
     /**
      * @tpTestDetails Tests for proper OpenAPI documentation of application endpoint returning a structured (POJO)
      *                response body
-     * @tpPassCrit Verifies that the returned YAML data has corresponding values for schema definition of returned POJO
+     * @tpPassCrit Verifies that the returned YAML data has corresponding values for definition of returned POJO
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForResponseTypeSchema(@ArquillianResource URL baseURL) throws URISyntaxException {
+    public void testOpenApiDocumentForResponseTypeObject(@ArquillianResource URL baseURL) throws URISyntaxException {
 
         String responseContent = get(baseURL.toURI().resolve("/openapi"))
                 .then()

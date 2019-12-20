@@ -10,14 +10,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirements;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
+import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 
 /**
  * Rest resource exposing operations which provide information about Local Service Router, this is a "non-routed"
- * service - i.e. only related to the Local Service Router domain
+ * service - i.e. only related to the Local Service Router domain.
  */
+@SecuritySchemes(value = {
+        @SecurityScheme(securitySchemeName = "http_secured", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")
+})
+@SecurityRequirements(value = {
+        @SecurityRequirement(name = "http_secured") })
 @Path("/info")
 public class LocalServiceRouterInfoResource {
 

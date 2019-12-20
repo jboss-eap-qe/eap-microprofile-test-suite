@@ -51,7 +51,7 @@ public class MicroProfileOpenApi11Test {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        WebArchive deployment = ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
+        return ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
                         ProviderApplication.class,
                         District.class,
@@ -61,7 +61,6 @@ public class MicroProfileOpenApi11Test {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     static class OpenApiExtensionSetup implements ServerSetupTask {

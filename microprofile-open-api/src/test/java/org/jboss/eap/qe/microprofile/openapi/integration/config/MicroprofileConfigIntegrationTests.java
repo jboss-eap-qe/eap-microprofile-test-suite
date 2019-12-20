@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -30,8 +31,13 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictO
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.LocalServiceRouterInfoResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.RouterDistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -55,15 +61,17 @@ public class MicroprofileConfigIntegrationTests {
     private final static String BADLY_CONFIGURED_ROUTER_DEPLOYMENT_NAME = "localServicesRouterBadlyConfiguredDeployment";
     private final static String SCAN_DISABLING_ROUTER_DEPLOYMENT_NAME = "localServicesRouterScanDisablingDeployment";
 
+    private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
+            ArquillianDescriptorWrapper.getArquillianDescriptor());
     private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
-    public static WebArchive serviceProviderDeployment() {
+    public static Archive<?> serviceProviderDeployment() {
         //  This is the Services Provider deployment with default configuration and simulates the main deployment in
         //  the current scenario - i.e. the one that is run by Services Provider. Following deployments
         //  are used to demonstrate advanced MP Config (and vendor extension properties) integration features.
-        WebArchive deployment = ShrinkWrap.create(WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
-                .addClasses(
+        return ShrinkWrap.create(WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
+               .addClasses(
                         ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
@@ -72,11 +80,17 @@ public class MicroprofileConfigIntegrationTests {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     @Deployment(name = ROUTER_DEPLOYMENT_NAME, order = 2, testable = false)
-    public static WebArchive localServicesRouterTestDeployment() {
+    public static Archive<?> localServicesRouterTestDeployment()
+            throws ConfigurationException, IOException, ManagementClientRelatedException {
+
+        int configuredHTTPPort;
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+        }
+
         //  OpenAPI doc here is configured for the second deployment to have a different path from the one
         //  defined by standard spec and to replace the value for Server records with a custom (local) one.
         //  Here we also add config properties to reach the Services Provider
@@ -86,11 +100,11 @@ public class MicroprofileConfigIntegrationTests {
                 + "\n" +
                 "mp.openapi.extensions.path=/local/openapi"
                 + "\n" +
-                "services.provider.host=localhost"
+                "services.provider.host=" + arquillianContainerProperties.getDefaultManagementAddress()
                 + "\n" +
-                "services.provider.port=8080";
+                String.format("services.provider.port=%d", configuredHTTPPort);
 
-        WebArchive deployment = ShrinkWrap.create(
+        return ShrinkWrap.create(
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
@@ -100,23 +114,29 @@ public class MicroprofileConfigIntegrationTests {
                         DistrictServiceClient.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     @Deployment(name = BADLY_CONFIGURED_ROUTER_DEPLOYMENT_NAME, order = 3, testable = false)
-    public static WebArchive localServicesRouterBadlyConfiguredDeployment() {
+    public static Archive<?> localServicesRouterBadlyConfiguredDeployment()
+            throws ConfigurationException, IOException, ManagementClientRelatedException {
+
+        int configuredHTTPPort;
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+        }
+
         //  OpenAPI doc here is badly configured for the third deployment - i.e. no value is provided for a custom
         //  path for "openapi" endpoint, in order to assess that the server is actually logging expected WARN IDs.
         //  Here we also add config properties to reach the Services Provider
         String mpConfigProperties = "mp.openapi.scan.disable=false"
                 + "\n" +
-                "services.provider.host=localhost"
-                + "\n" +
                 "mp.openapi.servers=https://xyz.io/v1"
                 + "\n" +
-                "services.provider.port=8080";
+                "services.provider.host=" + arquillianContainerProperties.getDefaultManagementAddress()
+                + "\n" +
+                String.format("services.provider.port=%d", configuredHTTPPort);
 
-        WebArchive deployment = ShrinkWrap.create(
+        return ShrinkWrap.create(
                 WebArchive.class, BADLY_CONFIGURED_ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
@@ -126,11 +146,16 @@ public class MicroprofileConfigIntegrationTests {
                         DistrictServiceClient.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     @Deployment(name = SCAN_DISABLING_ROUTER_DEPLOYMENT_NAME, order = 4, testable = false)
-    public static WebArchive localServicesRouterScanDisablingDeployment() {
+    public static Archive<?> localServicesRouterScanDisablingDeployment()
+            throws ConfigurationException, IOException, ManagementClientRelatedException {
+
+        int configuredHTTPPort;
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+        }
         //  OpenAPI doc here is badly configured for the fourth deployment - i.e. OpenAPI annotations scan is disabled.
         //  This represents a negative scenario because in situation like server reboot it must be verified that
         //  this configuration will not affect other deployments annotations scan and doc generation in general.
@@ -141,11 +166,11 @@ public class MicroprofileConfigIntegrationTests {
                 //                + "\n" +
                 //                "mp.openapi.extensions.path=/disabled/openapi"
                 + "\n" +
-                "services.provider.host=localhost"
+                "services.provider.host=" + arquillianContainerProperties.getDefaultManagementAddress()
                 + "\n" +
-                "services.provider.port=8080";
+                String.format("services.provider.port=%d", configuredHTTPPort);
 
-        WebArchive deployment = ShrinkWrap.create(
+        return ShrinkWrap.create(
                 WebArchive.class, SCAN_DISABLING_ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
@@ -155,7 +180,6 @@ public class MicroprofileConfigIntegrationTests {
                         DistrictServiceClient.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     static class OpenApiExtensionSetup implements ServerSetupTask {
@@ -183,7 +207,6 @@ public class MicroprofileConfigIntegrationTests {
      *                {@code mp.openapi.extensions.path} by Local Service Router deployments
      * @tpPassCrit The server is logging expected {@code WFLYMPOAI0007} message because a deployment was configured
      *             in order to have a custom url for {@code openapi} endpoint
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -198,7 +221,6 @@ public class MicroprofileConfigIntegrationTests {
      *                deployment
      * @tpPassCrit The server is logging expected {@code WFLYMPOAI0003} message because one deployment was not
      *             properly configured in order to have a custom url for {@code openapi} endpoint
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -212,14 +234,13 @@ public class MicroprofileConfigIntegrationTests {
      *                Local Service Router deployments
      * @tpPassCrit The generated OpenAPI document {@code Server Records} contents are overridden by custom value
      *             provided through {@code mp.openapi.servers} property
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     public void testServerRecordsAreOverriddenByConfigProperty(
             @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL)
             throws URISyntaxException {
-        get(baseURL.toURI().resolve(baseURL.toURI().resolve("/local/openapi")))
+        get(baseURL.toURI().resolve("/local/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
@@ -231,7 +252,6 @@ public class MicroprofileConfigIntegrationTests {
      *                Local Service Router deployments
      * @tpPassCrit The generated OpenAPI document {@code paths} property contents are not empty - i.e. the main
      *             deployment related OpenAPI document is generated properly
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -257,7 +277,6 @@ public class MicroprofileConfigIntegrationTests {
      *                Local Service Router deployments
      * @tpPassCrit The generated OpenAPI document {@code info} property contents are not empty - i.e. the main
      *             deployment related OpenAPI document is generated properly
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -279,7 +298,6 @@ public class MicroprofileConfigIntegrationTests {
      *                Local Service Router deployments
      * @tpPassCrit The generated OpenAPI document {@code servers} property contents are not empty - i.e. the main
      *             deployment related OpenAPI document is generated properly
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test

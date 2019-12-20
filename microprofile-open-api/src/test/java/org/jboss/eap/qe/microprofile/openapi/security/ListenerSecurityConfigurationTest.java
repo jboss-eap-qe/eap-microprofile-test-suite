@@ -36,6 +36,7 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.Arq
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -68,8 +69,8 @@ public class ListenerSecurityConfigurationTest {
     private static String jbossHome;
 
     @Deployment(testable = false)
-    public static WebArchive createServicesProviderDeployment() {
-        WebArchive deployment = ShrinkWrap.create(
+    public static Archive<?> createServicesProviderDeployment() {
+        return ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
@@ -83,7 +84,6 @@ public class ListenerSecurityConfigurationTest {
                         OpenApiModelReader.class,
                         OpenApiFilter.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return deployment;
     }
 
     static class OpenApiExtensionSetup implements ServerSetupTask {
@@ -213,9 +213,8 @@ public class ListenerSecurityConfigurationTest {
     /**
      * @tpTestDetails Test to verify that the {@code openapi} endpoint is available via HTTPS once the listener
      *                has been properly configured
-     * @tpPassCrit The {@code openapi} endpoint can be reached via [https] schema at related standard port number
+     * @tpPassCrit The {@code openapi} endpoint can be reached via [https] at related standard port number
      *             (8443), response status is HTTP 200 and response body is not empty
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -251,7 +250,6 @@ public class ListenerSecurityConfigurationTest {
      *                endpoint to be accessible via [http]
      * @tpPassCrit The server is logging expected {@code WFLYMPOAI0006} message because HTTP (default) listener
      *             does not exist
-     *
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
