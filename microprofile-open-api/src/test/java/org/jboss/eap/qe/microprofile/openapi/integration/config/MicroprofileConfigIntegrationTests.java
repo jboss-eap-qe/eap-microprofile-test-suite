@@ -11,6 +11,9 @@ import java.util.Map;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiTestConstants;
@@ -27,7 +30,6 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.Rou
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -43,6 +45,7 @@ import org.yaml.snakeyaml.Yaml;
  * Test cases for MP OpenAPI and MP Config integration
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ MicroprofileConfigIntegrationTests.OpenApiExtensionSetup.class })
 @RunAsClient
 public class MicroprofileConfigIntegrationTests {
 
@@ -53,28 +56,6 @@ public class MicroprofileConfigIntegrationTests {
 
     static String openApiUrl, localServicesRouterTestOpenApiUrl;
     static OnlineManagementClient onlineManagementClient;
-
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        localServicesRouterTestOpenApiUrl = String.format(
-                "http://%s:%s/local/openapi",
-                OpenApiTestConstants.DEFAULT_HOST_NAME,
-                OpenApiTestConstants.DEFAULT_ENDPOINT_PORT);
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
 
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
     public static Archive<?> serviceProviderDeployment() {
@@ -181,6 +162,31 @@ public class MicroprofileConfigIntegrationTests {
         return deployment;
     }
 
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
+            localServicesRouterTestOpenApiUrl = String.format(
+                    "http://%s:%s/local/openapi",
+                    OpenApiTestConstants.DEFAULT_HOST_NAME,
+                    OpenApiTestConstants.DEFAULT_ENDPOINT_PORT);
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
+    }
+
     /**
      * @tpTestDetails Integration test to verify usage of MP Config extension property
      *                {@code mp.openapi.extensions.path} by Local Service Router deployments
@@ -191,10 +197,8 @@ public class MicroprofileConfigIntegrationTests {
      */
     @Test
     public void testWarningIsLoggedBecauseOfNonConventionalOpenApiUrl() throws ConfigurationException, IOException {
-        try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(client, 100);
-            Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0007"));
-        }
+        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(onlineManagementClient, 100);
+        Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0007"));
     }
 
     /**
@@ -208,10 +212,8 @@ public class MicroprofileConfigIntegrationTests {
      */
     @Test
     public void testWarningIsLoggedBecauseOfSkippedBadlyConfiguredDeployment() throws ConfigurationException, IOException {
-        try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(client, 100);
-            Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0003"));
-        }
+        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(onlineManagementClient, 100);
+        Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0003"));
     }
 
     /**
@@ -239,7 +241,6 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     @SuppressWarnings("unchecked")
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeployedConfiguration() {
@@ -264,7 +265,6 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeploymentInfo() {
         String responseContent = get(openApiUrl)
@@ -285,7 +285,6 @@ public class MicroprofileConfigIntegrationTests {
      *
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("https://issues.redhat.com/browse/WFWIP-289")
     @Test
     @SuppressWarnings("unchecked")
     public void testDisabledAnnotationsScanIsNotAffectingPreviouslyDeploymentServerRecords() {
