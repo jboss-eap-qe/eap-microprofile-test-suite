@@ -132,4 +132,22 @@ public class OpenApiServerConfiguration {
             throw new ManagementClientRelatedException(e);
         }
     }
+
+    private static int getBoundPort(OnlineManagementClient client, String socketBinding)
+            throws ManagementClientRelatedException {
+        ModelNodeResult result = ManagementClientHelper.executeCliCommand(client,
+                String.format(
+                        "/socket-binding-group=standard-sockets/socket-binding=%s/:read-attribute(name=bound-port)",
+                        socketBinding));
+        result.assertSuccess();
+        return result.intValue();
+    }
+
+    public static int getHTTPPort(OnlineManagementClient client) throws ManagementClientRelatedException {
+        return getBoundPort(client, "http");
+    }
+
+    public static int getHTTPSPort(OnlineManagementClient client) throws ManagementClientRelatedException {
+        return getBoundPort(client, "https");
+    }
 }

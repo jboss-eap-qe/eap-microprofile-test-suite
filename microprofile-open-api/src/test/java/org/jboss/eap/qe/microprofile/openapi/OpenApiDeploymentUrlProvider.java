@@ -19,7 +19,7 @@ public class OpenApiDeploymentUrlProvider {
     }
 
     /**
-     * Builds default OpenAPI URL, as per MP OpenAPI 1.1 specs
+     * Builds default OpenAPI endpoint URL, as per MP OpenAPI 1.1 specs
      * 
      * @return
      */
