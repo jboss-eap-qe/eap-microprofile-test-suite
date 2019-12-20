@@ -32,6 +32,7 @@ public class HealthDeprecatedTest {
     }
 
     /**
+     *  
      * @tpTestDetails backward compatibility scenario - test for deprecated however still supported annotation {@code @Health}.
      * @tpPassCrit Overall and the health check status is up.
      * @tpSince EAP 7.4.0.CD19
