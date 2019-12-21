@@ -4,7 +4,8 @@ import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.comparesEqualTo;
 
-import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,11 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiTestConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
@@ -24,16 +27,12 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -43,35 +42,12 @@ import org.yaml.snakeyaml.Yaml;
  * Test cases for MP OpenAPI v. 1.1 annotations on JAX-RS components (migrated from RHOAR QE TS)
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ MicroProfileOpenApi11Test.OpenApiExtensionSetup.class })
 @RunAsClient
 public class MicroProfileOpenApi11Test {
     private final static String DEPLOYMENT_NAME = MicroProfileOpenApi11Test.class.getSimpleName();
 
-    static String openApiUrl, patchTestUrl;
     static OnlineManagementClient onlineManagementClient;
-
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        patchTestUrl = String.format(
-                "http://%s:%s/%s/districts/DW",
-                OpenApiTestConstants.DEFAULT_HOST_NAME,
-                OpenApiTestConstants.DEFAULT_ENDPOINT_PORT,
-                DEPLOYMENT_NAME);
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
@@ -91,6 +67,26 @@ public class MicroProfileOpenApi11Test {
         return deployment;
     }
 
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
+    }
+
     /**
      * @tpTestDetails Tests for an application PATCH endpoint to be working
      * @tpPassCrit Calls application PATCH endpoint twice to modify and then reset a district data, checking for
@@ -98,12 +94,13 @@ public class MicroProfileOpenApi11Test {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testAppEndpoint() {
+    public void testAppEndpoint(@ArquillianResource URL baseURL) {
+        String patchTestURL = baseURL.toExternalForm() + "districts/DW";
         given()
                 .header("Accept", MediaType.APPLICATION_JSON)
                 .header("Content-Type", MediaType.APPLICATION_JSON)
                 .body(new DistrictEntity("DW", "Western district - OBS", Boolean.TRUE)).when()
-                .patch(patchTestUrl)
+                .patch(patchTestURL)
                 .then()
                 .statusCode(200)
                 .body("code", comparesEqualTo("DW"),
@@ -112,7 +109,8 @@ public class MicroProfileOpenApi11Test {
         given()
                 .header("Accept", MediaType.APPLICATION_JSON)
                 .header("Content-Type", MediaType.APPLICATION_JSON)
-                .body(new DistrictEntity("DW", "Western district", Boolean.FALSE)).when().patch(patchTestUrl)
+                .body(new DistrictEntity("DW", "Western district", Boolean.FALSE)).when()
+                .patch(patchTestURL)
                 .then()
                 .statusCode(200)
                 .body("code", comparesEqualTo("DW"),
@@ -131,8 +129,8 @@ public class MicroProfileOpenApi11Test {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForV11Annotations() {
-        String responseContent = get(openApiUrl).then()
+    public void testOpenApiDocumentForV11Annotations(@ArquillianResource URL baseURL) throws URISyntaxException {
+        String responseContent = get(baseURL.toURI().resolve("/openapi")).then()
                 .statusCode(200)
                 .extract().asString();
         Yaml yaml = new Yaml();

@@ -3,16 +3,19 @@ package org.jboss.eap.qe.microprofile.openapi.v10;
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.comparesEqualTo;
 
-import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiTestConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
@@ -20,16 +23,12 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -39,39 +38,16 @@ import org.yaml.snakeyaml.Yaml;
  * Test cases for MP OpenAPI v. 1.0 annotations on JAX-RS components (migrated from RHOAR QE TS)
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ OpenApi10OnJaxRsAnnotationsTest.OpenApiExtensionSetup.class })
 @RunAsClient
 public class OpenApi10OnJaxRsAnnotationsTest {
 
     private final static String DEPLOYMENT_NAME = OpenApi10OnJaxRsAnnotationsTest.class.getSimpleName();
 
-    static String openApiUrl, resourceUrl;
     static OnlineManagementClient onlineManagementClient;
 
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        resourceUrl = String.format(
-                "http://%s:%s/%s/districts/DW",
-                OpenApiTestConstants.DEFAULT_HOST_NAME,
-                OpenApiTestConstants.DEFAULT_ENDPOINT_PORT,
-                DEPLOYMENT_NAME);
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
-
     @Deployment(testable = false)
-    public static Archive<?> createCDeployment() {
+    public static Archive<?> createDeployment() {
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
@@ -87,14 +63,35 @@ public class OpenApi10OnJaxRsAnnotationsTest {
         return deployment;
     }
 
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
+    }
+
     /**
      * @tpTestDetails Tests for application endpoint to be working
      * @tpPassCrit Verifies that the returned JSON data corresponds to server side POJO
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testAppEndpoint() {
-        get(resourceUrl).then()
+    public void testAppEndpoint(@ArquillianResource URL baseURL) {
+        String resourceURL = baseURL.toExternalForm() + "districts/DW";
+        get(resourceURL).then()
                 .statusCode(200)
                 .body("code", comparesEqualTo("DW"),
                         "obsolete", comparesEqualTo(Boolean.FALSE),
@@ -108,9 +105,9 @@ public class OpenApi10OnJaxRsAnnotationsTest {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForPathAndQueryParam() {
+    public void testOpenApiDocumentForPathAndQueryParam(@ArquillianResource URL baseURL) throws URISyntaxException {
 
-        String responseContent = get(openApiUrl)
+        String responseContent = get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .extract().asString();
@@ -159,9 +156,9 @@ public class OpenApi10OnJaxRsAnnotationsTest {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForResponseTypeSchema() {
+    public void testOpenApiDocumentForResponseTypeSchema(@ArquillianResource URL baseURL) throws URISyntaxException {
 
-        String responseContent = get(openApiUrl)
+        String responseContent = get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .extract().asString();

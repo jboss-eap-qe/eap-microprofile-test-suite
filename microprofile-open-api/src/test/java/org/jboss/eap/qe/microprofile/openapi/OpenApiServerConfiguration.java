@@ -80,7 +80,7 @@ public class OpenApiServerConfiguration {
      *         {@link OnlineManagementClient} API
      */
     public static void enableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
-        if (openapiSubsystemExists(client)) {
+        if (openApiSubsystemExists(client)) {
             return;
         }
         try {
@@ -102,7 +102,7 @@ public class OpenApiServerConfiguration {
      *         {@link OnlineManagementClient} API
      */
     public static void disableOpenApi(OnlineManagementClient client) throws ManagementClientRelatedException {
-        if (!openapiSubsystemExists(client)) {
+        if (!openApiSubsystemExists(client)) {
             return;
         }
         try {
@@ -124,7 +124,7 @@ public class OpenApiServerConfiguration {
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
      *         {@link OnlineManagementClient} API
      */
-    public static Boolean openapiSubsystemExists(OnlineManagementClient client) throws ManagementClientRelatedException {
+    public static Boolean openApiSubsystemExists(OnlineManagementClient client) throws ManagementClientRelatedException {
         Operations ops = new Operations(client);
         try {
             return ops.exists(Address.extension("org.wildfly.extension.microprofile.openapi-smallrye"));

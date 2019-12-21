@@ -6,6 +6,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.openapi.models.OpenAPI;
@@ -16,7 +19,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -42,12 +44,8 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 @RunAsClient
 public class ProgrammingModelTest {
 
-    @ArquillianResource
-    private ManagementClient managementClient;
-
     private final static String DEPLOYMENT_NAME = ProgrammingModelTest.class.getSimpleName();
 
-    private static String openApiUrl;
     private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(testable = false)
@@ -84,8 +82,8 @@ public class ProgrammingModelTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testAppEndpoint() {
-        get(OpenApiDeploymentUrlProvider.composeDefaultDeploymentBaseUrl(DEPLOYMENT_NAME + "/districts/all"))
+    public void testAppEndpoint(@ArquillianResource URL baseURL) {
+        get(baseURL.toExternalForm() + "districts/all")
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase(MediaType.APPLICATION_JSON))
@@ -98,8 +96,8 @@ public class ProgrammingModelTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testOpenApiDocumentForOpenApiInfoChange() {
-        get(openApiUrl)
+    public void testOpenApiDocumentForOpenApiInfoChange(@ArquillianResource URL baseURL) throws URISyntaxException {
+        get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
@@ -113,8 +111,9 @@ public class ProgrammingModelTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testOpenApiDocumentForRouterFqdnExtensionModification() {
-        get(openApiUrl)
+    public void testOpenApiDocumentForRouterFqdnExtensionModification(@ArquillianResource URL baseURL)
+            throws URISyntaxException {
+        get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
@@ -125,23 +124,18 @@ public class ProgrammingModelTest {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
             //  MP OpenAPI up
             onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            if (!OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
-                OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-            }
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
             //  MP OpenAPI down
-            if (OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
-                try {
-                    OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-                } finally {
-                    onlineManagementClient.close();
-                }
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
             }
         }
     }

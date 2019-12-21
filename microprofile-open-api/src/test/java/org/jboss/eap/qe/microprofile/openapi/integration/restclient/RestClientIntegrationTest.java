@@ -6,13 +6,19 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -21,11 +27,14 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
+import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.RouterApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictObject;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.LocalServiceRouterInfoResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.RouterDistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,8 +42,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -43,36 +50,18 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
  * Test cases for MP OpenAPI and MP Rest Client integration
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ RestClientIntegrationTest.OpenApiExtensionSetup.class })
 @RunAsClient
 public class RestClientIntegrationTest {
 
     private final static String PROVIDER_DEPLOYMENT_NAME = "serviceProviderDeployment";
     private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
 
-    private static String openApiUrl;
+    private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
+            ArquillianDescriptorWrapper.getArquillianDescriptor());
     private static OnlineManagementClient onlineManagementClient;
 
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        if (!OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-        }
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
-
-    @Deployment(name = "serviceProviderDeployment", order = 1, testable = false)
+    @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
     public static Archive<?> serviceProviderDeployment() {
         //  MP OpenAPI disabled on this Services Provider deployment for testing purposes, we don't want it here
         String mpConfigProperties = "mp.openapi.extensions.enabled=false";
@@ -91,8 +80,15 @@ public class RestClientIntegrationTest {
         return deployment;
     }
 
-    @Deployment(name = "localServicesRouterDeployment", order = 2, testable = false)
-    public static Archive<?> localServicesRouterDeployment() {
+    @Deployment(name = ROUTER_DEPLOYMENT_NAME, order = 2, testable = false)
+    public static Archive<?> localServicesRouterDeployment()
+            throws ConfigurationException, IOException, ManagementClientRelatedException {
+
+        int configuredHTTPPort;
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+        }
+
         //  OpenAPI doc here is exposing doc generated only from Local Service Provider "non-routed" JAX-RS endpoints
         //  as MP Config is used to tell MP OpenAPI to skip doc generation for exposed "routed" JAX-RS endpoints
         //  Here we also add config properties to reach the Services Provider
@@ -100,14 +96,15 @@ public class RestClientIntegrationTest {
                 + "\n" +
                 "mp.openapi.scan.disable=false"
                 + "\n" +
-                "services.provider.host=localhost"
+                //  both deployments sit on the same host
+                "services.provider.host=" + arquillianContainerProperties.getDefaultManagementAddress()
                 + "\n" +
-                "services.provider.port=8080";
+                String.format("services.provider.port=%d", configuredHTTPPort);
 
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
-                        ProviderApplication.class,
+                        RouterApplication.class,
                         LocalServiceRouterInfoResource.class)
                 .addClasses(
                         DistrictObject.class,
@@ -118,6 +115,26 @@ public class RestClientIntegrationTest {
         return deployment;
     }
 
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
+    }
+
     /**
      * @tpTestDetails Integration test to verify MP Rest Client usage by Local Service Router JAX-RS resource
      * @tpPassCrit One of the Local Service Router endpoints is called to retrieve data from Service Provider,
@@ -126,8 +143,8 @@ public class RestClientIntegrationTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testAppEndpoint() {
-        get(OpenApiDeploymentUrlProvider.composeDefaultDeploymentBaseUrl(ROUTER_DEPLOYMENT_NAME + "/districts/all"))
+    public void testAppEndpoint(@ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) {
+        get(baseURL.toExternalForm() + "districts/all")
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase(MediaType.APPLICATION_JSON));
@@ -141,8 +158,9 @@ public class RestClientIntegrationTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testNoRestClientInterfaceAnnotationInOpenApiDoc() {
-        get(openApiUrl)
+    public void testNoRestClientInterfaceAnnotationInOpenApiDoc(
+            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) throws URISyntaxException {
+        get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
@@ -157,8 +175,10 @@ public class RestClientIntegrationTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testOpenApiDocContainsLocalServicesRouterInformation() {
-        get(openApiUrl)
+    public void testOpenApiDocContainsLocalServicesRouterInformation(
+            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL)
+            throws URISyntaxException {
+        get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
