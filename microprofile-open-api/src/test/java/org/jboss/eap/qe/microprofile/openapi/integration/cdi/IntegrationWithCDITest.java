@@ -3,27 +3,27 @@ package org.jboss.eap.qe.microprofile.openapi.integration.cdi;
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
-import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.eap.qe.microprofile.openapi.OpenApiDeploymentUrlProvider;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.as.arquillian.api.ServerSetupTask;
+import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.RouterApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.legacy.Contact;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -33,31 +33,12 @@ import org.yaml.snakeyaml.Yaml;
  * Test cases for MP OpenAPI and CDI integration, see https://javaee.github.io/tutorial/jaxrs-advanced004.html
  */
 @RunWith(Arquillian.class)
+@ServerSetup({ IntegrationWithCDITest.OpenApiExtensionSetup.class })
 @RunAsClient
 public class IntegrationWithCDITest {
     private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
-    private static String openApiUrl;
+
     private static OnlineManagementClient onlineManagementClient;
-
-    @BeforeClass
-    public static void setup() throws ManagementClientRelatedException, ConfigurationException {
-        openApiUrl = OpenApiDeploymentUrlProvider.composeDefaultOpenApiUrl();
-        //  MP OpenAPI up
-        onlineManagementClient = ManagementClientProvider.onlineStandalone();
-        if (!OpenApiServerConfiguration.openapiSubsystemExists(onlineManagementClient)) {
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
-        }
-    }
-
-    @AfterClass
-    public static void tearDown() throws ManagementClientRelatedException, IOException {
-        //  MP OpenAPI down
-        try {
-            OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-        } finally {
-            onlineManagementClient.close();
-        }
-    }
 
     @Deployment(testable = false)
     public static Archive<?> localServicesRouterDeployment() {
@@ -70,6 +51,26 @@ public class IntegrationWithCDITest {
         return deployment;
     }
 
+    static class OpenApiExtensionSetup implements ServerSetupTask {
+
+        @Override
+        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI up
+            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+        }
+
+        @Override
+        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
+            //  MP OpenAPI down
+            try {
+                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
+            } finally {
+                onlineManagementClient.close();
+            }
+        }
+    }
+
     /**
      * @tpTestDetails Integration test to verify that a "legacy" CDI bean converted to "requestScoped" JAX-RS resource
      *                and having JAX-RS annotated constructor is returning expected content
@@ -77,18 +78,17 @@ public class IntegrationWithCDITest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testAppEndpoint() {
+    public void testAppEndpoint(@ArquillianResource URL baseURL) {
         String id = "1";
         String response = get(
-                OpenApiDeploymentUrlProvider.composeDefaultDeploymentBaseUrl(
-                        ROUTER_DEPLOYMENT_NAME + String.format("/contact/%s/details", id)))
-                                .then()
-                                .statusCode(200)
-                                //  RestEasy >3.9.3 adds charset info unless resteasy.add.charset is set to false,
-                                //  thus expecting for it to be there, see
-                                //  https://docs.jboss.org/resteasy/docs/3.9.3.Final/userguide/html/Installation_Configuration.html#configuration_switches
-                                .contentType(equalToIgnoringCase("text/plain;charset=UTF-8"))
-                                .extract().asString();
+                baseURL.toExternalForm() + String.format("contact/%s/details", id))
+                        .then()
+                        .statusCode(200)
+                        //  RestEasy >3.9.3 adds charset info unless resteasy.add.charset is set to false,
+                        //  thus expecting for it to be there, see
+                        //  https://docs.jboss.org/resteasy/docs/3.9.3.Final/userguide/html/Installation_Configuration.html#configuration_switches
+                        .contentType(equalToIgnoringCase("text/plain;charset=UTF-8"))
+                        .extract().asString();
         Assert.assertEquals(response, String.format("ID: %s", id));
     }
 
@@ -101,9 +101,9 @@ public class IntegrationWithCDITest {
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void testOpenApiDocumentForDocumentedConstructorParam() {
+    public void testOpenApiDocumentForDocumentedConstructorParam(@ArquillianResource URL baseURL) throws URISyntaxException {
 
-        String responseContent = get(openApiUrl)
+        String responseContent = get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .extract().asString();

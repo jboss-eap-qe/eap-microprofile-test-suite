@@ -40,10 +40,8 @@ public class ConfigureMicroProfileOpenApiExtensionTest {
             throws ManagementClientRelatedException, IOException, ConfigurationException {
         //  MP OpenAPI up & down
         try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone(arquillianContainerProperties)) {
-            if (!OpenApiServerConfiguration.openapiSubsystemExists(client)) {
-                OpenApiServerConfiguration.enableOpenApi(client);
-                OpenApiServerConfiguration.disableOpenApi(client);
-            }
+            OpenApiServerConfiguration.enableOpenApi(client);
+            OpenApiServerConfiguration.disableOpenApi(client);
         }
     }
 }
