@@ -49,22 +49,19 @@ public abstract class NamefellowMetricsTest {
 
     @Before
     public void prepare() {
+        String metricsURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics";
         jsonMetricsRequest = given()
-                .baseUri("http://" + managementClient.getMgmtAddress())
-                .port(managementClient.getMgmtPort())
-                .basePath("metrics")
+                .baseUri(metricsURL)
                 .accept(ContentType.JSON);
         textMetricsRequest = given()
-                .baseUri("http://" + managementClient.getMgmtAddress())
-                .port(managementClient.getMgmtPort())
-                .basePath("/metrics")
+                .baseUri(metricsURL)
                 .accept(ContentType.TEXT);
     }
 
     /**
      * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are registered
-     *                and tagged properly. The informations are avalable under {@code /metrics} endpoint via HTTP OPTIONS.
-     *                Metrics are in separate archives - multiple-deployment / subdeployment scenario.
+     *                and tagged properly. The information is available under {@code /metrics} endpoint via HTTP OPTIONS.
+     *                Metrics are in separate archives - multiple-deployment / sub-deployment scenario.
      * @tpPassCrit Metrics are tagged properly
      * @tpSince EAP 7.4.0.CD19
      */
@@ -87,7 +84,7 @@ public abstract class NamefellowMetricsTest {
     /**
      * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are incremented
      *                properly according to the number of a CDI beans invocation.
-     *                Metrics are in separate archives - multiple-deployment / subdeployment scenario.
+     *                Metrics are in separate archives - multiple-deployment / sub-deployment scenario.
      * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in JSON and prometheus format.
      * @tpSince EAP 7.4.0.CD19
      */

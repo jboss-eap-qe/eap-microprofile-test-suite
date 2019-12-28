@@ -82,9 +82,7 @@ public class ConnectionStressMetricsTest {
             }
 
             given()
-                    .baseUri("http://" + managementClient.getMgmtAddress())
-                    .port(managementClient.getMgmtPort())
-                    .basePath("metrics")
+                    .baseUri(metricsURL.toString())
                     .accept(ContentType.JSON)
                     .get().then()
                     .contentType(ContentType.JSON)
