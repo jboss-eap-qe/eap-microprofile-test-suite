@@ -57,7 +57,7 @@ public abstract class CustomMetricBaseTest {
 
     void testMetricForValue(int value) {
         given()
-                .baseUri("http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics")
+                .baseUri(metricsURL)
                 .accept(ContentType.JSON)
                 .get()
                 .then()

@@ -55,15 +55,12 @@ public class MetricsTest {
 
     @Before
     public void prepare() {
+        String metricsURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics";
         jsonMetricsRequest = given()
-                .baseUri("http://" + managementClient.getMgmtAddress())
-                .port(managementClient.getMgmtPort())
-                .basePath("metrics")
+                .baseUri(metricsURL)
                 .accept(ContentType.JSON);
         textMetricsRequest = given()
-                .baseUri("http://" + managementClient.getMgmtAddress())
-                .port(managementClient.getMgmtPort())
-                .basePath("/metrics")
+                .baseUri(metricsURL)
                 .accept(ContentType.TEXT);
     }
 
@@ -89,7 +86,7 @@ public class MetricsTest {
 
     /**
      * @tpTestDetails MP Metrics specification compatibility scenario to verify application MP Metrics have correct
-     *                metadata acording to MP Metric specification.
+     *                metadata according to MP Metric specification.
      *                Metadata are exposed under /metrics endpoint with HTTP OPTIONS method.
      * @tpPassCrit Correct metadata (against the specification) are provided for metrics.
      * @tpSince EAP 7.4.0.CD19
