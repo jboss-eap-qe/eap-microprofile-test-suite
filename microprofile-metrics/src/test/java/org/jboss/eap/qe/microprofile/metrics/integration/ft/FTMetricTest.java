@@ -134,7 +134,7 @@ public class FTMetricTest {
     }
 
     private void setMPConfig(boolean providerCorrupted, int increment, int failSafeIncrement) throws IOException {
-        String content = String.format("%s=%s\n%s=%s\n%s=%s",
+        String content = String.format("%s=%s%n%s=%s%n%s=%s",
                 FAULT_CTL_CONFIG_PROPERTY, providerCorrupted,
                 INCREMENT_CONFIG_PROPERTY, increment,
                 FAILSAFE_INCREMENT_CONFIG_PROPERTY, failSafeIncrement);

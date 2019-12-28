@@ -1,9 +1,12 @@
 package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -99,8 +102,8 @@ public final class RsaKeyTool {
     }
 
     private void prepare(final URI pkcs8Key) {
-        try (final FileReader fileReader = new FileReader(new File(pkcs8Key));
-                final BufferedReader bufferedFileReader = new BufferedReader(fileReader)) {
+        try (final InputStreamReader isr = new InputStreamReader(new FileInputStream(new File(pkcs8Key)), UTF_8);
+                final BufferedReader bufferedFileReader = new BufferedReader(isr)) {
 
             final StringBuilder file = new StringBuilder();
             String line;
