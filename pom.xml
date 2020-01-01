@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -31,6 +30,7 @@
         <version.io.rest-assured>4.1.2</version.io.rest-assured>
         <version.javax.servlet.javax.servlet-api>3.0.1</version.javax.servlet.javax.servlet-api>
         <version.junit>4.12</version.junit>
+        <version.org.apache.maven.plugins.maven-release-plugin>3.0.0-M1</version.org.apache.maven.plugins.maven-release-plugin>
         <version.org.eclipse.microprofile>3.2</version.org.eclipse.microprofile>
         <version.org.jboss.arquillian>1.5.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>18.0.0.Final</version.org.jboss.wildfly.dist>
@@ -151,6 +151,12 @@
         </dependencies>
     </dependencyManagement>
 
+    <scm>
+        <url>scm:git:git@github.com:jboss-eap-qe/eap-microprofile-test-suite.git</url>
+        <connection>scm:git:git@github.com:jboss-eap-qe/eap-microprofile-test-suite.git</connection>
+        <developerConnection>scm:git:git@github.com:jboss-eap-qe/eap-microprofile-test-suite.git</developerConnection>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
@@ -165,6 +171,15 @@
                         <jboss.home>${jboss.home}</jboss.home>
                         <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
                     </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-release-plugin}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>

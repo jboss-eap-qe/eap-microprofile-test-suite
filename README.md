@@ -73,3 +73,41 @@ mvn process-sources
 
 ./mvnw process-sources
 ```
+
+## Tagging and branching strategy
+
+#### Version policy
+
+Naming convention: `$MAJOR.$MINOR.$MICRO.Final-SNAPSHOT` (`1.0.0.Final-SNAPSHOT`)
+
+Start with `1.0.0.Final`
+
+#### Tagging policy
+
+Naming convention: `$MAJOR.$MINOR.$MICRO.Final` (`1.0.0.Final`)
+
+###### When?
+
+New WildFly major version is released and covers a MicroProfile update
+
+#### Branching policy
+
+Naming convention: `$MAJOR.$MINOR.z` (`1.0.z`)
+
+###### When?
+
+No branches unless really needed
+
+### How to release a new version
+
+```
+mvn release:prepare release:clean
+```
+
+In order to skip tests run following command:
+
+```
+mvn release:prepare release:clean -Darguments=-DskipTests
+```
+
+With commands you are able to define a release, a tag and a next development version name in interactive way.
