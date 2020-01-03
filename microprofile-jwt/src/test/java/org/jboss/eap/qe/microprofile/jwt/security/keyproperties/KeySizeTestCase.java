@@ -9,10 +9,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +34,7 @@ public class KeySizeTestCase {
     @Deployment(name = BITS_512_KEY_DEPLOYMENT)
     public static WebArchive create512keyDeployment() {
         return ShrinkWrap.create(WebArchive.class, BITS_512_KEY_DEPLOYMENT + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key512.public.pem"), "key.public.pem");
@@ -44,7 +43,7 @@ public class KeySizeTestCase {
     @Deployment(name = BITS_1024_KEY_DEPLOYMENT)
     public static WebArchive create1024keyDeployment() {
         return ShrinkWrap.create(WebArchive.class, BITS_1024_KEY_DEPLOYMENT + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key1024.public.pem"), "key.public.pem");
@@ -53,7 +52,7 @@ public class KeySizeTestCase {
     @Deployment(name = BITS_2048_KEY_DEPLOYMENT)
     public static WebArchive create2048keyDeployment() {
         return ShrinkWrap.create(WebArchive.class, BITS_2048_KEY_DEPLOYMENT + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"), "key.public.pem");
@@ -62,7 +61,7 @@ public class KeySizeTestCase {
     @Deployment(name = BITS_4096_KEY_DEPLOYMENT)
     public static WebArchive create4096keyDeployment() {
         return ShrinkWrap.create(WebArchive.class, BITS_4096_KEY_DEPLOYMENT + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key4096.public.pem"), "key.public.pem");
