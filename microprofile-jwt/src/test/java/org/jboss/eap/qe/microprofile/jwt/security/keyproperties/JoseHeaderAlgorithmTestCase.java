@@ -10,9 +10,8 @@ import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.cdi.BasicCdiTest;
-import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsBasicEndpoint;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
@@ -42,7 +41,7 @@ public class JoseHeaderAlgorithmTestCase {
     @Deployment
     public static WebArchive create2048keyDeployment() {
         return ShrinkWrap.create(WebArchive.class, DEFAULT_DEPLOYMENT + ".war")
-                .addClass(JaxRsBasicEndpoint.class)
+                .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
                 .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"), "key.public.pem");
@@ -50,7 +49,7 @@ public class JoseHeaderAlgorithmTestCase {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = BasicCdiTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = JoseHeaderAlgorithmTestCase.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
