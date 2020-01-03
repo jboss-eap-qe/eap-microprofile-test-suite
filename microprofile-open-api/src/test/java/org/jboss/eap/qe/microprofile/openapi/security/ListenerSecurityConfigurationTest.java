@@ -32,6 +32,7 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
@@ -40,7 +41,9 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.CliException;
@@ -64,9 +67,9 @@ public class ListenerSecurityConfigurationTest {
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
     private static int configuredHTTPPort, configuredHTTPSPort;
-    private static OnlineManagementClient onlineManagementClient;
     private static Path keyStoreFile;
     private static String jbossHome;
+    private static OnlineManagementClient listenersConfigurationOnlineManagementClient;
 
     @Deployment(testable = false)
     public static Archive<?> createServicesProviderDeployment() {
@@ -86,27 +89,33 @@ public class ListenerSecurityConfigurationTest {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
+    @BeforeClass
+    public static void setup() throws ConfigurationException {
+        listenersConfigurationOnlineManagementClient = ManagementClientProvider.onlineStandalone();
+    }
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        listenersConfigurationOnlineManagementClient.close();
+    }
+
     static class OpenApiExtensionSetup implements ServerSetupTask {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
             jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome");
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
+
+            OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
             //  configured server ports for HTTP and HTTPS bindings, offset is taken into account
-            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(onlineManagementClient);
-            configuredHTTPSPort = OpenApiServerConfiguration.getHTTPSPort(onlineManagementClient);
+            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+            configuredHTTPSPort = OpenApiServerConfiguration.getHTTPSPort(client);
             //  MP OpenAPI up
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(client);
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 
@@ -115,19 +124,19 @@ public class ListenerSecurityConfigurationTest {
 
         String keystorePath = jbossHome + "/keystore.jks";
 
-        ModelNodeResult result = onlineManagementClient.execute(
+        ModelNodeResult result = listenersConfigurationOnlineManagementClient.execute(
                 String.format(
                         "/subsystem=elytron/key-store=httpsGenKS:add(path=%s,credential-reference={clear-text=secret},type=JKS",
                         keystorePath));
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
                         "alias=localhost,algorithm=RSA,key-size=1024,validity=365," +
                         "credential-reference={clear-text=secret},distinguished-name=\"CN=localhost\")");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute("/subsystem=elytron/key-store=httpsGenKS:store()");
+        result = listenersConfigurationOnlineManagementClient.execute("/subsystem=elytron/key-store=httpsGenKS:store()");
         result.assertSuccess();
 
         // keep a reference to keystore.jks in order to flush it away once we're done
@@ -136,18 +145,18 @@ public class ListenerSecurityConfigurationTest {
         }
         keyStoreFile = Paths.get(keystorePath);
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-manager=httpsKM:add(key-store=httpsGenKS,credential-reference={clear-text=secret})");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/server-ssl-context=httpsSSC:add(key-manager=httpsKM,protocols=[\"TLSv1.2\"])");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=undertow/server=default-server/https-listener=https:read-attribute(name=security-realm)\n");
         if (result.isSuccess()) {
-            Operations operations = new Operations(onlineManagementClient);
+            Operations operations = new Operations(listenersConfigurationOnlineManagementClient);
             Address undertowAddress = Address.subsystem("undertow").and("server", "default-server").and("https-listener",
                     "https");
             Batch batch = new Batch();
@@ -156,11 +165,11 @@ public class ListenerSecurityConfigurationTest {
             result = operations.batch(batch);
             result.assertSuccess();
         }
-        new Administration(onlineManagementClient).reload();
+        new Administration(listenersConfigurationOnlineManagementClient).reload();
     }
 
     private static void disableHTTPSListener() throws InterruptedException, TimeoutException, IOException, CliException {
-        Operations operations = new Operations(onlineManagementClient);
+        Operations operations = new Operations(listenersConfigurationOnlineManagementClient);
         Address undertowAddress = Address.subsystem("undertow").and("server", "default-server").and("https-listener",
                 "https");
         Batch batch = new Batch();
@@ -169,45 +178,46 @@ public class ListenerSecurityConfigurationTest {
         ModelNodeResult result = operations.batch(batch);
         result.assertSuccess();
 
-        result = onlineManagementClient.execute("/subsystem=elytron/server-ssl-context=httpsSSC:remove()");
+        result = listenersConfigurationOnlineManagementClient
+                .execute("/subsystem=elytron/server-ssl-context=httpsSSC:remove()");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-manager=httpsKM:remove()");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-store=httpsGenKS:remove()");
         result.assertSuccess();
 
-        new Administration(onlineManagementClient).reload();
+        new Administration(listenersConfigurationOnlineManagementClient).reload();
 
         Files.delete(keyStoreFile);
     }
 
     private static void disableHTTPListener() throws InterruptedException, TimeoutException, IOException, CliException {
-        ModelNodeResult result = onlineManagementClient.execute(
+        ModelNodeResult result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=undertow/server=default-server/http-listener=default:remove");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=https)");
         result.assertSuccess();
 
-        new Administration(onlineManagementClient).reload();
+        new Administration(listenersConfigurationOnlineManagementClient).reload();
     }
 
     private static void enableHTTPListener() throws InterruptedException, TimeoutException, IOException, CliException {
-        ModelNodeResult result = onlineManagementClient.execute(
+        ModelNodeResult result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=undertow/server=default-server/http-listener=default:add(" +
                         "socket-binding=http,redirect-socket=https,enable-http2=true)");
         result.assertSuccess();
 
-        result = onlineManagementClient.execute(
+        result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=default)");
         result.assertSuccess();
 
-        new Administration(onlineManagementClient).reload();
+        new Administration(listenersConfigurationOnlineManagementClient).reload();
     }
 
     /**
@@ -255,7 +265,7 @@ public class ListenerSecurityConfigurationTest {
     @Test
     @InSequence(2)
     public void testMissingHTTPListenerWarningLogged() {
-        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(onlineManagementClient, 200);
+        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(listenersConfigurationOnlineManagementClient, 200);
         Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0006"));
     }
 }

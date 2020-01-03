@@ -63,7 +63,6 @@ public class MicroprofileConfigIntegrationTests {
 
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
-    private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
     public static Archive<?> serviceProviderDeployment() {
@@ -71,7 +70,7 @@ public class MicroprofileConfigIntegrationTests {
         //  the current scenario - i.e. the one that is run by Services Provider. Following deployments
         //  are used to demonstrate advanced MP Config (and vendor extension properties) integration features.
         return ShrinkWrap.create(WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
-               .addClasses(
+                .addClasses(
                         ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
@@ -186,19 +185,12 @@ public class MicroprofileConfigIntegrationTests {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 
@@ -210,9 +202,11 @@ public class MicroprofileConfigIntegrationTests {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testWarningIsLoggedBecauseOfNonConventionalOpenApiUrl() {
-        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(onlineManagementClient, 100);
-        Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0007"));
+    public void testWarningIsLoggedBecauseOfNonConventionalOpenApiUrl() throws ConfigurationException, IOException {
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(client, 100);
+            Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0007"));
+        }
     }
 
     /**
@@ -224,9 +218,11 @@ public class MicroprofileConfigIntegrationTests {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testWarningIsLoggedBecauseOfSkippedBadlyConfiguredDeployment() {
-        ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(onlineManagementClient, 100);
-        Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0003"));
+    public void testWarningIsLoggedBecauseOfSkippedBadlyConfiguredDeployment() throws ConfigurationException, IOException {
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(client, 100);
+            Assert.assertTrue(modelNodeLogChecker.logContains("WFLYMPOAI0003"));
+        }
     }
 
     /**
