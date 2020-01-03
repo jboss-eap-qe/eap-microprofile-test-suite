@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -45,9 +44,8 @@ import org.yaml.snakeyaml.Yaml;
 @ServerSetup({ MicroProfileOpenApi11Test.OpenApiExtensionSetup.class })
 @RunAsClient
 public class MicroProfileOpenApi11Test {
-    private final static String DEPLOYMENT_NAME = MicroProfileOpenApi11Test.class.getSimpleName();
 
-    static OnlineManagementClient onlineManagementClient;
+    private final static String DEPLOYMENT_NAME = MicroProfileOpenApi11Test.class.getSimpleName();
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
@@ -67,19 +65,12 @@ public class MicroProfileOpenApi11Test {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 

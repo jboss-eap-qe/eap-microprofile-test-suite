@@ -30,8 +30,6 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictO
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.LocalServiceRouterInfoResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.RouterDistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
-import org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter;
-import org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
@@ -68,7 +66,6 @@ public class JWTSecurityAnnotationsTest {
 
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
-    private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
     public static Archive<?> serviceProviderDeployment() {
@@ -131,19 +128,12 @@ public class JWTSecurityAnnotationsTest {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 

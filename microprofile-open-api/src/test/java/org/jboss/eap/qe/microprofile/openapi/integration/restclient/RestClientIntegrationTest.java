@@ -59,7 +59,6 @@ public class RestClientIntegrationTest {
 
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
-    private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
     public static Archive<?> serviceProviderDeployment() {
@@ -116,19 +115,12 @@ public class RestClientIntegrationTest {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 

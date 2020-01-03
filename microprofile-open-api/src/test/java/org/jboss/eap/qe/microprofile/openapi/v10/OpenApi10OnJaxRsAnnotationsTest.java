@@ -64,19 +64,12 @@ public class OpenApi10OnJaxRsAnnotationsTest {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 

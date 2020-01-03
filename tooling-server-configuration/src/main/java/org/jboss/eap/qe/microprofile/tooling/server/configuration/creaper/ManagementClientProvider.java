@@ -3,7 +3,6 @@ package org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
-import org.wildfly.extras.creaper.core.ManagementClient;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.OnlineOptions;
 
@@ -38,9 +37,24 @@ public class ManagementClientProvider {
      */
     public static OnlineManagementClient onlineStandalone(ArquillianContainerProperties arquillianContainerProperties)
             throws ConfigurationException {
-        return ManagementClient.onlineLazy(
+        return org.wildfly.extras.creaper.core.ManagementClient.onlineLazy(
                 OnlineOptions.standalone().hostAndPort(
                         arquillianContainerProperties.getDefaultManagementAddress(),
                         arquillianContainerProperties.getDefaultManagementPort()).build());
+    }
+
+    /**
+     * Creates {@link OnlineManagementClient} for <b>standalone</b> mode, based on
+     * {@link org.jboss.as.arquillian.container.ManagementClient}
+     * 
+     * @param managementClient {@link org.jboss.as.arquillian.container.ManagementClient} instance which is going
+     *        to provide the
+     *        {@link org.jboss.as.controller.client.ModelControllerClient} to be wrapped by Creaper
+     *        {@link OnlineManagementClient} returned.
+     * @return Initialized {@link OnlineManagementClient} instance, don't forget to close it
+     */
+    public static OnlineManagementClient onlineStandalone(org.jboss.as.arquillian.container.ManagementClient managementClient) {
+        return org.wildfly.extras.creaper.core.ManagementClient.onlineLazy(
+                OnlineOptions.standalone().wrap(managementClient.getControllerClient()));
     }
 }

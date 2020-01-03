@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
 /**
  * Test cases for MP OpenAPI programming model (migrated from TT QE TS)
@@ -46,8 +45,6 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 public class ProgrammingModelTest {
 
     private final static String DEPLOYMENT_NAME = ProgrammingModelTest.class.getSimpleName();
-
-    private static OnlineManagementClient onlineManagementClient;
 
     @Deployment(testable = false)
     public static Archive<?> createCentralDeployment() {
@@ -79,19 +76,12 @@ public class ProgrammingModelTest {
 
         @Override
         public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI up
-            onlineManagementClient = ManagementClientProvider.onlineStandalone();
-            OpenApiServerConfiguration.enableOpenApi(onlineManagementClient);
+            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            //  MP OpenAPI down
-            try {
-                OpenApiServerConfiguration.disableOpenApi(onlineManagementClient);
-            } finally {
-                onlineManagementClient.close();
-            }
+            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
         }
     }
 
