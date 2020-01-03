@@ -48,11 +48,9 @@ public class OpenApi10OnJaxRsAnnotationsTest {
 
     @Deployment(testable = false)
     public static Archive<?> createDeployment() {
-        WebArchive deployment = ShrinkWrap.create(
-                WebArchive.class,
-                String.format("%s.war", DEPLOYMENT_NAME))
-                .addClasses(ProviderApplication.class)
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
+                        ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
                         DistrictService.class,

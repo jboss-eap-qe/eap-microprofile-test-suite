@@ -62,10 +62,9 @@ public class MicroprofileConfigIntegrationTests {
         //  This is the Services Provider deployment with default configuration and simulates the main deployment in
         //  the current scenario - i.e. the one that is run by Services Provider. Following deployments
         //  are used to demonstrate advanced MP Config (and vendor extension properties) integration features.
-        WebArchive deployment = ShrinkWrap.create(
-                WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
-                .addClasses(ProviderApplication.class)
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
+                        ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
                         DistrictService.class,
@@ -95,8 +94,7 @@ public class MicroprofileConfigIntegrationTests {
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
-                        LocalServiceRouterInfoResource.class)
-                .addClasses(
+                        LocalServiceRouterInfoResource.class,
                         DistrictObject.class,
                         RouterDistrictsResource.class,
                         DistrictServiceClient.class)
@@ -122,8 +120,7 @@ public class MicroprofileConfigIntegrationTests {
                 WebArchive.class, BADLY_CONFIGURED_ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
-                        LocalServiceRouterInfoResource.class)
-                .addClasses(
+                        LocalServiceRouterInfoResource.class,
                         DistrictObject.class,
                         RouterDistrictsResource.class,
                         DistrictServiceClient.class)
@@ -152,8 +149,7 @@ public class MicroprofileConfigIntegrationTests {
                 WebArchive.class, SCAN_DISABLING_ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
-                        LocalServiceRouterInfoResource.class)
-                .addClasses(
+                        LocalServiceRouterInfoResource.class,
                         DistrictObject.class,
                         RouterDistrictsResource.class,
                         DistrictServiceClient.class)
