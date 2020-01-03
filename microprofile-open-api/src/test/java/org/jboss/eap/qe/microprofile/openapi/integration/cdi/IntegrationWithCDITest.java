@@ -42,11 +42,8 @@ public class IntegrationWithCDITest {
 
     @Deployment(testable = false)
     public static Archive<?> localServicesRouterDeployment() {
-        WebArchive deployment = ShrinkWrap.create(
-                WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
-                .addClasses(
-                        RouterApplication.class,
-                        Contact.class)
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
+                .addClasses(RouterApplication.class, Contact.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return deployment;
     }

@@ -60,15 +60,14 @@ public class ProgrammingModelTest {
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class,
                 String.format("%s.war", DEPLOYMENT_NAME))
-                .addClasses(ProviderApplication.class)
                 .addClasses(
+                        ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
                         DistrictService.class,
                         InMemoryDistrictService.class,
                         DistrictsResource.class,
-                        RoutingServiceConstants.class)
-                .addClasses(
+                        RoutingServiceConstants.class,
                         OpenApiModelReader.class,
                         OpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")

@@ -42,7 +42,7 @@ public class ActivationCompatibilityTest {
 
     @Deployment
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(WebArchive.class)
+        return ShrinkWrap.create(WebArchive.class, ActivationCompatibilityTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(

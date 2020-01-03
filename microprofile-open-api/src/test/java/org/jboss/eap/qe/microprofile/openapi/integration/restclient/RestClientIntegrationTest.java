@@ -67,8 +67,8 @@ public class RestClientIntegrationTest {
         String mpConfigProperties = "mp.openapi.extensions.enabled=false";
         WebArchive deployment = ShrinkWrap.create(
                 WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
-                .addClasses(ProviderApplication.class)
                 .addClasses(
+                        ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
                         DistrictService.class,
@@ -105,8 +105,7 @@ public class RestClientIntegrationTest {
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
                         RouterApplication.class,
-                        LocalServiceRouterInfoResource.class)
-                .addClasses(
+                        LocalServiceRouterInfoResource.class,
                         DistrictObject.class,
                         RouterDistrictsResource.class,
                         DistrictServiceClient.class)

@@ -51,12 +51,9 @@ public class MicroProfileOpenApi11Test {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        WebArchive deployment = ShrinkWrap.create(
-                WebArchive.class,
-                String.format("%s.war", DEPLOYMENT_NAME))
+        WebArchive deployment = ShrinkWrap.create(WebArchive.class, String.format("%s.war", DEPLOYMENT_NAME))
                 .addClasses(
-                        ProviderApplication.class)
-                .addClasses(
+                        ProviderApplication.class,
                         District.class,
                         DistrictEntity.class,
                         DistrictService.class,
