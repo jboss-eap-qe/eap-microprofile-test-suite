@@ -1,0 +1,11 @@
+components:
+  schemas:
+    DistrictEntity:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        obsolete:
+          type: boolean

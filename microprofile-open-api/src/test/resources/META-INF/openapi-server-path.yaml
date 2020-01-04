@@ -102,6 +102,29 @@ paths:
       x-object-array-property:
         - name: item-1
         - name: item-2
+  /echo:
+    get:
+      summary: Get echo response from central Service Provider
+      description: Service Provider app is called to get an echo response
+      operationId: getEchoFromServiceProvider
+      parameters:
+        - name: message
+          in: query
+          required: true
+          schema:
+            type: string
+      servers:
+      - url: http://127.0.0.1:8080/serviceProviderDeployment
+        description: Central Service Provider server
+      responses:
+        "404":
+          description: The Service provider echo endpoint was not found
+        "200":
+          description: An echo response containing the message sent through the request
+          content:
+            text/plain:
+              schema:
+                type: string
 components:
   schemas:
     DistrictEntity:

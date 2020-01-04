@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -29,7 +30,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -127,8 +127,8 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_PLAIN} {@code Accept} header and no {@code format} query
      *                parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -138,15 +138,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.TEXT_PLAIN)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_XML} {@code Accept} header and no {@code format} query
      *                parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -156,15 +155,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.TEXT_XML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_HTML} {@code Accept} header and no {@code format} query
      *                parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -174,15 +172,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.TEXT_HTML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_XML} {@code Accept} header and no {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -192,15 +189,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_XML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_ATOM_XML} {@code Accept} header and no {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -210,15 +206,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_ATOM_XML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_XHTML_XML} {@code Accept} header and no
      *                {@code format} query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -228,15 +223,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_XHTML_XML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_SVG_XML} {@code Accept} header and no {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -246,15 +240,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_SVG_XML)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#SERVER_SENT_EVENTS} {@code Accept} header and no {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -264,35 +257,33 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.SERVER_SENT_EVENTS)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_OCTET_STREAM} {@code Accept} header and no
      *                {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     public void testResponseYamlContentTypeWhenApplicationStreamAcceptHeaderAndNoQueryParameter(@ArquillianResource URL baseURL)
             throws URISyntaxException {
         given()
-                .header("Accept", MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                .header("Accept", MediaType.APPLICATION_OCTET_STREAM)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_FORM_URLENCODED} {@code Accept} header and no
      *                {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -303,15 +294,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_FORM_URLENCODED)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@link MediaType#MULTIPART_FORM_DATA} {@code Accept} header and no {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -322,15 +312,14 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.MULTIPART_FORM_DATA)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 
     /**
      * @tpTestDetails Sends HTTP request with {@code application/*} {@code Accept} header and no {@code format} query
      *                parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -341,7 +330,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", "application/*")
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
+                .statusCode(Response.Status.OK.getStatusCode())
                 .contentType("application/yaml");
     }
 
@@ -349,12 +338,11 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_JSON_PATCH_JSON} {@code Accept} header and no
      *                {@code format}
      *                query parameter.
-     * @tpPassCrit Despite unexpected information is sent to server through the "Accept" HTTP header,
-     *             the right Content Type is returned as per MicroProfile OpenAPI spec.
+     * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
+     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @Ignore("https://issues.redhat.com/browse/WFWIP-290")
     public void testResponseYamlContentTypeWhenJsonPatchJsonAcceptHeaderAndNoQueryParameter(
             @ArquillianResource URL baseURL)
             throws URISyntaxException {
@@ -362,7 +350,6 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
                 .header("Accept", MediaType.APPLICATION_JSON_PATCH_JSON)
                 .get(baseURL.toURI().resolve("/openapi"))
                 .then()
-                .statusCode(200)
-                .contentType("application/yaml");
+                .statusCode(Response.Status.NOT_ACCEPTABLE.getStatusCode());
     }
 }

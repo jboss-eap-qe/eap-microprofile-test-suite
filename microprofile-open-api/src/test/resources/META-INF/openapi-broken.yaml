@@ -102,14 +102,3 @@ paths:
       x-object-array-property:
         - name: item-1
         - name: item-2
-components:
-  schemas:
-    DistrictEntity:
-      type: object
-      properties:
-        code:
-          type: string
-        name:
-          type: string
-        obsolete:
-          type: boolean

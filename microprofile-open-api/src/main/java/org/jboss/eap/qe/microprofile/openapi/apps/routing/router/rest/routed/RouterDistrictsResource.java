@@ -77,13 +77,15 @@ public class RouterDistrictsResource {
     /***
      * Updates a district data
      *
-     * @param {@link {@link DistrictObject}} instance carrying data to update the stored entity
+     *
+     * @param code String that uniquely identifies a District
+     * @param district instance carrying data to update the stored entity
      * @return District instance representing the updated stored entity
      */
     @PATCH
     @Path("/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDistrict(@RequestBody DistrictObject district) {
-        return serviceClient.updateDistrict(district.getCode(), district);
+    public Response updateDistrict(@PathParam("code") String code, @RequestBody DistrictObject district) {
+        return serviceClient.updateDistrict(code, district);
     }
 }
