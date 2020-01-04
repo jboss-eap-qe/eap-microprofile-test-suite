@@ -1,6 +1,11 @@
 package org.jboss.eap.qe.microprofile.jwt.security.keyproperties;
 
-import io.restassured.RestAssured;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -16,11 +21,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import static org.hamcrest.CoreMatchers.equalTo;
+import io.restassured.RestAssured;
 
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -36,8 +37,10 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_512_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key512.public.pem"), "key.public.pem");
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key512.public.pem"),
+                        "key.public.pem");
     }
 
     @Deployment(name = BITS_1024_KEY_DEPLOYMENT)
@@ -45,8 +48,10 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_1024_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key1024.public.pem"), "key.public.pem");
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key1024.public.pem"),
+                        "key.public.pem");
     }
 
     @Deployment(name = BITS_2048_KEY_DEPLOYMENT)
@@ -54,8 +59,10 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_2048_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"), "key.public.pem");
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"),
+                        "key.public.pem");
     }
 
     @Deployment(name = BITS_4096_KEY_DEPLOYMENT)
@@ -63,13 +70,15 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_4096_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key4096.public.pem"), "key.public.pem");
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key4096.public.pem"),
+                        "key.public.pem");
     }
 
     /**
      * @tpTestDetails Test specification compatibility by authenticating against server with a token signed with a valid
-     * key 1024 bits long. Proper public key is supplied to server.
+     *                key 1024 bits long. Proper public key is supplied to server.
      * @tpPassCrit Authentication is successful and client receives raw token value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -87,7 +96,7 @@ public class KeySizeTestCase {
 
     /**
      * @tpTestDetails Test specification compatibility by authenticating against server with a token signed with a valid
-     * key 2048 bits long. Proper public key is supplied to server.
+     *                key 2048 bits long. Proper public key is supplied to server.
      * @tpPassCrit Authentication is successful and client receives raw token value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -105,7 +114,7 @@ public class KeySizeTestCase {
 
     /**
      * @tpTestDetails Test specification compatibility by authenticating against server with a token signed with a valid
-     * key 2048 bits long. Proper public key is supplied to server.
+     *                key 2048 bits long. Proper public key is supplied to server.
      * @tpPassCrit Authentication is successful and client receives raw token value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -123,8 +132,9 @@ public class KeySizeTestCase {
 
     /**
      * @tpTestDetails Test specification compatibility by authenticating against server with a token signed with a valid
-     * key 512 bits long. This is a negative test scenario and should not succeed since MP-JWT 1.1 supports only 1024
-     * and 2048 bits long keys. Proper public key is supplied to server.
+     *                key 512 bits long. This is a negative test scenario and should not succeed since MP-JWT 1.1 supports only
+     *                1024
+     *                and 2048 bits long keys. Proper public key is supplied to server.
      * @tpPassCrit Authentication is not successful and client receives "unauthorized" response.
      * @tpSince EAP 7.4.0.CD19
      */
