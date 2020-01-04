@@ -1,6 +1,17 @@
 package org.jboss.eap.qe.microprofile.jwt.security.keyproperties;
 
-import io.restassured.RestAssured;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.UUID;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -18,17 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.equalTo;
+import io.restassured.RestAssured;
 
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -43,8 +44,10 @@ public class JoseHeaderAlgorithmTestCase {
         return ShrinkWrap.create(WebArchive.class, DEFAULT_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"), "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"), "key.public.pem");
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"),
+                        "key.public.pem");
     }
 
     @BeforeClass
@@ -58,7 +61,7 @@ public class JoseHeaderAlgorithmTestCase {
 
     /**
      * @tpTestDetails JOSE header with {@code alg} set to {@code RS256} must be supported. Verify, such JWT is not
-     * rejected.
+     *                rejected.
      * @tpPassCrit JWT is not rejected and its raw value is returned to client.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -95,7 +98,7 @@ public class JoseHeaderAlgorithmTestCase {
     }
 
     private JsonWebToken prepareJwtWithCustomJoseHeaderSignedWithRS384(final JoseHeader joseHeader, final RsaKeyTool keyTool) {
-         final String subject = "FAKE_USER";
+        final String subject = "FAKE_USER";
 
         final Instant now = Instant.now();
         final Instant later = now.plus(1, ChronoUnit.HOURS);
