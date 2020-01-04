@@ -307,5 +307,12 @@
                 <module>microprofile-jwt</module>
             </modules>
         </profile>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>microprofile-jwt</module>
+                <module>microprofile-open-api</module>
+            </modules>
+        </profile>
     </profiles>
 </project>

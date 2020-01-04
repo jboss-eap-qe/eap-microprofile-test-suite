@@ -5,8 +5,8 @@ jdk:
 install:
  - mvn -version; docker version
 script:
- - mvn -B formatter:validate impsort:check
- - mvn -B verify -DskipTests -Djboss.home=foo
+ - mvn -B -Pall formatter:validate impsort:check
+ - mvn -B -Pall verify -DskipTests -Djboss.home=foo
 cache:
  directories:
   - $HOME/.m2
