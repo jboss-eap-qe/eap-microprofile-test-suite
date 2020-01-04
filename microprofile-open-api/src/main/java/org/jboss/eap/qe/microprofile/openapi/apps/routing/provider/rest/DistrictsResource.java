@@ -103,7 +103,8 @@ public class DistrictsResource {
     /***
      * Updates a district data
      *
-     * @param {@link {@link DistrictEntity}} instance carrying data to update the stored entity
+     * @param code String that uniquely identifies a District
+     * @param district instance carrying data to update the stored entity
      * @return DistrictEntity instance representing the updated stored entity
      */
     @PATCH
@@ -123,13 +124,13 @@ public class DistrictsResource {
             @Extension(name = "x-object-array-property", value = "[ { \"name\": \"item-1\" }, { \"name\" : \"item-2\" } ]", parseValue = true)
     })
     @Operation(summary = "Updates a district data", description = "Retrieves, updates and returns the requested district data", operationId = "updateDistrict")
-    public Response updateDistrict(@RequestBody DistrictEntity district) {
-        District result = districtService.getByCode(district.getCode());
+    public Response updateDistrict(@PathParam("code") String code, @RequestBody DistrictEntity district) {
+        District result = districtService.getByCode(code);
         if (result == null)
             return Response.status(Response.Status.NOT_FOUND).build();
         else {
 
-            return Response.ok().entity(toEntity(districtService.update(district.getCode(), district))).build();
+            return Response.ok().entity(toEntity(districtService.update(code, district))).build();
         }
     }
 }

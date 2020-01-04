@@ -132,8 +132,8 @@ public class MicroProfileOpenApi11Test {
         // 1.1 the addition of the JAXRS 2.1 PATCH method
         Map<String, Object> patchMethod = (Map<String, Object>) getDistrictByCodePath.get("patch");
         Assert.assertFalse("\"/districts/{code}\" \"patch\" property is empty", patchMethod.isEmpty());
-        Assert.assertEquals("\"/districts/{code}\" \"patch\" property should have exactly 12 keys",
-                patchMethod.keySet().size(), 12);
+        Assert.assertEquals("\"/districts/{code}\" \"patch\" property should have exactly 13 keys",
+                patchMethod.keySet().size(), 13);
 
         // 1.1 @Content now supports a singular example field
         Map<String, Object> responses = (Map<String, Object>) patchMethod.get("responses");

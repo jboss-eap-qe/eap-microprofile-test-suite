@@ -1,10 +1,4 @@
----
-openapi: 3.0.1
-info:
-  title: LSR App
-  version: "1.0"
-paths:
-  /districts/all:
+  /districts@@ID@@/all:
     get:
       summary: Get all districts
       description: Retrieves and returns the available districts
@@ -35,7 +29,7 @@ paths:
       x-object-array-property:
         - name: item-1
         - name: item-2
-  /districts/{code}:
+  /districts@@ID@@/{code}:
     get:
       summary: Get district by code
       description: Retrieves and returns the requested district
@@ -102,14 +96,3 @@ paths:
       x-object-array-property:
         - name: item-1
         - name: item-2
-components:
-  schemas:
-    DistrictEntity:
-      type: object
-      properties:
-        code:
-          type: string
-        name:
-          type: string
-        obsolete:
-          type: boolean

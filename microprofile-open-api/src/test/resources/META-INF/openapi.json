@@ -1,0 +1,179 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "LSR App",
+    "version": "1.0"
+  },
+  "paths": {
+    "/districts/all": {
+      "get": {
+        "summary": "Get all districts",
+        "description": "Retrieves and returns the available districts",
+        "operationId": "getAllDistricts",
+        "responses": {
+          "200": {
+            "description": "All available districts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DistrictEntity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-routing-fqdn": "provider.acme.unknown",
+        "x-string-property": "string-value",
+        "x-boolean-property": true,
+        "x-number-property": 42,
+        "x-object-property": {
+          "property-1": "value-1",
+          "property-2": "value-2",
+          "property-3": {
+            "prop-3-1": 42,
+            "prop-3-2": true
+          }
+        },
+        "x-string-array-property": [
+          "one",
+          "two",
+          "three"
+        ],
+        "x-object-array-property": [
+          {
+            "name": "item-1"
+          },
+          {
+            "name": "item-2"
+          }
+        ]
+      }
+    },
+    "/districts/{code}": {
+      "get": {
+        "summary": "Get district by code",
+        "description": "Retrieves and returns the requested district",
+        "operationId": "getDistrictByCOde",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeObsolete",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistrictEntity"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Requested district was not found"
+          }
+        },
+        "x-routing-fqdn": "provider.acme.unknown"
+      },
+      "patch": {
+        "summary": "Updates a district data",
+        "description": "Retrieves, updates and returns the requested district data",
+        "operationId": "updateDistrict",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DistrictEntity"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistrictEntity"
+                },
+                "example": "{\"code\": \"DW\", \"name\": \"Western district\", \"obsolete\": false}"
+              }
+            }
+          },
+          "404": {
+            "description": "Requested district was not found"
+          }
+        },
+        "x-routing-fqdn": "provider.acme.unknown",
+        "x-string-property": "string-value",
+        "x-boolean-property": true,
+        "x-number-property": 42,
+        "x-object-property": {
+          "property-1": "value-1",
+          "property-2": "value-2",
+          "property-3": {
+            "prop-3-1": 42,
+            "prop-3-2": true
+          }
+        },
+        "x-string-array-property": [
+          "one",
+          "two",
+          "three"
+        ],
+        "x-object-array-property": [
+          {
+            "name": "item-1"
+          },
+          {
+            "name": "item-2"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DistrictEntity": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "obsolete": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
