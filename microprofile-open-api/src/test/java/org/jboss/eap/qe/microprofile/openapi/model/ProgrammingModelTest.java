@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
 /**
- * Test cases for MP OpenAPI programming model (migrated from RHOAR QE TS)
+ * Test cases for MP OpenAPI programming model (migrated from TT QE TS)
  */
 @RunWith(Arquillian.class)
 @ServerSetup({ ProgrammingModelTest.OpenApiExtensionSetup.class })

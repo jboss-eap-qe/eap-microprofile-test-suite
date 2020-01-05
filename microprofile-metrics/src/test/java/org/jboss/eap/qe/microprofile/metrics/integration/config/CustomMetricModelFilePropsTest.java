@@ -75,7 +75,7 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
 
     /**
      * Setup a microprofile-config-smallrye subsystem to obtain values from a directory defined in the subsystem.
-     * The directory contains files (filenames are mapped to MP Config properties name) which contains config values.
+     * The directory contains files (file name is mapped to MP Config property name) which contain config values.
      */
     public static class SetupTask implements ServerSetupTask {
 

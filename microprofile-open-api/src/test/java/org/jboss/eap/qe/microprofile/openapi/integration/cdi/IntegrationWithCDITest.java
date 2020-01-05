@@ -112,10 +112,10 @@ public class IntegrationWithCDITest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> getConctactIdDetailsPath = (Map<String, Object>) paths.get("/contact/{id}/details");
-        Assert.assertFalse("\"/contact/{id}/details\" property is empty", getConctactIdDetailsPath.isEmpty());
+        Map<String, Object> getContactIdDetailsPath = (Map<String, Object>) paths.get("/contact/{id}/details");
+        Assert.assertFalse("\"/contact/{id}/details\" property is empty", getContactIdDetailsPath.isEmpty());
 
-        Map<String, Object> getMethod = (Map<String, Object>) getConctactIdDetailsPath.get("get");
+        Map<String, Object> getMethod = (Map<String, Object>) getContactIdDetailsPath.get("get");
         Assert.assertFalse("\"/contact/{id}/details\" \"get\" property is empty", getMethod.isEmpty());
         Assert.assertNotNull("\"/contact/{id}/details\" \"responses\" for GET verb is null", getMethod.get("responses"));
 
@@ -133,7 +133,7 @@ public class IntegrationWithCDITest {
                 "\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 has \"content\" but null \"application/json\" property",
                 http200ResponseContent.get("text/plain"));
 
-        List<Object> parameters = (List<Object>) getConctactIdDetailsPath.get("parameters");
+        List<Object> parameters = (List<Object>) getContactIdDetailsPath.get("parameters");
         Assert.assertEquals("\"/contact/{id}/details\" operation for GET verb should have exactly 1 parameters",
                 parameters.size(), 1);
 

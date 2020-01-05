@@ -165,7 +165,7 @@ public class Docker extends ExternalResource {
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
         terminateThreadPools();
-        removeDockerContainter();
+        removeDockerContainer();
     }
 
     public void kill() throws Exception {
@@ -177,7 +177,7 @@ public class Docker extends ExternalResource {
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
         terminateThreadPools();
-        removeDockerContainter();
+        removeDockerContainer();
     }
 
     private void terminateThreadPools() throws Exception {
@@ -185,7 +185,7 @@ public class Docker extends ExternalResource {
         outputPrinter.awaitTermination(10, TimeUnit.SECONDS);
     }
 
-    private void removeDockerContainter() throws Exception {
+    private void removeDockerContainer() throws Exception {
         new ProcessBuilder()
                 .command("docker", "rm", uuid)
                 .start()

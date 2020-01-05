@@ -82,7 +82,7 @@ public class FTMetricTest {
 
     /**
      * @tpTestDetails Multi-component customer scenario to verify custom counter metric is registered & exposed.
-     *                The counter increment value depends on MP Config property values privded by a CDI bean
+     *                The counter increment value depends on MP Config property values provided by a CDI bean
      *                The increment for the counter is provided by a fail-safe service. If one provider fails
      *                (controlled by MP Config property) the fail-safe service fallbacks to another provider. Values
      *                returned by providers are configured via MP Config.
@@ -105,7 +105,7 @@ public class FTMetricTest {
 
     /**
      * @tpTestDetails Multi-component customer scenario to verify custom counter metric is registered & exposed.
-     *                The counter increment value depends on MP Config property values privded by a CDI bean
+     *                The counter increment value depends on MP Config property values provided by a CDI bean
      *                The increment for the counter is provided by a fail-safe service. If one provider fails
      *                (controlled by MP Config property) the fail-safe service fallbacks to another provider. Values
      *                returned by providers are configured via MP Config.
