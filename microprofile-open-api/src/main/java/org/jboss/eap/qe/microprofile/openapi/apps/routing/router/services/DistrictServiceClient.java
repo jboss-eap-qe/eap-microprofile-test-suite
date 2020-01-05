@@ -49,7 +49,7 @@ public interface DistrictServiceClient {
      * Updates a district data
      *
      * @param {@link District} instance carrying data to update the stored entity
-     * @return District instance representing the updated stored entoty
+     * @return District instance representing the updated stored entity
      */
     @PATCH
     @Path("/{code}")

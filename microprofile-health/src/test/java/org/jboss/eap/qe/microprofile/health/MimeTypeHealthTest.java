@@ -68,7 +68,7 @@ public class MimeTypeHealthTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testHealtTextPlain() throws ConfigurationException {
+    public void testHealthTextPlain() throws ConfigurationException {
         test("text/plain");
     }
 
@@ -81,7 +81,7 @@ public class MimeTypeHealthTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testHealtTextCSV() throws ConfigurationException {
+    public void testHealthTextCSV() throws ConfigurationException {
         test("text/csv");
     }
 
@@ -94,7 +94,7 @@ public class MimeTypeHealthTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testHealtModelVML() throws ConfigurationException {
+    public void testHealthModelVML() throws ConfigurationException {
         test("model/vml");
     }
 

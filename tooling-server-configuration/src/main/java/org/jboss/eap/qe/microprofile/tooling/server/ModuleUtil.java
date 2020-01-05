@@ -81,7 +81,7 @@ public class ModuleUtil {
         }
 
         /**
-         * Execute the oppertaion on {@param client}. ENV property {@code JBOSS_HOME} must be set.
+         * Execute the operation on {@param client}. ENV property {@code JBOSS_HOME} must be set.
          */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
             StringBuilder cmd = new StringBuilder("module add");
@@ -112,7 +112,7 @@ public class ModuleUtil {
         }
 
         /**
-         * Execute the oppertaion on {@param client}. ENV property {@code JBOSS_HOME} must be set.
+         * Execute the operation on {@param client}. ENV property {@code JBOSS_HOME} must be set.
          */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
             client.executeCli("module remove --name=" + name);

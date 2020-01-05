@@ -35,7 +35,7 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * Test cases for MP OpenAPI v. 1.0 annotations on JAX-RS components (migrated from RHOAR QE TS)
+ * Test cases for MP OpenAPI v. 1.0 annotations on JAX-RS components (migrated from TT QE TS)
  */
 @RunWith(Arquillian.class)
 @ServerSetup({ OpenApi10OnJaxRsAnnotationsTest.OpenApiExtensionSetup.class })
