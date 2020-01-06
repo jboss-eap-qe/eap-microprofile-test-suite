@@ -14,7 +14,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.cdi.ActivationCompatibilityTest;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
@@ -43,7 +42,8 @@ public class PublicKeyPropertyTestCase {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = ActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = PublicKeyPropertyTestCase.class.getClassLoader()
+                .getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -61,7 +61,8 @@ public class PublicKeyPropertyTestCase {
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(
-                        ActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-pk-valid.properties"),
+                        PublicKeyPropertyTestCase.class.getClassLoader()
+                                .getResource("mp-config-pk-valid.properties"),
                         "microprofile-config.properties");
     }
 
@@ -76,7 +77,8 @@ public class PublicKeyPropertyTestCase {
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(
-                        ActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-pk-invalid.properties"),
+                        PublicKeyPropertyTestCase.class.getClassLoader()
+                                .getResource("mp-config-pk-invalid.properties"),
                         "microprofile-config.properties");
     }
 
@@ -89,7 +91,7 @@ public class PublicKeyPropertyTestCase {
     @Test
     @RunAsClient
     @OperateOnDeployment(DEPLOYMENT_WITH_INVALID_KEY)
-    public void testJwkVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws ConfigurationException, IOException {
+    public void testJwtVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws ConfigurationException, IOException {
         final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         RestAssured.given()
@@ -108,15 +110,15 @@ public class PublicKeyPropertyTestCase {
     }
 
     /**
-     * @tpTestDetails A negative scenario where request with proper JWT is sent on server which has configured bad
-     *                public key. The server verifies the signature and authorizes user.
+     * @tpTestDetails Proper JWT is sent on server which has configured matching public key. The server verifies the
+     *                signature and authorizes user.
      * @tpPassCrit Token which was sent on server is sent back to client in response.
-     * @tpSince EAP 7.3.0.CD19
+     * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @RunAsClient
     @OperateOnDeployment(DEPLOYMENT_WITH_VALID_KEY)
-    public void testJwkVerificationSucceedsWithValidKey(@ArquillianResource URL url) {
+    public void testJwtVerificationSucceedsWithValidKey(@ArquillianResource URL url) {
         final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         RestAssured.given()

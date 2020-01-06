@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.jwt.cdi;
+package org.jboss.eap.qe.microprofile.jwt.activation;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
@@ -12,7 +12,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
-import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.NonJwtJaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -24,38 +24,44 @@ import org.junit.runner.RunWith;
 import io.restassured.RestAssured;
 
 /**
- * Just verify a raw token value can be injected into a variable in an application class a compare it has expected value
+ * Set of tests which are verifying that JWT subsystem can be activated by configuring {@code auth-method} in app's
+ * web.xml.
  */
 @RunWith(Arquillian.class)
-public class ActivationCompatibilityTest {
+public class WebXmlActivationCompatibilityTest {
 
     private static RsaKeyTool keyTool;
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = ActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = WebXmlActivationCompatibilityTest.class.getClassLoader()
+                .getResource("pki/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
         keyTool = RsaKeyTool.newKeyTool(privateKeyUrl.toURI());
     }
 
-    @Deployment
+    @Deployment(testable = false)
     public static Archive<?> createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, ActivationCompatibilityTest.class.getSimpleName() + ".war")
+        return ShrinkWrap.create(WebArchive.class, WebXmlActivationCompatibilityTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
-                .addClass(JaxRsTestApplication.class)
+                .addClass(NonJwtJaxRsTestApplication.class)
+                .setWebXML(
+                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("activation-web.xml"))
                 .addAsManifestResource(
-                        ActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-basic.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(ActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(
+                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.public.pem"),
                         "key.public.pem");
     }
 
     /**
-     * @tpTestDetails Testing CDI specification compatibility
+     * @tpTestDetails Test that subsystem was correctly activated by setting {@code auth-method} in {@code web.xml} to
+     *                {@code MP-JWT}.
      * @tpPassCrit Same token which was sent on server is received in response.
-     * @tpSince EAP 7.3.0.CD19
+     * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @RunAsClient
