@@ -1,5 +1,8 @@
 package org.jboss.eap.qe.microprofile.jwt;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
@@ -13,9 +16,6 @@ import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.OperationException;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
-
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Class aggregating all subsystem related tests. If there ever will be configuration options for subsystem, this is the
