@@ -47,16 +47,12 @@ public class MicroProfileJwtSubsystemTestCase {
 
     @Before
     public void after() throws IOException, TimeoutException, InterruptedException {
-        final Operations ops = new Operations(client);
-
         if (wasSubsystemRemovedInPrepare) {
-            ops.add(MP_JWT_SUBSYSTEM_ADDRESS).assertSuccess();
+            new Operations(client).add(MP_JWT_SUBSYSTEM_ADDRESS).assertSuccess();
             new Administration(client).reloadIfRequired();
         }
 
-        if (client != null) {
-            client.close();
-        }
+        client.close();
     }
 
     /**
