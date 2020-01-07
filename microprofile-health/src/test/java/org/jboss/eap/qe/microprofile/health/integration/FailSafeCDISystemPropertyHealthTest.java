@@ -24,27 +24,25 @@ public class FailSafeCDISystemPropertyHealthTest extends FailSafeCDIHealthBaseTe
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        WebArchive webArchive = ShrinkWrap
+        return ShrinkWrap
                 .create(WebArchive.class, FailSafeCDISystemPropertyHealthTest.class.getSimpleName() + ".war")
                 .addClasses(FailSafeDummyService.class, CDIBasedLivenessHealthCheck.class, CDIBasedReadinessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        return webArchive;
     }
 
     @Override
     protected void setConfigProperties(boolean live, boolean ready, boolean inMaintanance, boolean readyInMainenance)
             throws Exception {
-        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
-                    FailSafeDummyService.LIVE_CONFIG_PROPERTY, live)).assertSuccess();
-            client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
-                    FailSafeDummyService.READY_CONFIG_PROPERTY, ready)).assertSuccess();
-            client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
-                    FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY, inMaintanance)).assertSuccess();
-            client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
-                    FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY, readyInMainenance)).assertSuccess();
-            new Administration(client).reload();
-        }
+        OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+        client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
+                FailSafeDummyService.LIVE_CONFIG_PROPERTY, live)).assertSuccess();
+        client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
+                FailSafeDummyService.READY_CONFIG_PROPERTY, ready)).assertSuccess();
+        client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
+                FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY, inMaintanance)).assertSuccess();
+        client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
+                FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY, readyInMainenance)).assertSuccess();
+        new Administration(client).reload();
     }
 
     /**
@@ -54,32 +52,30 @@ public class FailSafeCDISystemPropertyHealthTest extends FailSafeCDIHealthBaseTe
 
         @Override
         public void setup(ManagementClient managementClient, String s) throws Exception {
-            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-                client.execute(String.format("/system-property=%s:add", FailSafeDummyService.LIVE_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(String.format("/system-property=%s:add", FailSafeDummyService.READY_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(String.format("/system-property=%s:add", FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(
-                        String.format("/system-property=%s:add", FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY))
-                        .assertSuccess();
-            }
+            OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+            client.execute(String.format("/system-property=%s:add", FailSafeDummyService.LIVE_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(String.format("/system-property=%s:add", FailSafeDummyService.READY_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(String.format("/system-property=%s:add", FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(
+                    String.format("/system-property=%s:add", FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY))
+                    .assertSuccess();
         }
 
         @Override
         public void tearDown(ManagementClient managementClient, String s) throws Exception {
-            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-                client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.LIVE_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.READY_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY))
-                        .assertSuccess();
-                client.execute(
-                        String.format("/system-property=%s:remove", FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY))
-                        .assertSuccess();
-            }
+            OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+            client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.LIVE_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.READY_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(String.format("/system-property=%s:remove", FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY))
+                    .assertSuccess();
+            client.execute(
+                    String.format("/system-property=%s:remove", FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY))
+                    .assertSuccess();
         }
     }
 }
