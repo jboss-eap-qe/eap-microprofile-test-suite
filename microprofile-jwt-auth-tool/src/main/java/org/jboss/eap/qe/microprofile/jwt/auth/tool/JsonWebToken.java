@@ -14,7 +14,9 @@ public class JsonWebToken {
     private final String rawTokenValue;
 
     private JsonWebToken(Builder builder) {
-        this.rawTokenValue = this.composeSignedRawValue(builder.joseHeader, builder.jwtClaims, builder.signature,
+        final String jwtClaims = builder.jwtClaims == null ? builder.jwtClaimsJsonString
+                : builder.jwtClaims.toJson().toString();
+        this.rawTokenValue = this.composeSignedRawValue(builder.joseHeader, jwtClaims, builder.signature,
                 builder.privateKey);
     }
 
@@ -23,11 +25,11 @@ public class JsonWebToken {
      *
      * @return a base64-encoded signed JWT.
      */
-    private String composeSignedRawValue(final JoseHeader joseHeader, final JwtClaims jwtClaims, final Signature signature,
+    private String composeSignedRawValue(final JoseHeader joseHeader, final String jwtClaims, final Signature signature,
             final PrivateKey privateKey) {
         try {
             final byte[] joseBytes = joseHeader.toJson().toString().getBytes("UTF-8");
-            final byte[] claimBytes = jwtClaims.toJson().toString().getBytes("UTF-8");
+            final byte[] claimBytes = jwtClaims.getBytes("UTF-8");
 
             final String joseAndClaims = Base64.getUrlEncoder().encodeToString(joseBytes) + "." +
                     Base64.getUrlEncoder().encodeToString(claimBytes);
@@ -59,6 +61,7 @@ public class JsonWebToken {
 
         private JoseHeader joseHeader;
         private JwtClaims jwtClaims;
+        private String jwtClaimsJsonString;
         private Signature signature;
         private PrivateKey privateKey;
 
@@ -81,6 +84,18 @@ public class JsonWebToken {
          */
         public Builder jwtClaims(JwtClaims jwtClaims) {
             this.jwtClaims = jwtClaims;
+            return this;
+        }
+
+        /**
+         * Set claim values as a JSON string. This method can be used in cases where it is desired to supply corrupted
+         * data
+         * 
+         * @param jwtClaimsJsonString JSON containing claim values
+         * @return instance of this builder
+         */
+        public Builder jwtClaims(String jwtClaimsJsonString) {
+            this.jwtClaimsJsonString = jwtClaimsJsonString;
             return this;
         }
 
@@ -110,7 +125,7 @@ public class JsonWebToken {
             if (this.joseHeader == null) {
                 throw new IllegalStateException("JOSE header must be set!");
             }
-            if (this.jwtClaims == null) {
+            if (this.jwtClaims == null && jwtClaimsJsonString == null) {
                 throw new IllegalStateException("Claims payload must be set!");
             }
             if (this.privateKey == null) {

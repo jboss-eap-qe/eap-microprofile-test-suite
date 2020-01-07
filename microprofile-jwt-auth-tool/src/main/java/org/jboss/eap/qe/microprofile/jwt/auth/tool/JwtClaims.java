@@ -3,7 +3,6 @@ package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -38,18 +37,44 @@ public class JwtClaims {
     }
 
     public JsonObject toJson() {
-        final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder()
-                .add("jti", this.jwtId)
-                .add("sub", this.subject)
-                .add("groups", Json.createArrayBuilder(this.groups))
-                .add("aud", this.audience)
-                .add("iss", this.issuer)
-                .add("iat", this.issuedAtTime)
-                .add("exp", this.expirationTime)
-                .add("upn", this.userPrincipalName);
+        final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
 
-        for (Map.Entry<String, Object> entry : this.customClaims.entrySet()) {
-            jsonObjectBuilder.add(entry.getKey(), entry.getValue().toString());
+        if (this.jwtId != null) {
+            jsonObjectBuilder.add("jti", this.jwtId);
+        }
+
+        if (this.subject != null) {
+            jsonObjectBuilder.add("sub", this.subject);
+        }
+
+        if (this.groups != null) {
+            jsonObjectBuilder.add("groups", Json.createArrayBuilder(this.groups));
+        }
+
+        if (this.audience != null) {
+            jsonObjectBuilder.add("aud", this.audience);
+        }
+
+        if (this.issuer != null) {
+            jsonObjectBuilder.add("iss", this.issuer);
+        }
+
+        if (this.issuedAtTime != null) {
+            jsonObjectBuilder.add("iat", this.issuedAtTime);
+        }
+
+        if (this.expirationTime != null) {
+            jsonObjectBuilder.add("exp", this.expirationTime);
+        }
+
+        if (this.userPrincipalName != null) {
+            jsonObjectBuilder.add("upn", this.userPrincipalName);
+        }
+
+        if (this.customClaims != null) {
+            for (Map.Entry<String, Object> entry : this.customClaims.entrySet()) {
+                jsonObjectBuilder.add(entry.getKey(), entry.getValue().toString());
+            }
         }
 
         return jsonObjectBuilder.build();
@@ -61,7 +86,7 @@ public class JwtClaims {
         private String subject;
         private Long expirationTime;
         private Long issuedAtTime;
-        private String jwtId = UUID.randomUUID().toString();
+        private String jwtId;
         private String userPrincipalName;
         private Set<String> groups;
         private String audience;
