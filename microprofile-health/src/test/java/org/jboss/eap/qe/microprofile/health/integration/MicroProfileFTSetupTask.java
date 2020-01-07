@@ -21,17 +21,15 @@ public class MicroProfileFTSetupTask implements ServerSetupTask {
 
     @Override
     public void setup(ManagementClient managementClient, String s) throws Exception {
-        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            client.execute(Util.createAddOperation(FT_EXTENSION_ADDRESS)).assertSuccess();
-            client.execute(Util.createAddOperation(FT_SUBSYSTEM_ADDRESS)).assertSuccess();
-        }
+        OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+        client.execute(Util.createAddOperation(FT_EXTENSION_ADDRESS)).assertSuccess();
+        client.execute(Util.createAddOperation(FT_SUBSYSTEM_ADDRESS)).assertSuccess();
     }
 
     @Override
     public void tearDown(ManagementClient managementClient, String s) throws Exception {
-        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            client.execute(Util.createRemoveOperation(FT_SUBSYSTEM_ADDRESS)).assertSuccess();
-            client.execute(Util.createRemoveOperation(FT_EXTENSION_ADDRESS)).assertSuccess();
-        }
+        OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+        client.execute(Util.createRemoveOperation(FT_SUBSYSTEM_ADDRESS)).assertSuccess();
+        client.execute(Util.createRemoveOperation(FT_EXTENSION_ADDRESS)).assertSuccess();
     }
 }
