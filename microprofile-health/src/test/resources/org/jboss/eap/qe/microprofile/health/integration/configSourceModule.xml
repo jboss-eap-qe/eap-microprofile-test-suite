@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    The file is needed for module that contains ConfigSource class to provide MP Config values for properties.
+-->
+
+<module xmlns="urn:jboss:module:1.5" name="test.custom-config-source">
+
+    <resources>
+        <resource-root path="config-source.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="org.eclipse.microprofile.config.api"/>
+    </dependencies>
+</module>
