@@ -23,14 +23,23 @@ import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
+/**
+ * Testclass to test {@code /health}, {@code /health/live}, {@code /health/ready} endpoints. Liveness and readiness probes
+ * are configured via MP Config properties at the beginning. Tests in the testclass are not expected to change state of
+ * probes after the initialization in the beginning since some ways of MP Config configurations in order to change values
+ * requires a WildFly to be reloaded.
+ */
+@RunAsClient
 public abstract class FailSafeCDIHealthBaseTest {
     protected RequestSpecification metricsRequest;
 
@@ -44,6 +53,8 @@ public abstract class FailSafeCDIHealthBaseTest {
         String url = "http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
                 + "/metrics";
         metricsRequest = given().baseUri(url).accept(ContentType.JSON);
+        // reset MP Config properties
+        new Administration(ManagementClientProvider.onlineStandalone(managementClient)).reload();
     }
 
     protected abstract void setConfigProperties(boolean live, boolean ready, boolean inMaintanance, boolean readyInMainenance)
@@ -56,7 +67,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @RunAsClient
     public void testHealthEndpointUp() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.healthEndpoint()).then()
@@ -90,7 +100,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @RunAsClient
     public void testLivenessEndpointUp() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.liveEndpoint()).then()
@@ -111,7 +120,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @RunAsClient
     public void testReadinessEndpointUp() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.readyEndpoint()).then()
@@ -145,7 +153,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      */
     @Ignore("WFLY-12924, WFLY-12925")
     @Test
-    @RunAsClient
     public void testHealthEndpointDownInMaintenace() throws Exception {
         setConfigProperties(false, true, true, false);
         // TODO Java 11 Map<String, String> liveCheck = Map.of( "name", "dummyLiveness", "status", "DOWN");
@@ -197,7 +204,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @RunAsClient
     public void testLivenessEndpointDownInMaintenace() throws Exception {
         setConfigProperties(false, true, true, false);
         get(HealthUrlProvider.liveEndpoint()).then()
@@ -219,7 +225,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      */
     @Ignore("WFLY-12924, WFLY-12925")
     @Test
-    @RunAsClient
     public void testReadinessEndpointDownInMaintenace() throws Exception {
         setConfigProperties(false, true, true, false);
         get(HealthUrlProvider.readyEndpoint()).then()
