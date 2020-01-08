@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,6 +39,29 @@ public final class JwtHelper {
      * @return a base64-encoded signed JWT token.
      */
     public JsonWebToken generateProperSignedJwt(final String subject) {
+        return generateProperSignedJwt(subject, new HashSet<>(Arrays.asList("group1", "group2")));
+    }
+
+    /**
+     * Generates a spec compliant base64-encoded signed JWT that expires after one hour and has the claims "sub" and
+     * "preferred_username" set to "FAKE_USER".
+     *
+     * @param groups value of {@code groups} claim
+     * @return a base64-encoded signed JWT token.
+     */
+    public JsonWebToken generateProperSignedJwt(final Set<String> groups) {
+        return generateProperSignedJwt("FAKE_USER", groups);
+    }
+
+    /**
+     * Generates a spec compliant base64-encoded signed JWT that expires after one hour and has the claims "sub" and
+     * "preferred_username" set to the provided subject string.
+     *
+     * @param subject string to use for "sub" and "preferred_username".
+     * @param groups value of {@code groups} claim
+     * @return a base64-encoded signed JWT token.
+     */
+    public JsonWebToken generateProperSignedJwt(final String subject, final Set<String> groups) {
         final Instant now = Instant.now();
         final Instant later = now.plus(1, ChronoUnit.HOURS);
 
@@ -51,7 +75,7 @@ public final class JwtHelper {
                 .issuer(this.issuer)
                 .issuedAtTime(now.getEpochSecond())
                 .expirationTime(later.getEpochSecond())
-                .groups(new HashSet<>(Arrays.asList("group1", "group2")))
+                .groups(groups)
                 .customClaim("preferred_username", subject)
                 .build();
 
