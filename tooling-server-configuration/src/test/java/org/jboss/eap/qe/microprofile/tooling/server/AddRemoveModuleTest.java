@@ -10,8 +10,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -27,18 +27,18 @@ import org.xml.sax.SAXException;
 public class AddRemoveModuleTest {
     private static final String TEST_MODULE_NAME = "org.jboss.testmodule";
 
-    private OnlineManagementClient client;
+    private static OnlineManagementClient client;
 
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder();
 
-    @Before
-    public void setUp() throws IOException, ConfigurationException {
+    @BeforeClass
+    public static void setUp() throws IOException, ConfigurationException {
         client = ManagementClientProvider.onlineStandalone();
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterClass
+    public static void tearDown() throws IOException {
         client.close();
     }
 
