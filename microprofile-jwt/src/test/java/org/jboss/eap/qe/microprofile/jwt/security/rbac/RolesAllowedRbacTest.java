@@ -35,6 +35,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RolesAllowedRbacTest {
 
+    private static final String DENY_ALL = "deny-all";
+
     private static RsaKeyTool keyTool;
 
     @BeforeClass
@@ -167,7 +169,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/deny-all")
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + DENY_ALL)
                 .then()
                 .statusCode(403);
     }
@@ -223,7 +225,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void nonAuthenticatedAccessDenyAllPath(@ArquillianResource URL url) {
-        get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/deny-all")
+        get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + DENY_ALL)
                 .then()
                 .statusCode(403);
     }
