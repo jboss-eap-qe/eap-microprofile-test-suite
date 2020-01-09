@@ -24,14 +24,12 @@ import org.junit.runner.RunWith;
 
 /**
  * Set of tests verifying key selection functionality. See chapter 9.2.3. JSON Web Key Set (JWKS) of MP-JWT 1.1
- * This set of tests supplies the public key using inline value through {@code mp.jwt.verify.publickey}.
+ * This set of tests uses {@code mp.jwt.verify.publickey.location} property to configure public keys on server.
  */
 @RunAsClient
 @RunWith(Arquillian.class)
-public class MultipleConfiguredPublicKeysSelectionTest {
+public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
 
-    private static final String DEPLOYMENT_WITH_BASE64_JWKS = "deployment-base64-jwks";
-    private static final String DEPLOYMENT_WITH_JSON_JWKS = "deployment-json-jwks";
     private static final String DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY = "deployment-base64-jwks-location";
     private static final String DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY = "deployment-json-jwks-location";
 
@@ -53,30 +51,10 @@ public class MultipleConfiguredPublicKeysSelectionTest {
                     .build())
             .build();
 
-    @Deployment(name = DEPLOYMENT_WITH_BASE64_JWKS)
-    public static WebArchive createDeploymentWithBase64Jwks() {
-        return new DeploymentBuilder(
-                DEPLOYMENT_WITH_BASE64_JWKS + MultipleConfiguredPublicKeysSelectionTest.class.getSimpleName() + ".war")
-                        .jwksObject(JWKS_DOCUMENT)
-                        .passAsInlineValue(true)
-                        .base64encodedJwks(true)
-                        .build();
-    }
-
-    @Deployment(name = DEPLOYMENT_WITH_JSON_JWKS)
-    public static WebArchive createDeploymentWithJsonJwks() {
-        return new DeploymentBuilder(
-                DEPLOYMENT_WITH_JSON_JWKS + MultipleConfiguredPublicKeysSelectionTest.class.getSimpleName() + ".war")
-                        .jwksObject(JWKS_DOCUMENT)
-                        .passAsInlineValue(true)
-                        .base64encodedJwks(false)
-                        .build();
-    }
-
     @Deployment(name = DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public static WebArchive createDeploymentWithBase64JwksLocation() {
         return new DeploymentBuilder(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY
-                + MultipleConfiguredPublicKeysSelectionTest.class.getSimpleName() + ".war")
+                + MultipleConfiguredPublicKeysSelectionLocationPropTest.class.getSimpleName() + ".war")
                         .jwksObject(JWKS_DOCUMENT)
                         .passAsInlineValue(false)
                         .base64encodedJwks(true)
@@ -86,7 +64,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
     @Deployment(name = DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public static WebArchive createDeploymentWithJsonJwksLocation() {
         return new DeploymentBuilder(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY
-                + MultipleConfiguredPublicKeysSelectionTest.class.getSimpleName() + ".war")
+                + MultipleConfiguredPublicKeysSelectionLocationPropTest.class.getSimpleName() + ".war")
                         .jwksObject(JWKS_DOCUMENT)
                         .passAsInlineValue(false)
                         .base64encodedJwks(false)
@@ -101,7 +79,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByOrangeKeyJsonPk(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolOrange, "issuer").generateProperSignedJwt();
 
@@ -120,7 +98,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByBlueKeyJsonPk(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolBlue, "issuer").generateProperSignedJwt();
 
@@ -140,7 +118,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByPinkKeyJsonPk(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolPink, "issuer").generateProperSignedJwt();
 
@@ -158,7 +136,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByOrangeKeyBase64(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolOrange, "issuer").generateProperSignedJwt();
 
@@ -177,7 +155,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByBlueKeyBase64(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolBlue, "issuer").generateProperSignedJwt();
 
@@ -197,7 +175,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS)
+    @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByPinkKeyBase64Pk(@ArquillianResource URL url) {
         JsonWebToken token = new JwtHelper(rsaKeyToolPink, "issuer").generateProperSignedJwt();
 
@@ -208,7 +186,8 @@ public class MultipleConfiguredPublicKeysSelectionTest {
     }
 
     private static URL getFileFromResources(final String filePath) {
-        final URL privateKeyUrl = MultipleConfiguredPublicKeysSelectionTest.class.getClassLoader().getResource(filePath);
+        final URL privateKeyUrl = MultipleConfiguredPublicKeysSelectionLocationPropTest.class.getClassLoader()
+                .getResource(filePath);
         if (privateKeyUrl == null) {
             throw new IllegalStateException("File wasn't found in resources!");
         }
