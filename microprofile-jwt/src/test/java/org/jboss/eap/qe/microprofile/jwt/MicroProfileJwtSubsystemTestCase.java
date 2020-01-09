@@ -7,6 +7,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class MicroProfileJwtSubsystemTestCase {
         }
     }
 
-    @Before
+    @After
     public void after() throws IOException, TimeoutException, InterruptedException {
         if (wasSubsystemRemovedInPrepare) {
             new Operations(client).add(MP_JWT_SUBSYSTEM_ADDRESS).assertSuccess();
