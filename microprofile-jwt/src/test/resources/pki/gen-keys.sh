@@ -9,6 +9,7 @@ function gen_key_pair() {
 }
 
 gen_key_pair key 2048
+gen_key_pair key2048_2 2048
 gen_key_pair key4096 4096
 gen_key_pair key1024 1024
 gen_key_pair key512 512

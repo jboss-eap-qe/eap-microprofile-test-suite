@@ -35,7 +35,7 @@ import javax.json.JsonObject;
 public final class RsaKeyTool {
     private RSAPublicKey publicKey;
     private RSAPrivateCrtKey privateKey;
-    private String keyId = "TESTSUITE_KEY_ID";
+    private String keyId;
 
     /**
      * Returns a new {@link RsaKeyTool} fully prepared with a RSA Key Pair.
@@ -45,8 +45,20 @@ public final class RsaKeyTool {
      * @throws IllegalArgumentException thrown if RSA and/or a key-length is not supported by the JVM.
      */
     public static RsaKeyTool newKeyTool(final URI pkcs8Key) {
+        return newKeyTool(pkcs8Key, "TESTSUITE_KEY_ID");
+    }
+
+    /**
+     * Returns a new {@link RsaKeyTool} fully prepared with a RSA Key Pair.
+     *
+     * @param pkcs8Key PKCS8-formatted private key
+     * @param keyId key ID which is used to identify "correct" key among others in JSON Web Key Set
+     * @return a {@link RsaKeyTool}.
+     * @throws IllegalArgumentException thrown if RSA and/or a key-length is not supported by the JVM.
+     */
+    public static RsaKeyTool newKeyTool(final URI pkcs8Key, final String keyId) {
         final RsaKeyTool rsaKeyTool = new RsaKeyTool();
-        rsaKeyTool.prepare(pkcs8Key);
+        rsaKeyTool.prepare(pkcs8Key, keyId);
 
         return rsaKeyTool;
     }
@@ -101,7 +113,9 @@ public final class RsaKeyTool {
         return privateKey;
     }
 
-    private void prepare(final URI pkcs8Key) {
+    private void prepare(final URI pkcs8Key, final String keyId) {
+        this.keyId = keyId;
+
         try (final InputStreamReader isr = new InputStreamReader(new FileInputStream(new File(pkcs8Key)), UTF_8);
                 final BufferedReader bufferedFileReader = new BufferedReader(isr)) {
 
