@@ -15,6 +15,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JwtRbacTestEndpoint;
@@ -73,7 +74,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/" + Roles.MONITOR)
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.MONITOR)
                 .then().body(equalTo(Roles.MONITOR));
     }
 
@@ -91,7 +92,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/" + Roles.ADMIN)
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.ADMIN)
                 .then()
                 .statusCode(403);
     }
@@ -110,7 +111,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/" + Roles.ADMIN)
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.ADMIN)
                 .then()
                 .statusCode(403);
     }
@@ -129,7 +130,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/" + Roles.ADMIN + Roles.DIRECTOR)
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.ADMIN + Roles.DIRECTOR)
                 .then()
                 .statusCode(403);
     }
@@ -148,7 +149,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/" + Roles.ADMIN + Roles.DIRECTOR)
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.ADMIN + Roles.DIRECTOR)
                 .then()
                 .body(equalTo(Roles.ADMIN + Roles.DIRECTOR));
     }
@@ -166,7 +167,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "rbac-endpoint/deny-all")
+                .get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/deny-all")
                 .then()
                 .statusCode(403);
     }
@@ -178,7 +179,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void nonAuthenticatedAccessPermitAllPath(@ArquillianResource URL url) {
-        get(url.toExternalForm() + "unsecured-endpoint")
+        get(url.toExternalForm() + Endpoints.UNSECURED_ENDPOINT)
                 .then()
                 .statusCode(200)
                 .and()
@@ -198,7 +199,7 @@ public class RolesAllowedRbacTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when()
-                .get(url.toExternalForm() + "unsecured-endpoint")
+                .get(url.toExternalForm() + Endpoints.UNSECURED_ENDPOINT)
                 .then()
                 .body(equalTo("hello"));
     }
@@ -210,7 +211,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void nonAuthenticatedAccessAdminDirectorPath(@ArquillianResource URL url) {
-        get(url.toExternalForm() + "rbac-endpoint/" + Roles.ADMIN + Roles.DIRECTOR)
+        get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/" + Roles.ADMIN + Roles.DIRECTOR)
                 .then()
                 .statusCode(403);
     }
@@ -222,7 +223,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void nonAuthenticatedAccessDenyAllPath(@ArquillianResource URL url) {
-        get(url.toExternalForm() + "rbac-endpoint/deny-all")
+        get(url.toExternalForm() + Endpoints.RBAC_ENDPOINT + "/deny-all")
                 .then()
                 .statusCode(403);
     }

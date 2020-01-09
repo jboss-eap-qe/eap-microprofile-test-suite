@@ -8,8 +8,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 
-@Path("/secured-endpoint")
+@Path("/" + Endpoints.SECURED_ENDPOINT)
 @ApplicationScoped
 public class SecuredJaxRsEndpoint {
 

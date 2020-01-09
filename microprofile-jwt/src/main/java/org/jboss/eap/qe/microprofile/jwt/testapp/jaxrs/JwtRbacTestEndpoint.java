@@ -8,12 +8,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 
 /**
  * A servlet which uses RBAC to control who can execute its methods
  */
-@Path("/rbac-endpoint")
+@Path("/" + Endpoints.RBAC_ENDPOINT)
 @DeclareRoles({ Roles.MONITOR, Roles.DIRECTOR, Roles.ADMIN })
 public class JwtRbacTestEndpoint {
 
