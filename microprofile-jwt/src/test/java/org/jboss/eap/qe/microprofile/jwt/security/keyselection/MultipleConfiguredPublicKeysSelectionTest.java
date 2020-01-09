@@ -93,14 +93,15 @@ public class MultipleConfiguredPublicKeysSelectionTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + "secured-endpoint")
-                .then().body(equalTo(token.getRawValue()));
+                .then()
+                .statusCode(200)
+                .body(equalTo(token.getRawValue()));
     }
 
     /**
      * @tpTestDetails A JWT signed by a "blue" private key is send to the server which has configured public key to be a
      *                JSON Web Key set in JSON. There are multiple keys in this set and correct one must be chosen based on
-     *                {@code kid}
-     *                value in JOSE header of JWT.
+     *                {@code kid} value in JOSE header of JWT.
      * @tpPassCrit Correct public key from the JWKS is chosen and client receives token raw value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -111,7 +112,9 @@ public class MultipleConfiguredPublicKeysSelectionTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + "secured-endpoint")
-                .then().body(equalTo(token.getRawValue()));
+                .then()
+                .statusCode(200)
+                .body(equalTo(token.getRawValue()));
     }
 
     /**
@@ -136,8 +139,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
     /**
      * @tpTestDetails A JWT signed by a "orange" private key is send to the server which has configured public key to be
      *                a JSON Web Key set Base64 encoded. There are multiple keys in this set and correct one must be chosen
-     *                based on
-     *                {@code kid} value in JOSE header of JWT.
+     *                based on {@code kid} value in JOSE header of JWT.
      * @tpPassCrit Correct public key from the JWKS is chosen and client receives token raw value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -148,14 +150,15 @@ public class MultipleConfiguredPublicKeysSelectionTest {
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + "secured-endpoint")
-                .then().body(equalTo(token.getRawValue()));
+                .then()
+                .statusCode(200)
+                .body(equalTo(token.getRawValue()));
     }
 
     /**
      * @tpTestDetails A JWT signed by a "blue" private key is send to the server which has configured public key to be
-     *                a JSON Web Key set Base64 encoded. There are multiple keys in this set and correct one must be chosen
-     *                based on
-     *                {@code kid} value in JOSE header of JWT.
+     *                a JSON Web Key set Base64 encoded. There are multiple keys in this set and correct one must be
+     *                chosen based on {@code kid} value in JOSE header of JWT.
      * @tpPassCrit Correct public key from the JWKS is chosen and client receives token raw value in response.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -167,14 +170,14 @@ public class MultipleConfiguredPublicKeysSelectionTest {
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + "secured-endpoint")
                 .then()
+                .statusCode(200)
                 .body(equalTo(token.getRawValue()));
     }
 
     /**
      * @tpTestDetails A JWT signed by a "pink" private key is send to the server which has configured public key to be a
-     *                JSON Web Key set Base64 encoded. There are multiple keys in this set and there is no "pink" public key
-     *                among
-     *                them.
+     *                JSON Web Key set Base64 encoded. There are multiple keys in this set and there is no "pink" public
+     *                key among them.
      * @tpPassCrit JWt is rejected and user receives 401/forbidden because there is no matching configured public key on
      *             the server.
      * @tpSince EAP 7.4.0.CD19
