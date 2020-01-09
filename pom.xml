@@ -18,6 +18,7 @@
     <modules>
         <module>tooling-docker</module>
         <module>tooling-server-configuration</module>
+        <module>tooling-cpu-load</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
         <module>server-utilities</module>
@@ -43,6 +44,7 @@
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
         <version.org.glassfish.javax.json>1.1</version.org.glassfish.javax.json>
+        <version.org.awaitility>3.1.6</version.org.awaitility>
     </properties>
 
     <dependencyManagement>
@@ -147,6 +149,12 @@
                 <groupId>org.glassfish</groupId>
                 <artifactId>javax.json</artifactId>
                 <version>${version.org.glassfish.javax.json}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${version.org.awaitility}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
