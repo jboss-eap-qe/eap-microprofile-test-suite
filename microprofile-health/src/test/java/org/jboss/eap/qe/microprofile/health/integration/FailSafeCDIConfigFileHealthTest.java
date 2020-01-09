@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -16,6 +15,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
@@ -23,11 +24,13 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.Arq
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
@@ -35,6 +38,9 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 
 /**
+ * MP FT integration will be tested relying on microprofile-config.properties,
+ * MP Config properties are defined in microprofile-config.properties in META INF.
+ *
  * Testclass to test {@code /health}, {@code /health/live}, {@code /health/ready} endpoints.
  * {@link CDIBasedLivenessHealthCheck} and {@link CDIBasedReadinessHealthCheck} probes are based on fail-safe CDI bean
  * {@link FailSafeDummyService} configured at the beginning via MP Config properties:
@@ -47,13 +53,18 @@ import io.restassured.specification.RequestSpecification;
  * </ul>
  * If service is in maintenance a method simulating opening resources {@link FailSafeDummyService#simulateOpeningResources}
  * throws a {@link IOException}.
- * Subclasses are supposed to configure only MP Config - set MP Config properties in different ways.
  *
- * Tests in this test class are not expected to change the state of probes after their initialization since some
- * ways of configuring MP Config would require a Wildfly reload in order to update those values.
  */
+@RunWith(Arquillian.class)
 @RunAsClient
-public abstract class FailSafeCDIHealthBaseTest {
+@ServerSetup(MicroProfileFTSetupTask.class)
+public class FailSafeCDIConfigFileHealthTest {
+
+    private static final String MPConfigContent = String.format("%s=%s\n%s=%s\n%s=%s\n%s=%s",
+            FailSafeDummyService.LIVE_CONFIG_PROPERTY, false,
+            FailSafeDummyService.READY_CONFIG_PROPERTY, true,
+            FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY, true,
+            FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY, false);
 
     protected static RequestSpecification metricsRequest;
 
@@ -79,96 +90,8 @@ public abstract class FailSafeCDIHealthBaseTest {
         return ShrinkWrap
                 .create(WebArchive.class, FailSafeCDIHealthBaseTest.class.getSimpleName() + ".war")
                 .addClasses(FailSafeDummyService.class, CDIBasedLivenessHealthCheck.class, CDIBasedReadinessHealthCheck.class)
+                .addAsManifestResource(new StringAsset(MPConfigContent), "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-    }
-
-    /**
-     * Subclass is expected to implement the method to set the MP Config properties in a way specific to MP Config
-     * configuration.
-     */
-    protected abstract void setConfigProperties(boolean live, boolean ready, boolean inMaintenance, boolean readyInMaintenance)
-            throws Exception;
-
-    /**
-     * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
-     *                property.
-     * @tpPassCrit Overall and the health check status are up. MP Metrics are increased according to the specification.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    final public void testHealthEndpointUp() throws Exception {
-        setConfigProperties(true, true, false, false);
-        get(HealthUrlProvider.healthEndpoint()).then()
-                .contentType(ContentType.JSON)
-                .statusCode(200)
-                .body("status", is("UP"),
-                        "checks", hasSize(2),
-                        "checks.status", hasItems("UP"),
-                        "checks.status", not(hasItems("DOWN")),
-                        "checks.name", containsInAnyOrder("dummyLiveness", "dummyReadiness"));
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(1)
-                .validateInvocationsTotal(1)
-                .validateRetryCallsSucceededNotTriedTotal(1);
-
-        // same request have been validated above, now we need to increase metrics
-        get(HealthUrlProvider.healthEndpoint()).then().statusCode(200);
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(2)
-                .validateInvocationsTotal(2)
-                .validateRetryCallsSucceededNotTriedTotal(2);
-    }
-
-    /**
-     * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
-     *                property.
-     * @tpPassCrit Overall and the health check status are up.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    final public void testLivenessEndpointUp() throws Exception {
-        setConfigProperties(true, true, false, false);
-        get(HealthUrlProvider.liveEndpoint()).then()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .body("status", is("UP"),
-                        "checks", hasSize(1),
-                        "checks.status", hasItems("UP"),
-                        "checks.status", not(hasItems("DOWN")),
-                        "checks.name", containsInAnyOrder("dummyLiveness"));
-    }
-
-    /**
-     * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
-     *                property.
-     * @tpPassCrit Overall and the health check status are up. MP Metrics are increased according to the specification.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    final public void testReadinessEndpointUp() throws Exception {
-        setConfigProperties(true, true, false, false);
-        get(HealthUrlProvider.readyEndpoint()).then()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .body("status", is("UP"),
-                        "checks", hasSize(1),
-                        "checks.status", hasItems("UP"),
-                        "checks.name", containsInAnyOrder("dummyReadiness"));
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(1)
-                .validateInvocationsTotal(1)
-                .validateRetryCallsSucceededNotTriedTotal(1);
-
-        // same request have been validated above, now we need to increase metrics
-        get(HealthUrlProvider.readyEndpoint()).then().statusCode(200);
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(2)
-                .validateInvocationsTotal(2)
-                .validateRetryCallsSucceededNotTriedTotal(2);
     }
 
     /**
@@ -181,7 +104,6 @@ public abstract class FailSafeCDIHealthBaseTest {
     @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testHealthEndpointDownInMaintenance() throws Exception {
-        setConfigProperties(false, true, true, false);
         // TODO Java 11 Map<String, String> liveCheck = Map.of( "name", "dummyLiveness", "status", "DOWN");
         Map<String, String> liveCheck = Collections.unmodifiableMap(new HashMap<String, String>() {
             {
@@ -232,7 +154,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      */
     @Test
     final public void testLivenessEndpointDownInMaintenance() throws Exception {
-        setConfigProperties(false, true, true, false);
         get(HealthUrlProvider.liveEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
@@ -252,7 +173,6 @@ public abstract class FailSafeCDIHealthBaseTest {
     @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testReadinessEndpointDownInMaintenance() throws Exception {
-        setConfigProperties(false, true, true, false);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
@@ -282,5 +202,4 @@ public abstract class FailSafeCDIHealthBaseTest {
                 .validateRetryCallsSucceededTotal(0)
                 .validateFallbackCallsTotal(2);
     }
-
 }

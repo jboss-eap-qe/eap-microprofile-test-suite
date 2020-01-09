@@ -31,11 +31,11 @@ public class FailSafeDummyService {
 
     @Inject
     @ConfigProperty(name = READY_IN_MAINTENANCE_CONFIG_PROPERTY)
-    private Provider<Boolean> readyInMainenance;
+    private Provider<Boolean> readyInMaintenance;
 
     @Inject
     @ConfigProperty(name = IN_MAINTENANCE_CONFIG_PROPERTY)
-    private Provider<Boolean> inMaintanance;
+    private Provider<Boolean> inMaintenance;
 
     @Inject
     FailSafeDummyService service;
@@ -52,13 +52,13 @@ public class FailSafeDummyService {
     }
 
     public boolean isReadyFallback() {
-        return readyInMainenance.get();
+        return readyInMaintenance.get();
     }
 
     @Counted(name = "simulation-count", absolute = true, displayName = "Simulation Count", description = "Number of simulateOpeningResources invocations", reusable = true)
     public void simulateOpeningResources() throws IOException {
-        if (inMaintanance.get()) {
-            throw new IOException("In maintanance");
+        if (inMaintenance.get()) {
+            throw new IOException("In Maintenance");
         }
     }
 }

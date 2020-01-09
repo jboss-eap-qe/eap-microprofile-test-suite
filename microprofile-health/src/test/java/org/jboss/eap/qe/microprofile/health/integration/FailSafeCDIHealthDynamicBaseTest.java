@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import io.restassured.http.ContentType;
@@ -21,7 +22,8 @@ import io.restassured.http.ContentType;
 /**
  * Testclass to test {@code /health}, {@code /health/live}, {@code /health/ready} endpoints. Liveness and readiness probes
  * are configured via MP Config properties at the beginning and changed later in test execution. Tests in the testclass
- * expect no reload operation after changing the values.
+ * expect no reload operation after changing the values (during the test execution).
+ * Test class extends {@link FailSafeCDIHealthBaseTest} for those scenarios that expect dynamic MP Config.
  */
 @RunAsClient
 public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealthBaseTest {
@@ -33,7 +35,7 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testHealthEndpointUpToDown() throws Exception {
+    final public void testHealthEndpointUpToDown() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.healthEndpoint()).then()
                 .statusCode(200)
@@ -44,6 +46,11 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
                         "checks.status", hasItems("UP"),
                         "checks.status", not(hasItems("DOWN")),
                         "checks.name", containsInAnyOrder("dummyLiveness", "dummyReadiness"));
+
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(1)
+                .validateInvocationsTotal(1)
+                .validateRetryCallsSucceededNotTriedTotal(1);
 
         setConfigProperties(true, false, false, true);
         // TODO Java 11 Map<String, String> liveCheck = Map.of( "name", "dummyLiveness", "status", "UP");
@@ -66,6 +73,11 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
                 .body("status", is("DOWN"),
                         "checks", hasSize(2),
                         "checks", containsInAnyOrder(liveCheck, readyCheck));
+
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(2)
+                .validateInvocationsTotal(2)
+                .validateRetryCallsSucceededNotTriedTotal(2);
     }
 
     /**
@@ -75,12 +87,11 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testLivenessEndpointUpToDown() throws Exception {
+    final public void testLivenessEndpointUpToDown() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.liveEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("UP"),
@@ -90,7 +101,6 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
         get(HealthUrlProvider.liveEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("DOWN"),
@@ -104,37 +114,46 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testReadinessEndpointUpToDown() throws Exception {
+    final public void testReadinessEndpointUpToDown() throws Exception {
         setConfigProperties(true, true, false, false);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("UP"),
                         "checks.name", containsInAnyOrder("dummyReadiness"));
 
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(1)
+                .validateInvocationsTotal(1)
+                .validateRetryCallsSucceededNotTriedTotal(1);
+
         setConfigProperties(true, false, false, true);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("DOWN"),
                         "checks.name", containsInAnyOrder("dummyReadiness"));
+
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(2)
+                .validateInvocationsTotal(2)
+                .validateRetryCallsSucceededNotTriedTotal(2);
     }
 
     /**
      * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
      *                property. There is IOException since service is in maintenance but fallback method should be used.
-     * @tpPassCrit Overall and the health check status is down and fallback method is invoked. MP Config change is propagated
+     * @tpPassCrit Overall and the health check status are down and fallback method is invoked. MP Config change is propagated
      *             correctly.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("WFLY-12924, WFLY-12925")
     @Test
-    public void testHealthEndpointDownToUpInMaintenace() throws Exception {
+    final public void testHealthEndpointDownToUpInMaintenance() throws Exception {
         setConfigProperties(true, true, true, false);
         // TODO Java 11 Map<String, String> liveCheck = Map.of( "name", "dummyLiveness", "status", "UP");
         Map<String, String> liveCheck = Collections.unmodifiableMap(new HashMap<String, String>() {
@@ -152,10 +171,18 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
         get(HealthUrlProvider.healthEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks", hasSize(2),
                         "checks", containsInAnyOrder(liveCheck, readyCheck));
+
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
+                .validateInvocationsTotal(1)
+                .validateInvocationsFailedTotal(1)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
+                .validateRetryCallsFailedTotal(1)
+                .validateRetryCallsSucceededTotal(0)
+                .validateFallbackCallsTotal(1);
 
         setConfigProperties(true, false, true, true);
         // TODO Java11 readyCheck = Map.of("name", "dummyReadiness", "status", "UP");
@@ -168,26 +195,34 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
         get(HealthUrlProvider.healthEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks", hasSize(2),
                         "checks", containsInAnyOrder(liveCheck, readyCheck));
+
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 2) // previous + 1
+                .validateInvocationsTotal(2)
+                .validateInvocationsFailedTotal(1)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
+                .validateRetryCallsFailedTotal(1)
+                .validateRetryCallsSucceededTotal(0)
+                .validateFallbackCallsTotal(1)
+                .validateRetryCallsSucceededNotTriedTotal(1);
     }
 
     /**
      * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
      *                property. There is IOException since service is in maintenance but fallback method should be used.
-     * @tpPassCrit Overall and the health check status is down and fallback method is invoked. MP Config change is propagated
+     * @tpPassCrit Overall and the health check status are down and fallback method is invoked. MP Config change is propagated
      *             correctly.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void testLivenessEndpointDownToUpInMaintenace() throws Exception {
+    final public void testLivenessEndpointDownToUpInMaintenance() throws Exception {
         setConfigProperties(false, true, true, true);
         get(HealthUrlProvider.liveEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("DOWN"),
@@ -197,7 +232,6 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
         get(HealthUrlProvider.liveEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("UP"),
@@ -207,31 +241,48 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
     /**
      * @tpTestDetails Multiple-component customer scenario - health check status is based on fail-safe CDI bean and MP Config
      *                property. There is IOException since service is in maintenance but fallback method should be used.
-     * @tpPassCrit Overall and the health check status is down and fallback method is invoked. MP Config change is propagated
+     * @tpPassCrit Overall and the health check status are down and fallback method is invoked. MP Config change is propagated
      *             correctly.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("WFLY-12924, WFLY-12925")
     @Test
-    public void testReadinessEndpointDownToUpInMaintenace() throws Exception {
+    final public void testReadinessEndpointDownToUpInMaintenance() throws Exception {
         setConfigProperties(true, true, true, false);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(503)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("DOWN"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("DOWN"),
                         "checks.name", containsInAnyOrder("dummyReadiness"));
 
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
+                .validateInvocationsTotal(1)
+                .validateInvocationsFailedTotal(1)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
+                .validateRetryCallsFailedTotal(1)
+                .validateRetryCallsSucceededTotal(0)
+                .validateFallbackCallsTotal(1);
+
         setConfigProperties(false, false, true, true);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
                 .body("status", is("UP"),
                         "checks", hasSize(1),
                         "checks.status", hasItems("UP"),
                         "checks.name", containsInAnyOrder("dummyReadiness"));
-    }
 
+        MetricsChecker.get(metricsRequest)
+                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 2) // previous + 1
+                .validateInvocationsTotal(2)
+                .validateInvocationsFailedTotal(1)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
+                .validateRetryCallsFailedTotal(1)
+                .validateRetryCallsSucceededTotal(0)
+                .validateFallbackCallsTotal(1)
+                .validateRetryCallsSucceededNotTriedTotal(1);
+    }
 }
