@@ -12,6 +12,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.NonJwtJaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.Archive;
@@ -69,7 +70,7 @@ public class WebXmlActivationCompatibilityTest {
         JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
 
         RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then().body(equalTo(token.getRawValue()));
     }
 

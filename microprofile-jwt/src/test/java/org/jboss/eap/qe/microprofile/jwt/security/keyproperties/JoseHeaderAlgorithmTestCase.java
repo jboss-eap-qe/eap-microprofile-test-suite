@@ -21,6 +21,7 @@ import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -71,7 +72,7 @@ public class JoseHeaderAlgorithmTestCase {
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .body(equalTo(token.getRawValue()))
                 .and()
@@ -90,7 +91,7 @@ public class JoseHeaderAlgorithmTestCase {
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
-                .when().get(url.toExternalForm() + "basic-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .body(equalTo("<html><head><title>Error</title></head><body>Unauthorized</body></html>"))
                 .and()

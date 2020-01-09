@@ -7,7 +7,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/unsecured-endpoint")
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
+
+@Path("/" + Endpoints.UNSECURED_ENDPOINT)
 @ApplicationScoped
 public class UnsecuredJaxRsEndpoint {
 

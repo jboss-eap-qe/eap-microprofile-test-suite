@@ -18,6 +18,7 @@ import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -87,7 +88,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -117,7 +118,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -146,7 +147,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -176,7 +177,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -206,7 +207,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -236,7 +237,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
@@ -266,7 +267,7 @@ public class JwtMinimalClaimSetTest {
         final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
 
         given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + "secured-endpoint")
+                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
                 .statusCode(401);
     }
