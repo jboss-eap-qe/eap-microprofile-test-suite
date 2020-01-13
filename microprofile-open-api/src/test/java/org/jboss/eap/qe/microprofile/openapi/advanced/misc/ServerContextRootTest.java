@@ -2,7 +2,9 @@ package org.jboss.eap.qe.microprofile.openapi.advanced.misc;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 import java.io.IOException;
@@ -160,8 +162,8 @@ public class ServerContextRootTest {
      */
     @Test
     public void testEchoEndpoint(@ArquillianResource @OperateOnDeployment(PROVIDER_DEPLOYMENT_NAME) URL baseURL) {
-        String theMessage = "Testing echo endpoint on central Service provider";
-        given().queryParam("message", theMessage)
+        String expectedMessage = "Testing echo endpoint on central Service provider";
+        final String responseContent = given().queryParam("message", expectedMessage)
                 .get(baseURL.toExternalForm() + "echo")
                 .then()
                 .statusCode(200)
@@ -169,7 +171,8 @@ public class ServerContextRootTest {
                 //  thus expecting for it to be there, see
                 //  https://docs.jboss.org/resteasy/docs/3.9.3.Final/userguide/html/Installation_Configuration.html#configuration_switches
                 .contentType(equalToIgnoringCase("text/plain;charset=UTF-8"))
-                .extract().asString().equals(theMessage);
+                .extract().asString();
+        assertThat(responseContent, equalTo(expectedMessage));
     }
 
     /**
