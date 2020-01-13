@@ -207,14 +207,15 @@ public class StaticFilesTest {
             stream.forEach(s -> headerContentBuilder.append(s).append("\n"));
         }
         bigFileContents += headerContentBuilder.toString();
+        StringBuilder bodyChunkContentBuilder = new StringBuilder();
+        try (Stream<String> stream = Files.lines(Paths.get("src/test/resources/META-INF/openapi-fragment-body.yaml"),
+                StandardCharsets.UTF_8)) {
+            stream.forEach(s -> bodyChunkContentBuilder.append(s).append("\n"));
+        }
+        String bodyChunk = bodyChunkContentBuilder.toString();
         for (int i = 0; i < REPEAT_BODY_CONTENTS_ITERATIONS; i++) {
             //  n-chunk of body
-            StringBuilder bodyChunkContentBuilder = new StringBuilder();
-            try (Stream<String> stream = Files.lines(Paths.get("src/test/resources/META-INF/openapi-fragment-body.yaml"),
-                    StandardCharsets.UTF_8)) {
-                stream.forEach(s -> bodyChunkContentBuilder.append(s).append("\n"));
-            }
-            bigFileContents += bodyChunkContentBuilder.toString().replaceAll("@@ID@@", String.valueOf(i));
+            bigFileContents += bodyChunk.replaceAll("@@ID@@", String.valueOf(i));
         }
         //  footer
         StringBuilder footerContentBuilder = new StringBuilder();
