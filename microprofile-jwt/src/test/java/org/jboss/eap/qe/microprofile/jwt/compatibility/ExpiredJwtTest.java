@@ -15,6 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
@@ -54,20 +55,19 @@ public class ExpiredJwtTest {
 
         final RsaKeyTool keyTool = RsaKeyTool.newKeyTool(privateKeyUrl.toURI());
 
-        final String subject = "FAKE_USER";
+        final String subject = JwtDefaultClaimValues.SUBJECT;
         final Instant now = Instant.now();
         final Instant sooner = now.minus(1, ChronoUnit.HOURS); //note the minus here setting time in past
 
         final JsonWebToken expiredJwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .subject(subject)
                 .userPrincipalName(subject)
-                .issuer("issuer")
+                .issuer(JwtDefaultClaimValues.ISSUER)
                 .issuedAtTime(now.getEpochSecond())
                 .expirationTime(sooner.getEpochSecond())
                 .groups(Collections.emptySet())
-                .customClaim("preferred_username", subject)
                 .build());
 
         given().header("Authorization", "Bearer " + expiredJwt.getRawValue())
