@@ -65,7 +65,7 @@ public class AnnotationActivationCompatibilityTest {
     @Test
     @RunAsClient
     public void testSameTokenReceived(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)

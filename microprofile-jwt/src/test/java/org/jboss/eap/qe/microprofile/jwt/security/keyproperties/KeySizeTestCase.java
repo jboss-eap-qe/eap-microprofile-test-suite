@@ -88,7 +88,7 @@ public class KeySizeTestCase {
     public void testJwtSignedBy1024bitsKey(@ArquillianResource URL url) throws URISyntaxException {
         final RsaKeyTool rsaKeyTool = RsaKeyTool.newKeyTool(getPrivateKey("key1024.private.pkcs8.pem"));
 
-        JsonWebToken token = new JwtHelper(rsaKeyTool, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyTool).generateProperSignedJwt();
 
         RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -106,7 +106,7 @@ public class KeySizeTestCase {
     public void testJwtSignedBy2048bitsKey(@ArquillianResource URL url) throws URISyntaxException {
         final RsaKeyTool rsaKeyTool = RsaKeyTool.newKeyTool(getPrivateKey("key.private.pkcs8.pem"));
 
-        JsonWebToken token = new JwtHelper(rsaKeyTool, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyTool).generateProperSignedJwt();
 
         RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -124,7 +124,7 @@ public class KeySizeTestCase {
     public void testJwtSignedBy4096bitsKey(@ArquillianResource URL url) throws URISyntaxException {
         final RsaKeyTool rsaKeyTool = RsaKeyTool.newKeyTool(getPrivateKey("key4096.private.pkcs8.pem"));
 
-        JsonWebToken token = new JwtHelper(rsaKeyTool, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyTool).generateProperSignedJwt();
 
         RestAssured.given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -144,7 +144,7 @@ public class KeySizeTestCase {
     public void testJwtSignedBy512bitsKey(@ArquillianResource URL url) throws URISyntaxException {
         final RsaKeyTool rsaKeyTool = RsaKeyTool.newKeyTool(getPrivateKey("key512.private.pkcs8.pem"));
 
-        final JsonWebToken token = new JwtHelper(rsaKeyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(rsaKeyTool).generateProperSignedJwt();
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())

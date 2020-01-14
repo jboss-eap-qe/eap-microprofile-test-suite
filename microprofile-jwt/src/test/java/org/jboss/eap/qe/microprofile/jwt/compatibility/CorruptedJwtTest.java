@@ -10,6 +10,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
@@ -53,7 +54,7 @@ public class CorruptedJwtTest {
 
         final RsaKeyTool keyTool = RsaKeyTool.newKeyTool(privateKeyUrl.toURI());
 
-        final JsonWebToken corruptedJsonJWT = new JwtHelper(keyTool, "issuer").generateJwtJsonCorrupted("FAKE_USER");
+        final JsonWebToken corruptedJsonJWT = new JwtHelper(keyTool).generateJwtJsonCorrupted(JwtDefaultClaimValues.SUBJECT);
 
         given().header("Authorization", "Bearer " + corruptedJsonJWT.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)

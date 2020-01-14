@@ -114,7 +114,7 @@ public class PublicKeyLocationPropertyTestCase {
      */
     @Test
     public void testPublicKeyObtainedFromHttp(@ArquillianResource @OperateOnDeployment(DEPLOYMENT_KEY_FROM_HTTP) URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -131,7 +131,7 @@ public class PublicKeyLocationPropertyTestCase {
     @Test
     public void testPublicKeyObtainedFromHttpInvalidUrl(
             @ArquillianResource @OperateOnDeployment(DEPLOYMENT_KEY_FROM_HTTP_INVALID) URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -147,7 +147,7 @@ public class PublicKeyLocationPropertyTestCase {
      */
     @Test
     public void testPublicKeyObtainedFromFile(@ArquillianResource @OperateOnDeployment(DEPLOYMENT_KEY_FROM_FILE) URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -164,7 +164,7 @@ public class PublicKeyLocationPropertyTestCase {
     @Test
     public void testPublicKeyObtainedFromFileInvalidUrl(
             @ArquillianResource @OperateOnDeployment(DEPLOYMENT_KEY_FROM_FILE_INVALID) URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
