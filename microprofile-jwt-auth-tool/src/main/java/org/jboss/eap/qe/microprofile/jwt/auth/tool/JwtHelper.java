@@ -21,6 +21,10 @@ public final class JwtHelper {
         this.issuer = issuer;
     }
 
+    public JwtHelper(final RsaKeyTool keyTool) {
+        this(keyTool, JwtDefaultClaimValues.ISSUER);
+    }
+
     /**
      * Generates a spec compliant base64-encoded signed JWT that expires after one hour and has the claims "sub" and
      * "preferred_username" set to "FAKE_USER".
@@ -28,7 +32,7 @@ public final class JwtHelper {
      * @return a base64-encoded signed JWT token.
      */
     public JsonWebToken generateProperSignedJwt() {
-        return generateProperSignedJwt("FAKE_USER");
+        return generateProperSignedJwt(JwtDefaultClaimValues.SUBJECT);
     }
 
     /**
@@ -50,7 +54,7 @@ public final class JwtHelper {
      * @return a base64-encoded signed JWT token.
      */
     public JsonWebToken generateProperSignedJwt(final Set<String> groups) {
-        return generateProperSignedJwt("FAKE_USER", groups);
+        return generateProperSignedJwt(JwtDefaultClaimValues.SUBJECT, groups);
     }
 
     /**
@@ -69,7 +73,7 @@ public final class JwtHelper {
 
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .subject(subject)
                 .userPrincipalName(subject)
                 .issuer(this.issuer)

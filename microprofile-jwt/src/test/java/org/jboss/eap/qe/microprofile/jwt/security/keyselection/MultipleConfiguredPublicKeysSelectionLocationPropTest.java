@@ -81,7 +81,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByOrangeKeyJsonPk(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolOrange, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolOrange).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -100,7 +100,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByBlueKeyJsonPk(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolBlue, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolBlue).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -120,7 +120,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByPinkKeyJsonPk(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolPink, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolPink).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -138,7 +138,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByOrangeKeyBase64(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolOrange, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolOrange).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -157,7 +157,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByBlueKeyBase64(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolBlue, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolBlue).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
@@ -177,7 +177,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY)
     public void testJwtSignedByPinkKeyBase64Pk(@ArquillianResource URL url) {
-        JsonWebToken token = new JwtHelper(rsaKeyToolPink, "issuer").generateProperSignedJwt();
+        JsonWebToken token = new JwtHelper(rsaKeyToolPink).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)

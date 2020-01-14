@@ -8,8 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.UUID;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -19,6 +18,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JoseHeader;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
@@ -68,7 +68,7 @@ public class JoseHeaderAlgorithmTestCase {
      */
     @Test
     public void testRSA256algorithm(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
@@ -99,21 +99,20 @@ public class JoseHeaderAlgorithmTestCase {
     }
 
     private JsonWebToken prepareJwtWithCustomJoseHeaderSignedWithRS384(final JoseHeader joseHeader, final RsaKeyTool keyTool) {
-        final String subject = "FAKE_USER";
+        final String subject = JwtDefaultClaimValues.SUBJECT;
 
         final Instant now = Instant.now();
         final Instant later = now.plus(1, ChronoUnit.HOURS);
 
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .subject(subject)
                 .userPrincipalName(subject)
-                .issuer("issuer")
+                .issuer(JwtDefaultClaimValues.ISSUER)
                 .issuedAtTime(now.getEpochSecond())
                 .expirationTime(later.getEpochSecond())
-                .groups(new HashSet<>(Arrays.asList("group1", "group2")))
-                .customClaim("preferred_username", subject)
+                .groups(Collections.emptySet())
                 .build();
 
         try {

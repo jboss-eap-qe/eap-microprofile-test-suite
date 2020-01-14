@@ -89,7 +89,7 @@ public class PublicKeyPropertyTestCase {
     @RunAsClient
     @OperateOnDeployment(DEPLOYMENT_WITH_INVALID_KEY)
     public void testJwtVerificationFailsWithInvalidKey(@ArquillianResource URL url) throws ConfigurationException, IOException {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())
@@ -110,7 +110,7 @@ public class PublicKeyPropertyTestCase {
     @RunAsClient
     @OperateOnDeployment(DEPLOYMENT_WITH_VALID_KEY)
     public void testJwtVerificationSucceedsWithValidKey(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         RestAssured.given()
                 .header("Authorization", "Bearer " + token.getRawValue())

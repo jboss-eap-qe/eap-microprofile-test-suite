@@ -71,7 +71,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void monitorAccessMonitorPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.MONITOR));
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -89,7 +89,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void monitorAccessAdminPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.MONITOR));
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -108,7 +108,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void noRoleAccessAdminPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.emptySet());
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -127,7 +127,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void monitorAccessAdminDirectorPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.MONITOR));
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -146,7 +146,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void adminAccessAdminDirectorPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.ADMIN));
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -164,7 +164,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void monitorAccessDenyAllPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.MONITOR));
 
         given().header("Authorization", "Bearer " + token.getRawValue())
@@ -196,7 +196,7 @@ public class RolesAllowedRbacTest {
      */
     @Test
     public void adminAccessPermitAllPath(@ArquillianResource URL url) {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer")
+        final JsonWebToken token = new JwtHelper(keyTool)
                 .generateProperSignedJwt(Collections.singleton(Roles.ADMIN));
 
         given().header("Authorization", "Bearer " + token.getRawValue())

@@ -67,7 +67,7 @@ public class CorruptedKeyTest {
      */
     @Test
     public void verifyErrorIsShownInLog(@ArquillianResource URL url) throws ConfigurationException, IOException {
-        final JsonWebToken token = new JwtHelper(keyTool, "issuer").generateProperSignedJwt();
+        final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
 
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)

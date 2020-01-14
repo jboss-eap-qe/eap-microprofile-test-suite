@@ -16,6 +16,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
+import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
@@ -37,8 +38,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class JwtMinimalClaimSetTest {
 
-    private static final String SUBJECT = "FAKE_USER";
-    private static final String ISSUER = "issuer";
+    private static final String SUBJECT = JwtDefaultClaimValues.SUBJECT;
+    private static final String ISSUER = JwtDefaultClaimValues.ISSUER;
 
     private static RsaKeyTool keyTool;
 
@@ -77,7 +78,7 @@ public class JwtMinimalClaimSetTest {
         //issuer (iss) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .subject(SUBJECT)
                 .userPrincipalName(SUBJECT)
                 .issuedAtTime(now.getEpochSecond())
@@ -107,7 +108,7 @@ public class JwtMinimalClaimSetTest {
         //subject (sub) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .userPrincipalName(SUBJECT)
                 .issuedAtTime(now.getEpochSecond())
@@ -136,7 +137,7 @@ public class JwtMinimalClaimSetTest {
         //expiration time (exp) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .subject(SUBJECT)
                 .userPrincipalName(SUBJECT)
@@ -166,7 +167,7 @@ public class JwtMinimalClaimSetTest {
         //issued at (iat) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .subject(SUBJECT)
                 .userPrincipalName(SUBJECT)
@@ -195,7 +196,7 @@ public class JwtMinimalClaimSetTest {
 
         //JWT ID (jti) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .subject(SUBJECT)
                 .userPrincipalName(SUBJECT)
@@ -226,7 +227,7 @@ public class JwtMinimalClaimSetTest {
         //user principal name (upn) claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .subject(SUBJECT)
                 .issuedAtTime(now.getEpochSecond())
@@ -256,7 +257,7 @@ public class JwtMinimalClaimSetTest {
         //groups claim intentionally missing
         final JwtClaims jwtClaims = new JwtClaims.Builder()
                 .jwtId(UUID.randomUUID().toString())
-                .audience("microprofile-jwt-testsuite")
+                .audience(JwtDefaultClaimValues.AUDIENCE)
                 .issuer(ISSUER)
                 .subject(SUBJECT)
                 .userPrincipalName(SUBJECT)
