@@ -81,7 +81,8 @@ public class ModuleUtil {
         }
 
         /**
-         * Execute the operation on {@param client}. ENV property {@code JBOSS_HOME} must be set.
+         * Execute the operation on {@param client}.
+         * System property {@code module.path} must be set (should be set in pom.xml).
          */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
             StringBuilder cmd = new StringBuilder("module add");
@@ -94,6 +95,7 @@ public class ModuleUtil {
             Joiner resourcesJoiner = Joiner.on(File.pathSeparatorChar);
             char pathSeparatorChar = File.pathSeparatorChar;
             cmd.append(" --resource-delimiter=").append(pathSeparatorChar);
+            cmd.append(" --module-root-dir=").append(System.getProperty("module.path"));
 
             if (!this.resources.isEmpty()) {
                 cmd.append(" --resources=").append(resourcesJoiner
@@ -115,7 +117,7 @@ public class ModuleUtil {
          * Execute the operation on {@param client}. ENV property {@code JBOSS_HOME} must be set.
          */
         public void executeOn(OnlineManagementClient client) throws IOException, CliException {
-            client.executeCli("module remove --name=" + name);
+            client.executeCli("module remove --name=" + name + " --module-root-dir=" + System.getProperty("module.path"));
         }
     }
 }
