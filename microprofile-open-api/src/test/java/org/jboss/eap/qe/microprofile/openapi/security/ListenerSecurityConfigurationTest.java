@@ -20,8 +20,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.as.arquillian.api.ServerSetupTask;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -35,6 +33,7 @@ import org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
 import org.jboss.shrinkwrap.api.Archive;
@@ -99,23 +98,26 @@ public class ListenerSecurityConfigurationTest {
         listenersConfigurationOnlineManagementClient.close();
     }
 
-    static class OpenApiExtensionSetup implements ServerSetupTask {
+    static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {
 
         @Override
-        public void setup(ManagementClient managementClient, String containerId) throws Exception {
+        public void setup() throws Exception {
             jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome");
 
-            OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
-            //  configured server ports for HTTP and HTTPS bindings, offset is taken into account
-            configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
-            configuredHTTPSPort = OpenApiServerConfiguration.getHTTPSPort(client);
-            //  MP OpenAPI up
-            OpenApiServerConfiguration.enableOpenApi(client);
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                //  configured server ports for HTTP and HTTPS bindings, offset is taken into account
+                configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
+                configuredHTTPSPort = OpenApiServerConfiguration.getHTTPSPort(client);
+                //  MP OpenAPI up
+                OpenApiServerConfiguration.enableOpenApi(client);
+            }
         }
 
         @Override
-        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
+        public void tearDown() throws Exception {
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                OpenApiServerConfiguration.disableOpenApi(client);
+            }
         }
     }
 

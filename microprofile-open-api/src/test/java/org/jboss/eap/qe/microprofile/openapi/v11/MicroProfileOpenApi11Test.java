@@ -17,8 +17,6 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.as.arquillian.api.ServerSetupTask;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -27,6 +25,7 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,6 +34,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -61,16 +61,20 @@ public class MicroProfileOpenApi11Test {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    static class OpenApiExtensionSetup implements ServerSetupTask {
+    static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {
 
         @Override
-        public void setup(ManagementClient managementClient, String containerId) throws Exception {
-            OpenApiServerConfiguration.enableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
+        public void setup() throws Exception {
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                OpenApiServerConfiguration.enableOpenApi(client);
+            }
         }
 
         @Override
-        public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
-            OpenApiServerConfiguration.disableOpenApi(ManagementClientProvider.onlineStandalone(managementClient));
+        public void tearDown() throws Exception {
+            try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+                OpenApiServerConfiguration.disableOpenApi(client);
+            }
         }
     }
 

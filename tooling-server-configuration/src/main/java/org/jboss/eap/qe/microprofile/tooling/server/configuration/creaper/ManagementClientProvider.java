@@ -53,6 +53,7 @@ public class ManagementClientProvider {
      *        {@link OnlineManagementClient} returned.
      * @return Initialized {@link OnlineManagementClient} instance, don't forget to close it
      */
+    @Deprecated
     public static OnlineManagementClient onlineStandalone(org.jboss.as.arquillian.container.ManagementClient managementClient) {
         return org.wildfly.extras.creaper.core.ManagementClient.onlineLazy(
                 OnlineOptions.standalone().wrap(managementClient.getControllerClient()));
