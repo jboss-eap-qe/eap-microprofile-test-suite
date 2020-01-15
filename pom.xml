@@ -316,10 +316,17 @@
             </modules>
         </profile>
         <profile>
+            <id>mp-ft</id>
+            <modules>
+                <module>microprofile-fault-tolerance</module>
+            </modules>
+        </profile>
+        <profile>
             <id>all</id>
             <modules>
                 <module>microprofile-jwt</module>
                 <module>microprofile-open-api</module>
+                <module>microprofile-fault-tolerance</module>
             </modules>
         </profile>
     </profiles>
