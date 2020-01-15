@@ -18,7 +18,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.CommandFailedException;
 import org.wildfly.extras.creaper.core.online.CliException;
-import org.wildfly.extras.creaper.core.online.ModelNodeResult;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.xml.sax.SAXException;
 
@@ -51,9 +50,9 @@ public class AddRemoveModuleTest {
                 .executeOn(client);
 
         // verify that module was added
-        File asRoot = new File(getPathToAs());
+        File modulesRoot = new File(System.getProperty("module.path"));
 
-        File module = new File(asRoot, "modules" + File.separator + TEST_MODULE_NAME.replaceAll("\\.", File.separator));
+        File module = new File(modulesRoot, TEST_MODULE_NAME.replaceAll("\\.", File.separator));
         assertTrue("Module " + module.getAbsolutePath() + " should exist on path", module.exists());
 
         File moduleTestJar1 = new File(module, "main" + File.separator + "testJar1.jar");
@@ -69,11 +68,5 @@ public class AddRemoveModuleTest {
 
         // verify that module was removed
         assertFalse("Module shouldn't exist on path " + module.getAbsolutePath(), module.exists());
-    }
-
-    private String getPathToAs() throws IOException, CliException {
-        ModelNodeResult result = client.execute(":resolve-expression(expression=${jboss.home.dir})");
-        result.assertSuccess("Cannot resolve jboss.home.dir");
-        return result.stringValue();
     }
 }

@@ -195,6 +195,7 @@
                     <systemPropertyVariables>
                         <jboss.home>${jboss.home}</jboss.home>
                         <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
+                        <module.path>${jboss.modules.path}</module.path>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -212,12 +213,68 @@
 
     <profiles>
         <profile>
-            <id>download-wildfly</id>
+            <id>copy-wildfly</id>
             <activation>
-                <property><name>!jboss.home</name></property>
+                <property>
+                    <name>jboss.dist</name>
+                </property>
             </activation>
             <properties>
                 <jboss.home>${basedir}/target/jboss-as</jboss.home>
+                <jboss.modules.path>${jboss.dist}/modules</jboss.modules.path>
+            </properties>
+            <build>
+                <plugins>
+                    <!--
+                      A build of target/wildfly which is shared by all modules.
+                      Modules and bundles are not copied as they are read-only (see surefire props).
+                    -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions combine.children="append">
+                            <!-- Copy the AS into current_submodule/target/jboss-as . This is executed recursively in submodules. -->
+                            <execution>
+                                <id>ts.copy-wildfly</id>
+                                <inherited>true</inherited>
+                                <phase>generate-test-resources</phase>
+                                <goals><goal>copy-resources</goal></goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/jboss-as</outputDirectory>
+                                    <overwrite>true</overwrite>
+                                    <resources>
+                                        <resource>
+                                            <directory>${jboss.dist}</directory>
+                                            <excludes>
+                                                <exclude>bin/client/</exclude>
+                                                <exclude>bin/*.jar</exclude>
+                                                <exclude>bin/*.sh</exclude>
+                                                <exclude>bin/*.bat</exclude>
+                                                <exclude>bin/*.ps1</exclude>
+                                                <exclude>docs/</exclude>
+                                                <exclude>modules/</exclude>
+                                                <exclude>welcome-content/*.png</exclude>
+                                                <exclude>standalone/data</exclude>
+                                                <exclude>standalone/log</exclude>
+                                                <exclude>standalone/tmp</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>download-wildfly</id>
+            <activation>
+                <property><name>!jboss.dist</name></property>
+            </activation>
+            <properties>
+                <jboss.home>${basedir}/target/jboss-as</jboss.home>
+                <jboss.modules.path>${basedir}/target/jboss-as/modules</jboss.modules.path>
             </properties>
             <build>
                 <plugins>
