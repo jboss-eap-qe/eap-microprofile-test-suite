@@ -9,12 +9,13 @@ import java.net.URL;
 import java.util.concurrent.TimeoutException;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.as.arquillian.api.ContainerResource;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 import io.restassured.http.ContentType;
@@ -28,15 +29,17 @@ public abstract class CustomMetricBaseTest {
     @ArquillianResource
     URL deploymentUrl;
 
-    @ContainerResource
-    ManagementClient managementClient;
-
     String metricsURL;
 
     @Before
     public void before() throws ConfigurationException, InterruptedException, TimeoutException, IOException {
-        metricsURL = "http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics";
-        new Administration(ManagementClientProvider.onlineStandalone()).reload();
+        ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
+                ArquillianDescriptorWrapper.getArquillianDescriptor());
+        metricsURL = "http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
+                + "/metrics";
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone(arqProps)) {
+            new Administration(client).reload();
+        }
     }
 
     abstract void setConfigProperties(int number) throws Exception;

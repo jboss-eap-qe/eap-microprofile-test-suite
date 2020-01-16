@@ -33,7 +33,7 @@ public class FailSafeCDISystemPropertyHealthTest extends FailSafeCDIHealthBaseTe
     @Override
     protected void setConfigProperties(boolean live, boolean ready, boolean inMaintanance, boolean readyInMainenance)
             throws Exception {
-        OnlineManagementClient client = ManagementClientProvider.onlineStandalone(managementClient);
+        OnlineManagementClient client = ManagementClientProvider.onlineStandalone();
         client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",
                 FailSafeDummyService.LIVE_CONFIG_PROPERTY, live)).assertSuccess();
         client.execute(String.format("/system-property=%s:write-attribute(name=value, value=%s)",

@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
@@ -27,6 +25,7 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.Manage
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 import io.restassured.http.ContentType;
@@ -43,9 +42,6 @@ import io.restassured.specification.RequestSpecification;
 public abstract class FailSafeCDIHealthBaseTest {
     protected RequestSpecification metricsRequest;
 
-    @ArquillianResource
-    protected ManagementClient managementClient;
-
     @Before
     public void before() throws ConfigurationException, InterruptedException, TimeoutException, IOException {
         ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
@@ -54,7 +50,9 @@ public abstract class FailSafeCDIHealthBaseTest {
                 + "/metrics";
         metricsRequest = given().baseUri(url).accept(ContentType.JSON);
         // reset MP Config properties
-        new Administration(ManagementClientProvider.onlineStandalone(managementClient)).reload();
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone(arqProps)) {
+            new Administration(client).reload();
+        }
     }
 
     protected abstract void setConfigProperties(boolean live, boolean ready, boolean inMaintanance, boolean readyInMainenance)

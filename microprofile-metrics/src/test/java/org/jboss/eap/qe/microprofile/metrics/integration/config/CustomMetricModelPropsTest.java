@@ -22,6 +22,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 /**
@@ -46,12 +47,12 @@ public class CustomMetricModelPropsTest extends CustomMetricBaseTest {
     }
 
     void setConfigProperties(int increment) throws IOException, ConfigurationException, TimeoutException, InterruptedException {
-        ModelNode properties = new ModelNode().add(INCREMENT_CONFIG_PROPERTY, increment);
-        Assert.assertEquals(ClientConstants.SUCCESS, managementClient.getControllerClient()
-                .execute(Util.getWriteAttributeOperation(CONFIG_SOURCE_PROPS_ADDRESS, "properties", properties))
-                .get(ClientConstants.OUTCOME)
-                .asString());
-        new Administration(ManagementClientProvider.onlineStandalone()).reload();
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            ModelNode properties = new ModelNode().add(INCREMENT_CONFIG_PROPERTY, increment);
+            client.execute(Util.getWriteAttributeOperation(CONFIG_SOURCE_PROPS_ADDRESS, "properties", properties))
+                    .assertSuccess();
+            new Administration(client).reload();
+        }
     }
 
     /**
