@@ -19,7 +19,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.as.arquillian.api.ContainerResource;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;
@@ -27,6 +26,8 @@ import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.operations.common.Util;
 import org.jboss.eap.qe.microprofile.tooling.server.ModuleUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -50,9 +51,6 @@ public class FTMetricTest {
     public static final String FAULT_CTL_CONFIG_PROPERTY = "dummy.corrupted";
     public static final String FAILSAFE_INCREMENT_CONFIG_PROPERTY = "dummy.failsafe.increment";
 
-    @ContainerResource
-    ManagementClient managementClient;
-
     @ArquillianResource
     URL deploymentUrl;
 
@@ -67,7 +65,9 @@ public class FTMetricTest {
 
     @Before
     public void reload() throws ConfigurationException, InterruptedException, TimeoutException, IOException {
-        new Administration(ManagementClientProvider.onlineStandalone()).reload();
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            new Administration(client).reload();
+        }
     }
 
     @Before
@@ -90,7 +90,7 @@ public class FTMetricTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void incrementProviderTest() throws IOException {
+    public void incrementProviderTest() throws IOException, ConfigurationException {
         setMPConfig(false, 2, 3);
         performRequest();
         performRequest();
@@ -113,7 +113,7 @@ public class FTMetricTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    public void incrementFailSafeProviderTest() throws IOException {
+    public void incrementFailSafeProviderTest() throws IOException, ConfigurationException {
         setMPConfig(false, 1, 3);
         performRequest();
         performRequest();
@@ -142,23 +142,26 @@ public class FTMetricTest {
         Files.write(SetupTask.propertyFilePath, content.getBytes(StandardCharsets.UTF_8));
     }
 
-    private void testCustomMetricForValue(int value) {
+    private void testCustomMetricForValue(int value) throws ConfigurationException {
         testAppCounterMetric("ft-custom-metric", value);
     }
 
-    private void testInvocationsMetric(int value) {
+    private void testInvocationsMetric(int value) throws ConfigurationException {
         testAppCounterMetric(
                 "ft." + FTCustomCounterIncrementProviderService.class.getName() + ".getIncrement.invocations.total", value);
     }
 
-    private void testFallbackMetric(int value) {
+    private void testFallbackMetric(int value) throws ConfigurationException {
         testAppCounterMetric(
                 "ft." + FTCustomCounterIncrementProviderService.class.getName() + ".getIncrement.fallback.calls.total", value);
     }
 
-    private void testAppCounterMetric(String name, int value) {
+    private void testAppCounterMetric(String name, int value) throws ConfigurationException {
+        ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
+                ArquillianDescriptorWrapper.getArquillianDescriptor());
         given()
-                .baseUri("http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics")
+                .baseUri("http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
+                        + "/metrics")
                 .accept(ContentType.JSON)
                 .get()
                 .then()

@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 /**
@@ -70,7 +71,9 @@ public class CustomMetricModelFilePropsTest extends CustomMetricBaseTest {
     void setConfigProperties(int increment) throws IOException, ConfigurationException, TimeoutException, InterruptedException {
         //      TODO Java 11 API way - Files.writeString(incrementFilePath, Integer.toString(increment));
         Files.write(incrementFilePath, Integer.toString(increment).getBytes(StandardCharsets.UTF_8));
-        new Administration(ManagementClientProvider.onlineStandalone()).reload();
+        try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
+            new Administration(client).reload();
+        }
     }
 
     /**
