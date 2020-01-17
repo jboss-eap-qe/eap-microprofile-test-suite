@@ -19,6 +19,7 @@ import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -119,6 +120,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpPassCrit Correct public key from the JWKS is chosen and client receives token raw value in response.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("https://issues.redhat.com/browse/WFLY-12975")
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_JSON_JWKS)
     public void testJwtSignedByBlueKeyJsonPk(@ArquillianResource URL url) {
@@ -176,6 +178,7 @@ public class MultipleConfiguredPublicKeysSelectionTest {
      * @tpPassCrit Correct public key from the JWKS is chosen and client receives token raw value in response.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("https://issues.redhat.com/browse/WFLY-12975")
     @Test
     @OperateOnDeployment(DEPLOYMENT_WITH_BASE64_JWKS)
     public void testJwtSignedByBlueKeyBase64(@ArquillianResource URL url) {
