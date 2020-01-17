@@ -23,6 +23,9 @@
         <module>microprofile-metrics</module>
         <module>server-utilities</module>
         <module>microprofile-jwt-auth-tool</module>
+        <module>microprofile-jwt</module>
+        <module>microprofile-open-api</module>
+        <module>microprofile-fault-tolerance</module>
     </modules>
 
     <properties>
@@ -299,35 +302,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <!--This section contains module activation profiles. These modules are activated separately because features
-        they are testing were not yet included in released WildFly distribution.-->
-        <profile>
-            <id>mp-open-api</id>
-            <modules>
-                <module>microprofile-open-api</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>mp-jwt</id>
-            <modules>
-                <module>microprofile-jwt</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>mp-ft</id>
-            <modules>
-                <module>microprofile-fault-tolerance</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>all</id>
-            <modules>
-                <module>microprofile-jwt</module>
-                <module>microprofile-open-api</module>
-                <module>microprofile-fault-tolerance</module>
-            </modules>
         </profile>
     </profiles>
 </project>
