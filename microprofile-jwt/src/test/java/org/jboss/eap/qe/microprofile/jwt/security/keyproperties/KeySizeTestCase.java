@@ -19,6 +19,7 @@ import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -83,6 +84,7 @@ public class KeySizeTestCase {
      * @tpPassCrit Authentication is successful and client receives raw token value in response.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("https://issues.redhat.com/browse/WFLY-12979")
     @Test
     @OperateOnDeployment(BITS_1024_KEY_DEPLOYMENT)
     public void testJwtSignedBy1024bitsKey(@ArquillianResource URL url) throws URISyntaxException {
