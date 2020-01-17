@@ -38,6 +38,16 @@ mvn clean verify -pl microprofile-health
 ```
 Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 
+## Run the testsuite on Jenkins instance using Jenkinsfile:
+
+- Follow instructions on <https://jenkins.io/doc/book/installing/> to install and run Jenkins
+- Install `Pipeline` and `AnsiColor` plugins - see https://jenkins.io/doc/book/managing/plugins/ for more details
+- Create a new `pipeline` job (`New Item` -> Choose `Pipeline` option and enter job name `microprofile-test-suite`)
+- Copy content of Jenkinsfile into Pipeline script section and `Save`
+    - Change `linux` label in `agent { label 'linux' }` to contain label assigned to your slaves
+    - Change `java-1.8.0-oracle` in `jdk 'java-1.8.0-oracle'` to installed JDK label
+- Trigger build by `Build Now` button - NOTE FIRST RUN WILL FAIL DUE TO ISSUES <https://issues.jenkins-ci.org/browse/JENKINS-40574/> <https://issues.jenkins-ci.org/browse/JENKINS-41929> but all the subsequent runs will work
+
 ## Quick compilation of the code
 Can be used to ensure code changes are compilable, `-Djboss.home=foo` is workaround to skip unpacking of WildFly zip.
 ```
