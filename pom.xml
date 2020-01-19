@@ -16,13 +16,13 @@
     <name>Test suite for MicroProfile on WF/EAP</name>
 
     <modules>
-        <module>tooling-docker</module>
-        <module>tooling-server-configuration</module>
         <module>tooling-cpu-load</module>
+        <module>tooling-docker</module>
+        <module>tooling-mp-jwt-auth-tool</module>
+        <module>tooling-server-configuration</module>
         <module>microprofile-health</module>
         <module>microprofile-metrics</module>
         <module>server-utilities</module>
-        <module>microprofile-jwt-auth-tool</module>
         <module>microprofile-jwt</module>
         <module>microprofile-open-api</module>
         <module>microprofile-fault-tolerance</module>
@@ -139,7 +139,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.eap.qe</groupId>
-                <artifactId>microprofile-jwt-auth-tool</artifactId>
+                <artifactId>tooling-mp-jwt-auth-tool</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

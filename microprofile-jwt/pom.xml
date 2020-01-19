@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
-            <artifactId>microprofile-jwt-auth-tool</artifactId>
+            <artifactId>tooling-mp-jwt-auth-tool</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
