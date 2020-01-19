@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>microprofile-jwt-auth-tool</artifactId>
+    <artifactId>tooling-mp-jwt-auth-tool</artifactId>
 
     <dependencies>
         <dependency>
