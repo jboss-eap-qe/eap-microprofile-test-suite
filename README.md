@@ -25,9 +25,9 @@ mvn clean verify -Darquillian.deploymentExportPath=target/deployments/
 
 ## Run one module against custom build
 ```
-mvn clean verify -pl microprofile-health -Djboss.home=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
+mvn clean verify -pl microprofile-health -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
 
-./mvnw clean verify -pl microprofile-health -Djboss.home=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
+./mvnw clean verify -pl microprofile-health -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
 ```
 
 ## Run one module against running server
@@ -49,11 +49,11 @@ Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 - Trigger build by `Build Now` button - NOTE FIRST RUN WILL FAIL DUE TO ISSUES <https://issues.jenkins-ci.org/browse/JENKINS-40574/> <https://issues.jenkins-ci.org/browse/JENKINS-41929> but all the subsequent runs will work
 
 ## Quick compilation of the code
-Can be used to ensure code changes are compilable, `-Djboss.home=foo` is workaround to skip unpacking of WildFly zip.
+Can be used to ensure code changes are compilable, `-Djboss.dist=foo` is workaround to skip unpacking of WildFly zip.
 ```
-mvn clean verify -DskipTests -DskipITs -Djboss.home=foo
+mvn clean verify -DskipTests -DskipITs -Djboss.dist=foo
 
-./mvnw clean verify -DskipTests -DskipITs -Djboss.home=foo
+./mvnw clean verify -DskipTests -DskipITs -Djboss.dist=foo
 ```
 
 ## Zip distribution bundle
