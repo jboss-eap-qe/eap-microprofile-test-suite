@@ -20,14 +20,13 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.as.arquillian.api.ServerSetupTask;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.operations.common.Util;
 import org.jboss.eap.qe.microprofile.tooling.server.ModuleUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -180,7 +179,7 @@ public class FTMetricTest {
      * Setup a microprofile-config-smallrye subsystem to obtain values from {@link FTCustomConfigSource}.
      * Add MP FT subsystem.
      */
-    static class SetupTask implements ServerSetupTask {
+    static class SetupTask implements MicroProfileServerSetupTask {
         private static final String TEST_MODULE_NAME = "test.ft-custom-config-source";
         private static final String PROPERTY_FILENAME = "ft-custom-metric.properties";
         static Path propertyFilePath = Paths.get(SetupTask.class.getResource(PROPERTY_FILENAME).getPath());
@@ -190,7 +189,7 @@ public class FTMetricTest {
                 "microprofile-fault-tolerance-smallrye");
 
         @Override
-        public void setup(ManagementClient managementClient, String s) throws Exception {
+        public void setup() throws Exception {
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 client.execute(String.format("/system-property=%s:add(value=%s)", FTCustomConfigSource.FILEPATH_PROPERTY,
                         SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
@@ -207,7 +206,7 @@ public class FTMetricTest {
         }
 
         @Override
-        public void tearDown(ManagementClient managementClient, String s) throws Exception {
+        public void tearDown() throws Exception {
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 client.execute("/subsystem=microprofile-config-smallrye/config-source=cs-from-class:remove");
                 ModuleUtil.remove(TEST_MODULE_NAME).executeOn(client);

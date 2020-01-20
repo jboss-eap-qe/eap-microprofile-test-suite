@@ -10,9 +10,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.as.arquillian.api.ServerSetupTask;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.tooling.server.ModuleUtil;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -63,11 +62,11 @@ public class CustomMetricCustomConfigSourceTest extends CustomMetricDynamicBaseT
      * Setup a microprofile-config-smallrye subsystem to obtain values from {@link CustomConfigSource} provided by
      * {@link CustomConfigSourceProvider}
      */
-    static class SetupTask implements ServerSetupTask {
+    static class SetupTask implements MicroProfileServerSetupTask {
         private static final String TEST_MODULE_NAME = "test.custom-config-source";
 
         @Override
-        public void setup(ManagementClient managementClient, String s) throws Exception {
+        public void setup() throws Exception {
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 client.execute(String.format("/system-property=%s:add(value=%s)", CustomConfigSource.FILEPATH_PROPERTY,
                         CustomMetricCustomConfigSourceProviderTest.SetupTask.class.getResource(PROPERTY_FILENAME).getPath()));
@@ -82,7 +81,7 @@ public class CustomMetricCustomConfigSourceTest extends CustomMetricDynamicBaseT
         }
 
         @Override
-        public void tearDown(ManagementClient managementClient, String s) throws Exception {
+        public void tearDown() throws Exception {
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 client.execute("/subsystem=microprofile-config-smallrye/config-source=cs-from-class:remove");
                 ModuleUtil.remove(TEST_MODULE_NAME).executeOn(client);
