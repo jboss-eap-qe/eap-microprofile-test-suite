@@ -48,7 +48,7 @@ pipeline {
                     WF_RELATIVE_PATH=`find wildfly/dist/target -mindepth 1 -maxdepth 1 -type d | grep "target/wildfly"`
                     WF_HOME=${PWD}/${WF_RELATIVE_PATH}
                     cd eap-microprofile-test-suite
-                    ./mvnw -B clean verify -Denforcer.skip=true -Djboss.home=$WF_HOME
+                    ./mvnw -B clean verify -Denforcer.skip=true -Djboss.dist=$WF_HOME
                 '''
             }
         }        
