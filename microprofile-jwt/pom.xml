@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
-            <artifactId>server-utilities</artifactId>
+            <artifactId>tooling-server-utilities</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

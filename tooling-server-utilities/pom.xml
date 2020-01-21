@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>server-utilities</artifactId>
+    <artifactId>tooling-server-utilities</artifactId>
 
     <dependencies>
         <dependency>

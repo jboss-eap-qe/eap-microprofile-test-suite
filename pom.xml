@@ -20,12 +20,12 @@
         <module>tooling-docker</module>
         <module>tooling-mp-jwt-auth-tool</module>
         <module>tooling-server-configuration</module>
-        <module>microprofile-health</module>
-        <module>microprofile-metrics</module>
-        <module>server-utilities</module>
-        <module>microprofile-jwt</module>
-        <module>microprofile-open-api</module>
+        <module>tooling-server-utilities</module>
         <module>microprofile-fault-tolerance</module>
+        <module>microprofile-health</module>
+        <module>microprofile-jwt</module>
+        <module>microprofile-metrics</module>
+        <module>microprofile-open-api</module>
     </modules>
 
     <properties>
@@ -144,7 +144,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.eap.qe</groupId>
-                <artifactId>server-utilities</artifactId>
+                <artifactId>tooling-server-utilities</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--implementation of javax.json:javax.json-api-->
