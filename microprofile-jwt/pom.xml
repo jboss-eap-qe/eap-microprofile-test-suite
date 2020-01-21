@@ -43,11 +43,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.eap.qe</groupId>
-            <artifactId>tooling-server-utilities</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.eap.qe</groupId>
             <artifactId>tooling-mp-jwt-auth-tool</artifactId>
             <scope>test</scope>
         </dependency>
