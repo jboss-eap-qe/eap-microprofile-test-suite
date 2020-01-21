@@ -119,7 +119,7 @@ public class OpenApiServerConfiguration {
     /**
      * Checks whether <b>"org.wildfly.extension.microprofile.openapi-smallrye"</b> subsytem is present
      *
-     * @param client {@link OnlineManagementClient} instance used to execute the command
+     * @param client {@link OnlineManagementClient} instance used to execute the commandprivate
      * @return True if subsystem is already present,false otherwise
      * @throws ManagementClientRelatedException Wraps exceptions thrown by the internal operation executed by
      *         {@link OnlineManagementClient} API
