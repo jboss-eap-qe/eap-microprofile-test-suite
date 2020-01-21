@@ -20,7 +20,6 @@
         <module>tooling-docker</module>
         <module>tooling-mp-jwt-auth-tool</module>
         <module>tooling-server-configuration</module>
-        <module>tooling-server-utilities</module>
         <module>microprofile-fault-tolerance</module>
         <module>microprofile-health</module>
         <module>microprofile-jwt</module>
@@ -143,12 +142,7 @@
                 <groupId>org.jboss.eap.qe</groupId>
                 <artifactId>tooling-mp-jwt-auth-tool</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.eap.qe</groupId>
-                <artifactId>tooling-server-utilities</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+            </dependency>           
             <!--implementation of javax.json:javax.json-api-->
             <dependency>
                 <groupId>org.glassfish</groupId>
