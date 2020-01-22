@@ -6,8 +6,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/ping-two")
+@Path("/" + PingTwoResource.RESOURCE)
 public class PingTwoResource {
+    public static final String RESOURCE = "ping-one";
+
     @Inject
     private PingTwoService ping;
 
