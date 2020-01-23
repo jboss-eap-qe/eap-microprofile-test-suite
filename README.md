@@ -121,3 +121,22 @@ mvn release:prepare release:clean -Darguments=-DskipTests
 ```
 
 With commands you are able to define a release, a tag and a next development version name in interactive way.
+
+## Issues found by the testsuite
+Any issue found in WildFly/EAP release will be reported into the Red Hat issue tracker: https://issues.redhat.com/ . There are the following Jira projects:
+* https://issues.redhat.com/projects/WFWIP - for issues in unreleased WildFly version (like WF dev branches)
+* https://issues.redhat.com/projects/WFLY - for released WildFly versions
+* https://issues.redhat.com/projects/JBEAP - for released EAP versions
+
+Every reported issue must contain:
+* Title (affected MP spec may be part of the title, proper Component must be set)
+* Type: Bug
+* Component: related Microprofile component (`mp-health`)
+* Affected Version - WildFly/EAP version (for WFLY/JBEAP issues)
+* Description of the issue
+  * provide high-level description of the issue
+  * information about tested WF/EAP build (or used commit/branch)
+  * impact on the user
+  * test scenario (actual and expected result)
+  * add logs/stacktraces
+  * automatic reproducer (if possible)

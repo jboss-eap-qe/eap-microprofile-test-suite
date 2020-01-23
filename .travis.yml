@@ -5,6 +5,11 @@ jdk:
 install:
  - mvn -version; docker version
 script:
+ - if [ $(git grep import | grep '\*' | grep -E -v '(.mvn/|.travis.yml:|README.md|CONTRIBUTING.md)' | wc -l) != 0 ]; then
+     echo "Wildcard found!";
+     git grep import | grep '\*' | grep -E -v '(.mvn/|.travis.yml:|README.md|CONTRIBUTING.md)';
+     exit 1;
+   fi
  - mvn -B formatter:validate impsort:check
  - mvn -B verify -DskipTests -Djboss.dist=foo
 cache:

@@ -3,16 +3,18 @@ package org.jboss.eap.qe.microprofile.metrics;
 import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ContainerResource;
-import org.jboss.as.arquillian.container.ManagementClient;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,17 +30,15 @@ public class InvalidMimeTypeMetricsTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @ContainerResource
-    ManagementClient managementClient;
+    private static RequestSpecification metricsRequest;
 
-    private RequestSpecification metricsRequest;
-
-    @Before
-    public void prepare() {
-        metricsRequest = given()
-                .baseUri("http://" + managementClient.getMgmtAddress())
-                .port(managementClient.getMgmtPort())
-                .basePath("metrics");
+    @BeforeClass
+    public static void composeMetricsEndpointURL() throws MalformedURLException, ConfigurationException {
+        ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
+                ArquillianDescriptorWrapper.getArquillianDescriptor());
+        String metricsURL = "http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
+                + "/metrics";
+        metricsRequest = given().baseUri(metricsURL);
     }
 
     /**
