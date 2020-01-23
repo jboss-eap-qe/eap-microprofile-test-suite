@@ -5,6 +5,7 @@ jdk:
 install:
  - mvn -version; docker version
 script:
+ - [[ $(git grep import | grep '\*' | grep -v '.mvn' | wc -l) == 0 ]] || ( echo "Wildcard found!" && exit 1 )
  - mvn -B formatter:validate impsort:check
  - mvn -B verify -DskipTests -Djboss.dist=foo
 cache:
