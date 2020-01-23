@@ -16,13 +16,14 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.as.arquillian.api.ContainerResource;
-import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.metrics.hello.MetricsApp;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,11 +32,9 @@ import io.restassured.http.ContentType;
 @RunWith(Arquillian.class)
 public class ConnectionStressMetricsTest {
 
-    @ContainerResource
-    ManagementClient managementClient;
     @ArquillianResource
     private URL deploymentUrl;
-    private URL metricsURL;
+    private static URL metricsURL;
 
     @Deployment
     public static WebArchive createDeployment() {
@@ -44,9 +43,12 @@ public class ConnectionStressMetricsTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    @Before
-    public void composeHealthEndpointURL() throws MalformedURLException {
-        metricsURL = new URL("http://" + managementClient.getMgmtAddress() + ":" + managementClient.getMgmtPort() + "/metrics");
+    @BeforeClass
+    public static void composeMetricsEndpointURL() throws MalformedURLException, ConfigurationException {
+        ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
+                ArquillianDescriptorWrapper.getArquillianDescriptor());
+        metricsURL = new URL("http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
+                + "/metrics");
     }
 
     private HttpURLConnection getHTTPConn(URL url) throws Exception {
