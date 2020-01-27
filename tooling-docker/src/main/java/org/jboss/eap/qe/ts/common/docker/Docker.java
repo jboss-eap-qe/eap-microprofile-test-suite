@@ -54,12 +54,38 @@ public class Docker extends ExternalResource implements Container {
         this.out = builder.out;
     }
 
-    /**
-     * Start this container
-     * 
-     * @throws ContainerStartException thrown when start of container fails
-     */
+    @Override
     public void start() throws ContainerStartException {
+        if (isRunning()) {
+            throw new ContainerStartException("Container '" + this.uuid + "' is already running!");
+        }
+        if (!containerExists()) {
+            throw new ContainerStartException("Container '" + this.uuid + "' doesn't exist!");
+        }
+        try {
+            final Process startProcess = runDockerCommand("start", this.uuid);
+            this.outputPrintingThread = startPrinterThread(startProcess, this.out, this.name);
+            final long startTime = System.currentTimeMillis();
+            while (!isContainerReady(this.uuid, this.containerReadyCondition)) {
+                if (System.currentTimeMillis() - startTime > containerReadyTimeout) {
+                    stop();
+                    remove();
+                    throw new ContainerStartException(
+                            "Container '" + this.uuid + "' was not ready in " + this.containerReadyTimeout + " ms");
+                }
+                // fail fast mechanism in case of malformed docker command, for example bad arguments, invalid format of port mapping, image version,...
+                if (!startProcess.isAlive() && startProcess.exitValue() != 0) {
+                    throw new ContainerStartException("Failed to start '" + this.uuid + "' container!");
+                }
+            }
+        } catch (DockerCommandException | ContainerReadyConditionException | ContainerStopException
+                | ContainerRemoveException e) {
+            throw new ContainerStartException("Failed to start container '" + this.uuid + "'!", e);
+        }
+    }
+
+    @Override
+    public void run() throws ContainerStartException {
         if (!isDockerPresent()) {
             throw new ContainerStartException("'docker' command is not present on this machine!");
         }
@@ -67,7 +93,7 @@ public class Docker extends ExternalResource implements Container {
         this.out.println(Ansi.ansi().reset().a("Starting container ").fgCyan().a(name).reset()
                 .a(" with ID ").fgYellow().a(uuid).reset());
 
-        final List<String> dockerStartCommand = composeStartCommand();
+        final List<String> dockerStartCommand = composeRunCommand();
         Process dockerRunProcess;
         try {
             dockerRunProcess = new ProcessBuilder()
@@ -85,7 +111,7 @@ public class Docker extends ExternalResource implements Container {
             while (!isContainerReady(this.uuid, this.containerReadyCondition)) {
                 if (System.currentTimeMillis() - startTime > containerReadyTimeout) {
                     stop();
-                    removeDockerContainer(this.uuid);
+                    remove();
                     throw new ContainerStartException(uuid + " - Container was not ready in " + containerReadyTimeout + " ms");
                 }
                 // fail fast mechanism in case of malformed docker command, for example bad arguments, invalid format of port mapping, image version,...
@@ -104,7 +130,7 @@ public class Docker extends ExternalResource implements Container {
         }
     }
 
-    private List<String> composeStartCommand() {
+    private List<String> composeRunCommand() {
         List<String> cmd = new ArrayList<>();
 
         cmd.add("docker");
@@ -172,14 +198,10 @@ public class Docker extends ExternalResource implements Container {
 
     private boolean isDockerPresent() {
         try {
-            Process dockerInfoProcess = new ProcessBuilder()
-                    .redirectErrorStream(true)
-                    .command(new String[] { "docker", "info" })
-                    .start();
-            dockerInfoProcess.waitFor();
-            return dockerInfoProcess.exitValue() == 0;
-        } catch (IOException | InterruptedException e) {
-            throw new IllegalStateException("There was an exception when checking for docker command presence!");
+            final int processExitValue = runDockerCommand("info").exitValue();
+            return processExitValue == 0;
+        } catch (DockerCommandException e) {
+            throw new IllegalStateException("There was an exception when checking for docker command presence!", e);
         }
     }
 
@@ -189,13 +211,35 @@ public class Docker extends ExternalResource implements Container {
     public boolean isRunning() {
         Process dockerRunProcess;
         try {
-            dockerRunProcess = new ProcessBuilder()
-                    .redirectErrorStream(true)
-                    .command(new String[] { "docker", "ps" })
-                    .start();
+            dockerRunProcess = runDockerCommand("ps");
+        } catch (DockerCommandException ignored) {
+            //when we cannot start the process for making the check container is not running
+            return false;
+        }
 
-            dockerRunProcess.waitFor();
-        } catch (IOException | InterruptedException ignored) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(this.uuid)) {
+                    return true;
+                }
+            }
+        } catch (IOException ignored) {
+            // ignore as any stop of docker container breaks the reader stream
+            // note that shutdown of docker would be already logged
+        }
+        return false;
+    }
+
+    /**
+     * @return Returns true if container exists.
+     */
+    private boolean containerExists() {
+        Process dockerRunProcess;
+        try {
+            dockerRunProcess = runDockerCommand("ps", "-a");
+        } catch (DockerCommandException ignored) {
             //when we cannot start the process for making the check container is not running
             return false;
         }
@@ -262,19 +306,22 @@ public class Docker extends ExternalResource implements Container {
     }
 
     private void terminatePrintingThread() throws InterruptedException {
-        outputPrintingThread.shutdown();
-        outputPrintingThread.awaitTermination(10, TimeUnit.SECONDS);
-    }
-
-    private void removeDockerContainer(final String uuid) throws ContainerRemoveException {
-        try {
-            runDockerCommand("rm", uuid);
-        } catch (DockerCommandException e) {
-            throw new ContainerRemoveException("Failed to remove the container '" + uuid + "'!", e);
+        if (outputPrintingThread != null) {
+            outputPrintingThread.shutdown();
+            outputPrintingThread.awaitTermination(10, TimeUnit.SECONDS);
         }
     }
 
-    private int runDockerCommand(final String... commandArguments) throws DockerCommandException {
+    @Override
+    public void remove() throws ContainerRemoveException {
+        try {
+            runDockerCommand("rm", this.uuid);
+        } catch (DockerCommandException e) {
+            throw new ContainerRemoveException("Failed to remove the container '" + this.uuid + "'!", e);
+        }
+    }
+
+    private Process runDockerCommand(final String... commandArguments) throws DockerCommandException {
         final String dockerCommand = "docker";
         final List<String> cmd = new ArrayList<>();
         cmd.add(dockerCommand);
@@ -288,7 +335,7 @@ public class Docker extends ExternalResource implements Container {
 
             process.waitFor(10, TimeUnit.SECONDS);
 
-            return process.exitValue();
+            return process;
         } catch (InterruptedException e) {
             throw new DockerCommandException("Interrupted while waiting for '" + String.join(" ", cmd) + "' to return!", e);
         } catch (IOException e) {
@@ -298,14 +345,14 @@ public class Docker extends ExternalResource implements Container {
 
     @Override
     protected void before() throws ContainerStartException {
-        start();
+        run();
     }
 
     @Override
     protected void after() {
         try {
             stop();
-            removeDockerContainer(this.uuid);
+            remove();
         } catch (ContainerStopException e) {
             throw new IllegalStateException("Failed to stop container '" + this.uuid + "'! ", e);
         } catch (ContainerRemoveException e) {

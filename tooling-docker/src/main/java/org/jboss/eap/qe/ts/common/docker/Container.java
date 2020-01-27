@@ -7,11 +7,16 @@ package org.jboss.eap.qe.ts.common.docker;
 public interface Container {
 
     /**
-     * Start this container
+     * Start a previously stopped or killed container
+     */
+    void start() throws ContainerStartException;
+
+    /**
+     * Create and start new container
      * 
      * @throws ContainerStartException thrown when start of container fails
      */
-    void start() throws ContainerStartException;
+    void run() throws ContainerStartException;
 
     /**
      * @return Returns true if docker container is running. It does NOT check whether container is ready.
@@ -33,5 +38,12 @@ public interface Container {
      * @throws ContainerKillException thrown when the kill command fails.
      */
     void kill() throws ContainerKillException;
+
+    /**
+     * Remove a container from system
+     * 
+     * @throws ContainerRemoveException thrown when removing fails
+     */
+    void remove() throws ContainerRemoveException;
 
 }
