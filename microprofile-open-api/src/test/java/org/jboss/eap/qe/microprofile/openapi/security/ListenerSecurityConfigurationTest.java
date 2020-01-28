@@ -1,19 +1,5 @@
 package org.jboss.eap.qe.microprofile.openapi.security;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.not;
-
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.TimeoutException;
-
-import javax.ws.rs.core.MediaType;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -52,6 +38,19 @@ import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.Batch;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
+
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeoutException;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Test cases for security scenarios involving HTTP/HTTPS listeners
@@ -124,7 +123,7 @@ public class ListenerSecurityConfigurationTest {
         }
     }
 
-    private static void enableHTTPSListener()
+    private static void enableHTTPSListener(final String hostName)
             throws IOException, TimeoutException, InterruptedException, CliException {
 
         String keystorePath = jbossHome + "/keystore.jks";
@@ -136,19 +135,22 @@ public class ListenerSecurityConfigurationTest {
         result.assertSuccess();
 
         result = listenersConfigurationOnlineManagementClient.execute(
-                "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
-                        "alias=localhost,algorithm=RSA,key-size=2048,validity=365," +
-                        "credential-reference={clear-text=secret},distinguished-name=\"CN=localhost\")");
+                String.format(
+                        "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
+                                "alias=%1$s,algorithm=RSA,key-size=2048,validity=365," +
+                                "credential-reference={clear-text=secret},distinguished-name=\"CN=cn-%1$s\")",
+                        hostName));
         result.assertSuccess();
 
         result = listenersConfigurationOnlineManagementClient.execute("/subsystem=elytron/key-store=httpsGenKS:store()");
         result.assertSuccess();
 
         // keep a reference to keystore.jks in order to flush it away once we're done
-        if (!Files.exists(Paths.get(keystorePath))) {
+        final Path path = Paths.get(keystorePath);
+        if (!Files.exists(path)) {
             throw new IllegalStateException(keystorePath + " not found");
         }
-        keyStoreFile = Paths.get(keystorePath);
+        keyStoreFile = path;
 
         result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-manager=httpsKM:add(key-store=httpsGenKS,credential-reference={clear-text=secret})");
@@ -229,8 +231,7 @@ public class ListenerSecurityConfigurationTest {
         new Administration(listenersConfigurationOnlineManagementClient).reload();
     }
 
-    private static boolean isHttpRemotingConnectorSet()
-            throws InterruptedException, TimeoutException, IOException, CliException {
+    private static boolean isHttpRemotingConnectorSet() throws IOException, CliException {
 
         ModelNodeResult result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=remoting/http-connector=http-remoting-connector:read-resource()");
@@ -254,7 +255,7 @@ public class ListenerSecurityConfigurationTest {
                 url.getPort() - configuredHTTPPort + configuredHTTPSPort);
 
         //  enable HTTPS
-        enableHTTPSListener();
+        enableHTTPSListener(url.getHost());
         //  ... and disable HTTP
         disableHTTPListener();
 
@@ -268,7 +269,6 @@ public class ListenerSecurityConfigurationTest {
         disableHTTPSListener();
         //  ... and re-enable HTTP
         enableHTTPListener();
-
     }
 
     /**
