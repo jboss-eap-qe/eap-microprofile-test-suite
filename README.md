@@ -25,9 +25,9 @@ mvn clean verify -Darquillian.deploymentExportPath=target/deployments/
 
 ## Run one module against custom build
 ```
-mvn clean verify -pl microprofile-health -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
+mvn clean verify -pl microprofile-health -am -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
 
-./mvnw clean verify -pl microprofile-health -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
+./mvnw clean verify -pl microprofile-health -am -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
 ```
 
 ## Run one module against running server
