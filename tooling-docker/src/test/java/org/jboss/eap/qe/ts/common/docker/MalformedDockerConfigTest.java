@@ -32,7 +32,7 @@ public class MalformedDockerConfigTest {
         thrown.expectMessage(containsString("Starting of docker container using command: \"docker run --name"));
         thrown.expectMessage(endsWith("failed. Check that provided command is correct."));
 
-        containerWithInvalidVersion.run();
+        containerWithInvalidVersion.start();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MalformedDockerConfigTest {
                         "Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout"))));
         // throws expected Exception
         try {
-            containerWithHangingReadyCondition.run();
+            containerWithHangingReadyCondition.start();
         } finally {
             assertThat("ContainerReadyConditionException was thrown and starting container is expected to be stopped/killed. " +
                     "However this did not happen and there is still container running which is bug.",
@@ -76,7 +76,7 @@ public class MalformedDockerConfigTest {
         thrown.expectMessage(containsString("Container was not ready in"));
 
         try {
-            containerWithShortTimeout.run();
+            containerWithShortTimeout.start();
         } finally {
             assertThat("DockerTimeoutException was thrown and starting container is expected to be stopped/killed. " +
                     "However this did not happen and there is still container running which is bug.",

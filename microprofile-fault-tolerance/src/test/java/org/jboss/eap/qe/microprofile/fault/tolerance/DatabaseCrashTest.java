@@ -113,7 +113,7 @@ public class DatabaseCrashTest {
                 .withCmdOption("-u")
                 .withCmdOption(String.valueOf(new UnixSystem().getUid()))
                 .build();
-        postgresDB.run();
+        postgresDB.start();
     }
 
     @BeforeClass

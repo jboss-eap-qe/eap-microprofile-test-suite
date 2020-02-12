@@ -12,38 +12,25 @@ public interface Container {
     void start() throws ContainerStartException;
 
     /**
-     * Create and start new container
+     * Check if container is running. Container in running state doesn't mean that the initialization is done and
+     * container is ready for work.
      * 
-     * @throws ContainerStartException thrown when start of container fails
-     */
-    void run() throws ContainerStartException;
-
-    /**
-     * @return Returns true if docker container is running. It does NOT check whether container is ready.
+     * @return Returns true if docker container is running.
      */
     boolean isRunning();
 
     /**
-     * Stop this docker container using docker command.
+     * Stop this docker container.
      * 
-     * @throws ContainerStopException thrown when the stop command fails. This generally means that the command wasn't
-     *         successful and container might be still running.
+     * @throws ContainerStopException thrown when the stop fails. This might mean that the container is still running.
      */
     void stop() throws ContainerStopException;
 
     /**
-     * Kill this docker container using docker command. Be aware that there might occur a situation when the docker
-     * command might fail. This might be caused for example by reaching file descriptors limit in system.
+     * Kill this container.
      * 
-     * @throws ContainerKillException thrown when the kill command fails.
+     * @throws ContainerKillException thrown when the kill fails. This might mean that the container is still running.
      */
     void kill() throws ContainerKillException;
-
-    /**
-     * Remove a container from system
-     * 
-     * @throws ContainerRemoveException thrown when removing fails
-     */
-    void remove() throws ContainerRemoveException;
 
 }

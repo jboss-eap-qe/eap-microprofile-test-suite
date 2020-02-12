@@ -56,36 +56,6 @@ public class Docker extends ExternalResource implements Container {
 
     @Override
     public void start() throws ContainerStartException {
-        if (isRunning()) {
-            throw new ContainerStartException("Container '" + this.uuid + "' is already running!");
-        }
-        if (!containerExists()) {
-            throw new ContainerStartException("Container '" + this.uuid + "' doesn't exist!");
-        }
-        try {
-            final Process startProcess = runDockerCommand("start", this.uuid);
-            this.outputPrintingThread = startPrinterThread(startProcess, this.out, this.name);
-            final long startTime = System.currentTimeMillis();
-            while (!isContainerReady(this.uuid, this.containerReadyCondition)) {
-                if (System.currentTimeMillis() - startTime > containerReadyTimeout) {
-                    stop();
-                    remove();
-                    throw new ContainerStartException(
-                            "Container '" + this.uuid + "' was not ready in " + this.containerReadyTimeout + " ms");
-                }
-                // fail fast mechanism in case of malformed docker command, for example bad arguments, invalid format of port mapping, image version,...
-                if (!startProcess.isAlive() && startProcess.exitValue() != 0) {
-                    throw new ContainerStartException("Failed to start '" + this.uuid + "' container!");
-                }
-            }
-        } catch (DockerCommandException | ContainerReadyConditionException | ContainerStopException
-                | ContainerRemoveException e) {
-            throw new ContainerStartException("Failed to start container '" + this.uuid + "'!", e);
-        }
-    }
-
-    @Override
-    public void run() throws ContainerStartException {
         if (!isDockerPresent()) {
             throw new ContainerStartException("'docker' command is not present on this machine!");
         }
@@ -149,6 +119,8 @@ public class Docker extends ExternalResource implements Container {
         }
 
         cmd.addAll(options);
+
+        cmd.add("--rm"); //causes Docker to automatically remove the container when it exits
 
         cmd.add(image);
 
@@ -233,33 +205,6 @@ public class Docker extends ExternalResource implements Container {
     }
 
     /**
-     * @return Returns true if container exists.
-     */
-    private boolean containerExists() {
-        Process dockerRunProcess;
-        try {
-            dockerRunProcess = runDockerCommand("ps", "-a");
-        } catch (DockerCommandException ignored) {
-            //when we cannot start the process for making the check container is not running
-            return false;
-        }
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(dockerRunProcess.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(this.uuid)) {
-                    return true;
-                }
-            }
-        } catch (IOException ignored) {
-            // ignore as any stop of docker container breaks the reader stream
-            // note that shutdown of docker would be already logged
-        }
-        return false;
-    }
-
-    /**
      * Stop this docker container using docker command.
      * 
      * @throws ContainerStopException thrown when the stop command fails. This generally means that the command wasn't
@@ -312,7 +257,6 @@ public class Docker extends ExternalResource implements Container {
         }
     }
 
-    @Override
     public void remove() throws ContainerRemoveException {
         try {
             runDockerCommand("rm", this.uuid);
@@ -345,7 +289,7 @@ public class Docker extends ExternalResource implements Container {
 
     @Override
     protected void before() throws ContainerStartException {
-        run();
+        start();
     }
 
     @Override
