@@ -68,6 +68,7 @@ public class ListenerSecurityConfigurationTest {
     private static int configuredHTTPPort, configuredHTTPSPort;
     private static Path keyStoreFile;
     private static String jbossHome;
+    private static String jbossHostName;
     private static OnlineManagementClient listenersConfigurationOnlineManagementClient;
 
     @Deployment(testable = false)
@@ -111,6 +112,8 @@ public class ListenerSecurityConfigurationTest {
                 //  MP OpenAPI up
                 OpenApiServerConfiguration.enableOpenApi(client);
             }
+
+            String jbossHostName = arquillianContainerProperties.getDefaultManagementAddress();
         }
 
         @Override
@@ -122,7 +125,7 @@ public class ListenerSecurityConfigurationTest {
     }
 
     private static void enableHTTPSListener()
-            throws IOException, TimeoutException, InterruptedException, CliException {
+            throws IOException, TimeoutException, InterruptedException, CliException, ConfigurationException {
 
         String keystorePath = jbossHome + "/keystore.jks";
 
@@ -133,9 +136,11 @@ public class ListenerSecurityConfigurationTest {
         result.assertSuccess();
 
         result = listenersConfigurationOnlineManagementClient.execute(
-                "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
-                        "alias=localhost,algorithm=RSA,key-size=1024,validity=365," +
-                        "credential-reference={clear-text=secret},distinguished-name=\"CN=localhost\")");
+                String.format(
+                        "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
+                                "alias=%1$s,algorithm=RSA,key-size=1024,validity=365," +
+                                "credential-reference={clear-text=secret},distinguished-name=\"CN=%1$s\")",
+                        jbossHostName));
         result.assertSuccess();
 
         result = listenersConfigurationOnlineManagementClient.execute("/subsystem=elytron/key-store=httpsGenKS:store()");
@@ -232,7 +237,7 @@ public class ListenerSecurityConfigurationTest {
     @Test
     @InSequence(1)
     public void testOpenApiOnHTTPSListener(@ArquillianResource URL url)
-            throws InterruptedException, TimeoutException, CliException, IOException {
+            throws InterruptedException, TimeoutException, CliException, IOException, ConfigurationException {
         String httpsOpenApiUrl = String.format(
                 "https://%s:%d/openapi",
                 url.getHost(),
