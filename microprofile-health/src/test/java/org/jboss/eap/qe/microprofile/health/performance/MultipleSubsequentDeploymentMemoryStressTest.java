@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.openapi.performance;
+package org.jboss.eap.qe.microprofile.health.performance;
 
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.empty;
@@ -14,14 +14,10 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.DistrictsResource;
-import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
-import org.jboss.eap.qe.microprofile.openapi.performance.evaluation.IncreaseOverToleranceEvaluator;
+import org.jboss.eap.qe.microprofile.health.BothHealthCheck;
+import org.jboss.eap.qe.microprofile.health.LivenessHealthCheck;
+import org.jboss.eap.qe.microprofile.health.ReadinessHealthCheck;
+import org.jboss.eap.qe.microprofile.health.performance.evaluation.IncreaseOverToleranceEvaluator;
 import org.jboss.eap.qe.microprofile.tooling.performance.core.Gauge;
 import org.jboss.eap.qe.microprofile.tooling.performance.core.MeasurementException;
 import org.jboss.eap.qe.microprofile.tooling.performance.core.StressTestException;
@@ -52,9 +48,9 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 @RunAsClient
 public class MultipleSubsequentDeploymentMemoryStressTest {
 
-    private final static String PROVIDER_DEPLOYMENT_NAME = "serviceProviderDeployment";
+    private final static String DEPLOYMENT_NAME = "deployment-1";
     private final static int POST_DEPLOYMENT_GRACEFUL_WAIT_TIME_IN_MSEC = 1000;
-    private final static int OPENAPI_INCREASED_MEMORY_FOOTPRINT_TOLERANCE_PERCENT = 7;
+    private final static int INCREASED_MEMORY_FOOTPRINT_TOLERANCE_PERCENT = 7;
     private final static int SIMPLE_REDEPLOY_ITERATIONS = 100;
     private final static int PROBING_INTERVAL_SIMPLE_REDEPLOY_ITERATIONS = SIMPLE_REDEPLOY_ITERATIONS;
     private final static int LINEAR_FIT_SLOPE_COMPARISON_REDEPLOY_ITERATIONS = 64;
@@ -65,7 +61,7 @@ public class MultipleSubsequentDeploymentMemoryStressTest {
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
     private static OnlineManagementClient onlineManagementClient;
-    private static String openapiUrl;
+    private static String healthUrl;
 
     private static Gauge<MemoryUsageRecord> gauge;
 
@@ -81,9 +77,9 @@ public class MultipleSubsequentDeploymentMemoryStressTest {
 
         onlineManagementClient = ManagementClientProvider.onlineStandalone();
 
-        openapiUrl = String.format("http://%s:%d/openapi",
+        healthUrl = String.format("http://%s:%d/health",
                 arquillianContainerProperties.getDefaultManagementAddress(),
-                8080);
+                arquillianContainerProperties.getDefaultManagementPort());
 
         gauge = new JMXBasedMemoryGauge(arquillianContainerProperties.getDefaultManagementAddress(),
                 arquillianContainerProperties.getDefaultManagementPort());
@@ -94,56 +90,26 @@ public class MultipleSubsequentDeploymentMemoryStressTest {
         onlineManagementClient.close();
     }
 
-    @Deployment(name = PROVIDER_DEPLOYMENT_NAME, managed = false, testable = false)
+    @Deployment(name = DEPLOYMENT_NAME, managed = false, testable = false)
     public static Archive<?> serviceProviderDeployment() {
         WebArchive deployment = ShrinkWrap.create(
-                WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
-                .addClasses(ProviderApplication.class)
-                .addClasses(
-                        District.class,
-                        DistrictEntity.class,
-                        DistrictService.class,
-                        InMemoryDistrictService.class,
-                        DistrictsResource.class,
-                        RoutingServiceConstants.class)
+                WebArchive.class, DEPLOYMENT_NAME + ".war")
+                .addClasses(BothHealthCheck.class, LivenessHealthCheck.class, ReadinessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         return deployment;
     }
 
     private Void executeSimpleRedeployActions() throws InterruptedException {
 
-        deployer.deploy(PROVIDER_DEPLOYMENT_NAME);
+        deployer.deploy(DEPLOYMENT_NAME);
         Thread.sleep(POST_DEPLOYMENT_GRACEFUL_WAIT_TIME_IN_MSEC);
-        deployer.undeploy(PROVIDER_DEPLOYMENT_NAME);
-
-        return null;
-    }
-
-    private Void executeRedeploymentControlActions() throws InterruptedException {
-
-        deployer.deploy(PROVIDER_DEPLOYMENT_NAME);
-        Thread.sleep(POST_DEPLOYMENT_GRACEFUL_WAIT_TIME_IN_MSEC);
-
-        get(openapiUrl)
-                .then()
-                .statusCode(404);
-
-        deployer.undeploy(PROVIDER_DEPLOYMENT_NAME);
-
-        return null;
-    }
-
-    private Void executeRedeploymentTestActions() throws InterruptedException {
-
-        deployer.deploy(PROVIDER_DEPLOYMENT_NAME);
-        Thread.sleep(POST_DEPLOYMENT_GRACEFUL_WAIT_TIME_IN_MSEC);
-
-        get(openapiUrl)
+        String response = get(healthUrl)
                 .then()
                 .statusCode(200)
-                .body(not(empty()));
-
-        deployer.undeploy(PROVIDER_DEPLOYMENT_NAME);
+                .body(not(empty()))
+                .extract().asString();
+        System.out.println(response);
+        deployer.undeploy(DEPLOYMENT_NAME);
 
         return null;
     }
@@ -206,7 +172,7 @@ public class MultipleSubsequentDeploymentMemoryStressTest {
                 String.format(
                         "Memory consumption increase exceeds tolerance: (%s - %s) = %s > %s",
                         initialValue, finalValue, finalValue - initialValue, MEMORY_INCREASE_TOLERANCE_IN_MB,
-                        OPENAPI_INCREASED_MEMORY_FOOTPRINT_TOLERANCE_PERCENT),
+                        INCREASED_MEMORY_FOOTPRINT_TOLERANCE_PERCENT),
                 outcome.isPassed());
     }
 }
