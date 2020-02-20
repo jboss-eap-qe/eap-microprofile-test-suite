@@ -15,6 +15,7 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationE
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,8 @@ public class MultiDeploymentHealthTest {
     public static Archive<?> deployment1() {
         return ShrinkWrap.create(WebArchive.class, MultiDeploymentHealthTest.class.getSimpleName() + "-1.war")
                 .addClasses(BothHealthCheck.class)
+                .addAsManifestResource(new StringAsset("mp.health.disable-default-procedures=true"),
+                        "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
@@ -38,6 +41,8 @@ public class MultiDeploymentHealthTest {
     public static Archive<?> deployment2() {
         return ShrinkWrap.create(WebArchive.class, MultiDeploymentHealthTest.class.getSimpleName() + "-2.war")
                 .addClasses(LivenessHealthCheck.class)
+                .addAsManifestResource(new StringAsset("mp.health.disable-default-procedures=true"),
+                        "microprofile-config.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
