@@ -20,6 +20,7 @@
         <module>tooling-docker</module>
         <module>tooling-mp-jwt-auth-tool</module>
         <module>tooling-server-configuration</module>
+        <module>microprofile-config</module>
         <module>microprofile-fault-tolerance</module>
         <module>microprofile-health</module>
         <module>microprofile-jwt</module>
