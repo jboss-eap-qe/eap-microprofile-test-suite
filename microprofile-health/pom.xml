@@ -44,5 +44,11 @@
             <artifactId>tooling-server-configuration</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.eap.qe</groupId>
+            <artifactId>tooling-performance</artifactId>
+            <version>1.0.0.Final-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
