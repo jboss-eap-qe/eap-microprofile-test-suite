@@ -29,7 +29,6 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToler
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -48,15 +47,10 @@ public class FaultTolerance20AsyncPartialTest {
 
     @Deployment
     public static Archive<?> deployment() {
-        String mpConfig = "hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=6000\n" +
-                "hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=20\n" +
-                "hystrix.threadpool.default.maximumSize=40\n" +
-                "hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize=true\n";
         return ShrinkWrap.create(WebArchive.class, FaultTolerance20AsyncPartialTest.class.getSimpleName() + ".war")
                 .addPackages(true, AsyncHelloService.class.getPackage())
                 .addClasses(TimeoutException.class, FaultToleranceException.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @BeforeClass

@@ -48,7 +48,7 @@ public class CpuLoadTest {
 
     @Deployment(testable = false)
     public static Archive<?> createFirstWarDeployment() {
-        String mpConfig = "hystrix.command.default.execution.timeout.enabled=true";
+        String mpConfig = "Timeout/enabled=true";
         return ShrinkWrap.create(WebArchive.class, CpuLoadTest.class.getSimpleName() + ".war")
                 .addPackage(LoadService.class.getPackage())
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")

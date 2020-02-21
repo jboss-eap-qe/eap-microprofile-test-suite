@@ -31,7 +31,6 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToler
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -46,15 +45,10 @@ public class FaultTolerance20AsyncTest {
 
     @Deployment
     public static Archive<?> deployment() {
-        String mpConfig = "hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=6000\n" +
-                "hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=20\n" +
-                "hystrix.threadpool.default.maximumSize=40\n" +
-                "hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize=true\n";
         return ShrinkWrap.create(WebArchive.class, FaultTolerance20AsyncTest.class.getSimpleName() + ".war")
                 .addClasses(TimeoutException.class, FaultToleranceException.class)
                 .addPackages(true, AsyncHelloService.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @BeforeClass
@@ -89,7 +83,7 @@ public class FaultTolerance20AsyncTest {
     }
 
     /**
-     * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead (hystrix.threadpool.default.maximumSize=40)
+     * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead
      *                and @Asynchronous annotation on service method and call 40 times. Call takes longer than defined timeout.
      * @tpPassCrit All 40 invocation ends in Fallback method as timeout was exceeded
      * @tpSince EAP 7.4.0.CD19
@@ -100,14 +94,14 @@ public class FaultTolerance20AsyncTest {
         Map<String, Integer> expectedResponses = new HashMap<>();
         expectedResponses.put("Hello from @Bulkhead @Timeout method", 0);
         expectedResponses.put("Fallback Hello", 40);
-        // timeout takes effect, there will be 40 fallbacks (hystrix.threadpool.default.maximumSize: 40)
+        // timeout takes effect, there will be 40 fallbacks
         // 41 invocations would already trigger fallback rejection
         // no matter @Bulkhead has e.g. value = 15 and waitingTaskQueue = 5
         testBulkhead(40, baseApplicationUrl + "async?operation=bulkhead-timeout&fail=true", expectedResponses);
     }
 
     /**
-     * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead (hystrix.threadpool.default.maximumSize=40)
+     * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead
      *                and @Asynchronous and @Retry annotations on service method and call it. Call takes less than defined
      *                timeout.
      * @tpPassCrit Invocation succeeds as fail was present
@@ -122,7 +116,6 @@ public class FaultTolerance20AsyncTest {
 
     /**
      * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @Retry, @BulkHead
-     *                (hystrix.threadpool.default.maximumSize=40)
      *                and @Asynchronous annotation on service method and call 40 times. Call takes longer than defined timeout.
      * @tpPassCrit All 40 invocation ends in Fallback method as timeout and retires were exceeded
      * @tpSince EAP 7.4.0.CD19

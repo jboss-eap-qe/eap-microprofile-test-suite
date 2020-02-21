@@ -35,7 +35,7 @@
         <version.javax.servlet.javax.servlet-api>3.0.1</version.javax.servlet.javax.servlet-api>
         <version.junit>4.12</version.junit>
         <version.org.apache.maven.plugins.maven-release-plugin>3.0.0-M1</version.org.apache.maven.plugins.maven-release-plugin>
-        <version.org.eclipse.microprofile>3.2</version.org.eclipse.microprofile>
+        <version.org.eclipse.microprofile>3.3</version.org.eclipse.microprofile>
         <version.org.jboss.arquillian>1.5.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>19.0.0.Beta2</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>2.2.0.Final</version.org.wildfly.arquillian>
