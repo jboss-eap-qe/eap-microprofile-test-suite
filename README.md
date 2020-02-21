@@ -32,9 +32,9 @@ mvn clean verify -pl microprofile-health -am -Djboss.dist=/Users/rsvoboda/Downlo
 
 ## Run one module against running server
 ```
-mvn clean verify -pl microprofile-health
+mvn clean verify -pl microprofile-health -am
 
-./mvnw clean verify -pl microprofile-health
+./mvnw clean verify -pl microprofile-health -am
 ```
 Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 
