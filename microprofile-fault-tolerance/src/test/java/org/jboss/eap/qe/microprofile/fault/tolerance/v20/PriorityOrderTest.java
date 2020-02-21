@@ -41,11 +41,7 @@ public class PriorityOrderTest {
 
     @Deployment
     public static Archive<?> deployment() {
-        String mpConfig = "hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=6000\n" +
-                "hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=20\n" +
-                "hystrix.threadpool.default.maximumSize=40\n" +
-                "hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize=true\n" +
-                "mp.fault.tolerance.interceptor.priority=5000";
+        String mpConfig = "mp.fault.tolerance.interceptor.priority=5000";
         return ShrinkWrap.create(WebArchive.class, PriorityOrderTest.class.getSimpleName() + ".war")
                 .addPackages(true, AsyncHelloService.class.getPackage())
                 .addClasses(TimeoutException.class, FaultToleranceException.class)

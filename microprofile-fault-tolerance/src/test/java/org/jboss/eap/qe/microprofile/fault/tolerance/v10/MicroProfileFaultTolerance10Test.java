@@ -33,7 +33,6 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.Manage
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -52,15 +51,9 @@ public class MicroProfileFaultTolerance10Test {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        String mpConfig = "hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=5000\n" +
-                "hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=20\n" +
-                "hystrix.threadpool.default.maximumSize=40\n" +
-                "hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize=true\n";
-
         return ShrinkWrap.create(WebArchive.class, MicroProfileFaultTolerance10Test.class.getSimpleName() + ".war")
                 .addPackages(true, HelloService.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
-                .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @BeforeClass
@@ -252,7 +245,6 @@ public class MicroProfileFaultTolerance10Test {
     }
 
     private static void testCircuitBreakerFailure(String url, String expectedFallbackResponse, String expectedOkResponse) {
-        // hystrix.command.default.circuitBreaker.requestVolumeThreshold
         int initialRequestsCount = 20;
 
         for (int i = 0; i < initialRequestsCount; i++) {
@@ -260,7 +252,6 @@ public class MicroProfileFaultTolerance10Test {
                     .body(containsString(expectedFallbackResponse));
         }
 
-        // initialRequestsCount * hystrix.command.default.circuitBreaker.errorThresholdPercentage
         int failuresCount = 10;
 
         for (int i = 0; i < failuresCount; i++) {

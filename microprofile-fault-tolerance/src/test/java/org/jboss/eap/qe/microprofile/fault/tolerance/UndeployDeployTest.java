@@ -4,7 +4,6 @@ import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.containsString;
 
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -36,6 +35,7 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
 /**
  * Tests deploy/undeploy of MP FT deployments (WAR archives)
+ * Note that this is test for multiple deployments which is currently unsupported feature in Wildfly/EAP.
  */
 @RunAsClient
 @RunWith(Arquillian.class)
@@ -50,7 +50,7 @@ public class UndeployDeployTest {
 
     @Deployment(name = FIRST_DEPLOYMENT, managed = false)
     public static Archive<?> createFirstDeployment() {
-        String mpConfig = "hystrix.command.default.execution.timeout.enabled=true";
+        String mpConfig = "Timeout/enabled=true";
 
         return ShrinkWrap.create(WebArchive.class, FIRST_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -60,7 +60,7 @@ public class UndeployDeployTest {
 
     @Deployment(name = SECOND_DEPLOYMENT, managed = false)
     public static Archive<?> createSecondDeployment() {
-        String mpConfig = "hystrix.command.default.execution.timeout.enabled=false";
+        String mpConfig = "Timeout/enabled=false";
 
         return ShrinkWrap.create(WebArchive.class, SECOND_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -118,69 +118,40 @@ public class UndeployDeployTest {
     }
 
     /**
-     * @tpTestDetails Deploy MP FT application which initializes MP FT/Hystrix, undeploy and deploy different MP FT
-     *                application which changes Hystrix configuration.
-     * @tpPassCrit Hystrix configuration was changed.
+     * @tpTestDetails Deploy first MP FT application which initializes MP FT then deploy second MP FT
+     *                application which has different MP FT configuration.
+     * @tpPassCrit MP FT configuration is different for both deployments.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @InSequence(10)
-    public void testUndeployDeployChangesHystrixConfiguration(
+    public void testSecondDeploymentDoesChangeConfiguration(
             @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
             @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) {
         deployer.deploy(FIRST_DEPLOYMENT);
+        deployer.deploy(SECOND_DEPLOYMENT);
+
         get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
                 .assertThat()
                 .body(containsString("Fallback Hello, context = foobar"));
-        deployer.undeploy(FIRST_DEPLOYMENT);
-
-        // make sure it's undeployed
-        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .statusCode(404);
-
-        deployer.deploy(SECOND_DEPLOYMENT);
+        // timeout is not working because 2nd deployment has disabled it
         get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
                 .assertThat()
                 .body(containsString("Hello from @Timeout method, context = foobar"));
-        deployer.undeploy(SECOND_DEPLOYMENT);
-    }
-
-    /**
-     * @tpTestDetails Deploy first MP FT application which initializes MP FT/Hystrix then deploy second MP FT
-     *                application which has different Hystrix configuration.
-     * @tpPassCrit Hystrix configuration was NOT changed as Hystrix is singleton and is initialized by first deployment.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @InSequence(10)
-    public void testSecondDeploymentDoesNotChangeConfigurationAndWarningWasLogged(
-            @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
-            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) {
-        deployer.deploy(FIRST_DEPLOYMENT);
-        deployer.deploy(SECOND_DEPLOYMENT);
-
-        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-        // timeout is still working even though 2nd deployment has disabled it
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
 
         deployer.undeploy(FIRST_DEPLOYMENT);
         deployer.undeploy(SECOND_DEPLOYMENT);
     }
 
     /**
-     * @tpTestDetails Deploy first MP FT application which initializes MP FT/Hystrix then deploy second MP FT
-     *                application which changes has different Hystrix configuration. Undeploy second application.
-     * @tpPassCrit Hystrix configuration was NOT changed.
+     * @tpTestDetails Deploy first MP FT application which initializes MP FT then deploy second MP FT
+     *                application which changes has different MP FT configuration. Undeploy second application.
+     * @tpPassCrit MP FT configuration was NOT changed.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @InSequence(10)
-    public void testUndeploySecondDeploymentDoesNotRestartHystrix(
+    public void testUndeploySecondDeploymentDoesNotChangeMpFtConfiguration(
             @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
             @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) {
         deployer.deploy(FIRST_DEPLOYMENT);
@@ -190,69 +161,11 @@ public class UndeployDeployTest {
                 .assertThat()
                 .body(containsString("Fallback Hello, context = foobar"));
 
-        deployer.undeploy(FIRST_DEPLOYMENT);
-
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
         deployer.undeploy(SECOND_DEPLOYMENT);
-    }
-
-    /**
-     * @tpTestDetails Deploy first MP FT application which initializes MP FT/Hystrix then deploy second NON MP FT
-     *                application. Undeploy first MP FT application and deploy third MP FT application which has different
-     *                Hystrix configuration.
-     * @tpPassCrit Hystrix configuration was changed (Hystrix was restarted)
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @InSequence(10)
-    public void testNonMPFTDeploymentDoesNotBlockRestartHystrix(
-            @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
-            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) {
-        deployer.deploy(FIRST_DEPLOYMENT);
-        deployer.deploy(NO_MP_FT_DEPLOYMENT);
 
         get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
                 .assertThat()
                 .body(containsString("Fallback Hello, context = foobar"));
-
-        deployer.undeploy(FIRST_DEPLOYMENT);
-        deployer.deploy(SECOND_DEPLOYMENT);
-
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Hello from @Timeout method, context = foobar"));
-        deployer.undeploy(NO_MP_FT_DEPLOYMENT);
-        deployer.undeploy(SECOND_DEPLOYMENT);
-    }
-
-    /**
-     * @tpTestDetails Deploy first and then second MP FT application.
-     * @tpPassCrit Verify that warning will be logged with information that Hystrix was already initialized by first
-     *             application.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @InSequence(10)
-    public void testDeployTwoWarsLogsWarning(@ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
-            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) throws Exception {
-        deployer.deploy(FIRST_DEPLOYMENT);
-        deployer.deploy(SECOND_DEPLOYMENT);
-        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-
-        try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            final LogChecker logChecker = new ModelNodeLogChecker(client, 10, true);
-
-            Assert.assertTrue(logChecker.logMatches(Pattern.compile(".*WFLYMPFTEXT0002.*")));
-        }
-
-        deployer.undeploy(FIRST_DEPLOYMENT);
         deployer.undeploy(SECOND_DEPLOYMENT);
     }
 
@@ -272,10 +185,10 @@ public class UndeployDeployTest {
         get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
                 .assertThat()
                 .body(containsString("Fallback Hello, context = foobar"));
-        // timeout is still working even though 2nd deployment has disabled it
+        // timeout is not working because 2nd deployment has disabled it
         get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
                 .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
+                .body(containsString("Hello from @Timeout method, context = foobar"));
 
         ArquillianContainerProperties arqProperties = new ArquillianContainerProperties(
                 ArquillianDescriptorWrapper.getArquillianDescriptor());
@@ -286,6 +199,34 @@ public class UndeployDeployTest {
                                 "application_ft_org_jboss_eap_qe_microprofile_fault_tolerance_deployments_v10_HelloService_timeout_invocations_total 2.0"));
 
         deployer.undeploy(FIRST_DEPLOYMENT);
+        deployer.undeploy(SECOND_DEPLOYMENT);
+    }
+
+    /**
+     * @tpTestDetails Deploy MP FT application which initializes MP FT, undeploy and deploy different MP FT
+     *                application which changes MP FT configuration.
+     * @tpPassCrit MP FT configuration was changed.
+     */
+    @Test
+    @InSequence(10)
+    public void testUndeployDeployChangesFaultToleranceConfiguration(
+            @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
+            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) {
+        deployer.deploy(FIRST_DEPLOYMENT);
+        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                .assertThat()
+                .body(containsString("Fallback Hello, context = foobar"));
+        deployer.undeploy(FIRST_DEPLOYMENT);
+
+        // make sure it's undeployed
+        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                .assertThat()
+                .statusCode(404);
+
+        deployer.deploy(SECOND_DEPLOYMENT);
+        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                .assertThat()
+                .body(containsString("Hello from @Timeout method, context = foobar"));
         deployer.undeploy(SECOND_DEPLOYMENT);
     }
 
