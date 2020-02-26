@@ -1,6 +1,7 @@
 package org.jboss.eap.qe.microprofile.jwt.security.keyproperties;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,6 +25,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -48,10 +50,10 @@ public class CorruptedKeyTest {
         keyTool = RsaKeyTool.newKeyTool(privateKeyUrl.toURI());
     }
 
-    @Deployment
+    @Deployment(testable = false)
     public static WebArchive createDeployment() {
         //this really isn't valid base64 encoded public key
-        final String mpProperties = "mp.jwt.verify.publickey=foobarqux" +
+        final String mpProperties = "mp.jwt.verify.publickey=foobarqux\n" +
                 "mp.jwt.verify.issuer=issuer";
 
         return ShrinkWrap.create(WebArchive.class, CorruptedKeyTest.class.getSimpleName() + ".war")
@@ -65,6 +67,7 @@ public class CorruptedKeyTest {
      * @tpPassCrit Verify, that error 500 is reported to user in that case and it is also noted in log.
      * @tpSince EAP 7.4.0.CD19
      */
+    @Ignore("https://issues.redhat.com/browse/WFLY-13164")
     @Test
     public void verifyErrorIsShownInLog(@ArquillianResource URL url) throws ConfigurationException, IOException {
         final JsonWebToken token = new JwtHelper(keyTool).generateProperSignedJwt();
@@ -75,7 +78,8 @@ public class CorruptedKeyTest {
                 .statusCode(500);
 
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            new ModelNodeLogChecker(client, 20).logContains("UT005023");
+            assertTrue("There is no error shown in log informing user that key is corrupted",
+                    new ModelNodeLogChecker(client, 20).logContains("UT005023"));
         }
     }
 
