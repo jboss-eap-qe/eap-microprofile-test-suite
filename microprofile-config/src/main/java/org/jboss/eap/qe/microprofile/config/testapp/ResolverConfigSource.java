@@ -6,11 +6,7 @@ import java.util.Map;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
 /**
- * End point use default Config object, release it, create and use new one and release it again.
- * New default Config should be created again.
- *
- * This is just an example that demonstrate, that releaseConfig call is possible.
- * It is not full use-case (where some synchronization would be necessary, etc.)
+ * This ConfigSource contains custom resolver.test.property property
  */
 public class ResolverConfigSource implements ConfigSource {
 
