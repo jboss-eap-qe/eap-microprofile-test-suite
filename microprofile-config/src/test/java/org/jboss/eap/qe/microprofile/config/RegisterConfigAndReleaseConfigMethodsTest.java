@@ -31,9 +31,9 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-public class ResolverTest {
+public class RegisterConfigAndReleaseConfigMethodsTest {
 
-    private final static String DEPLOYMENT_NAME = ResolverTest.class.getSimpleName();
+    private final static String DEPLOYMENT_NAME = RegisterConfigAndReleaseConfigMethodsTest.class.getSimpleName();
     private final static String ORIGINAL_PROPERTY_VALUE = "original";
 
     @Deployment(testable = false)
@@ -62,9 +62,27 @@ public class ResolverTest {
      */
     @Test
     public void checkRegisterConfigAndReleaseConfigMethods(@ArquillianResource URL baseURL) {
-        get(baseURL.toExternalForm() + "resolver")
+        get(baseURL.toExternalForm() + "resolver/oneConfigSource")
                 .then()
                 .statusCode(200)
                 .body(equalToIgnoringCase(ORIGINAL_PROPERTY_VALUE + UPDATED_PROPERTY_VALUE + ORIGINAL_PROPERTY_VALUE));
+    }
+
+    /**
+     * @tpTestDetails Register a new configuration which include values from a custom configuration resolver
+     *                using ConfigProviderResolver#registerConfig method. This Config contains custom ConfigSource.
+     *                Try to register second config with the same custom ConfigSource. Exception is expected.
+     *                Read property from first config. Release it.
+     *                Read property from second config.
+     * @tpPassCrit Verifies exception is thrown during registration of second Config object. Verifies that both Config objects
+     *             returns properties.
+     * @tpSince EAP 7.4.0.CD19
+     */
+    @Test
+    public void checkTwoConfigsWithTheSameConfigSource(@ArquillianResource URL baseURL) {
+        get(baseURL.toExternalForm() + "resolver/twoConfigSources")
+                .then()
+                .statusCode(200)
+                .body(equalToIgnoringCase(UPDATED_PROPERTY_VALUE + UPDATED_PROPERTY_VALUE));
     }
 }
