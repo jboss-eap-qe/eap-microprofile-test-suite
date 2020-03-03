@@ -163,35 +163,6 @@ public class FaultTolerance20AsyncPartialTest {
     }
 
     /**
-     * @tpTestDetails Test sends 16 parallel requests. There are annotations on service:
-     *                Retry(retryOn = IOException.class), CircuitBreaker(failOn = IOException.class,
-     *                requestVolumeThreshold = 5, successThreshold = 3, delay = 2, delayUnit = ChronoUnit.SECONDS, failureRatio
-     *                = 0.75)
-     *                4 requests pass, 12 invoke IOException.
-     * @tpPassCrit After that the circuit is open, after at most 3 seconds it is closed.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @RunAsClient
-    public void retryCircuitBreaker() throws InterruptedException {
-        Map<String, Range<Integer>> expectedResponses = new HashMap<>();
-        expectedResponses.put("Hello from @Retry @CircuitBreaker method", Range.closed(0, 4));
-        expectedResponses.put("Fallback Hello", Range.closed(12, 16));
-        testPartial(16, baseApplicationUrl + "partial?operation=retry-circuitbreaker&counter=", expectedResponses);
-
-        // ensure circuit is opened (note number 88 does request correct behavior!)
-        String response2 = RestAssured.when().get(baseApplicationUrl + "partial?operation=retry-circuitbreaker&counter=88")
-                .asString();
-        assertThat(response2, is("Fallback Hello88"));
-        // ensure circuit is closed
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
-            String response = RestAssured.when()
-                    .get(baseApplicationUrl + "partial?operation=retry-circuitbreaker&counter=88").asString();
-            assertThat(response, is("Hello from @Retry @CircuitBreaker method88"));
-        });
-    }
-
-    /**
      * @tpTestDetails Test sends 20 parallel requests. There are annotations on service:
      *                Retry(maxRetries = 2), CircuitBreaker(failOn = TimeoutException.class), Timeout
      *                5 requests pass, 10 invoke TimeoutException, 5 requests time-out.

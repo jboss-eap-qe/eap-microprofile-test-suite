@@ -40,9 +40,6 @@ public class AsyncPartialHelloServlet extends HttpServlet {
                 case "bulkhead15q5-timeout-retry":
                     completionStage = asyncHello.bulkhead15q5TimeoutRetry(counter);
                     break;
-                case "retry-circuitbreaker":
-                    completionStage = asyncHello.retryCircuitBreaker(counter);
-                    break;
                 case "retry-circuitbreaker-timeout":
                     completionStage = asyncHello.retryCircuitBreakerTimeout(counter);
                     break;

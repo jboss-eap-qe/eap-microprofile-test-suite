@@ -84,24 +84,6 @@ public class FaultTolerance20AsyncTest {
 
     /**
      * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead
-     *                and @Asynchronous annotation on service method and call 40 times. Call takes longer than defined timeout.
-     * @tpPassCrit All 40 invocation ends in Fallback method as timeout was exceeded
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @RunAsClient
-    public void bulkheadTimeoutFailure() throws InterruptedException {
-        Map<String, Integer> expectedResponses = new HashMap<>();
-        expectedResponses.put("Hello from @Bulkhead @Timeout method", 0);
-        expectedResponses.put("Fallback Hello", 40);
-        // timeout takes effect, there will be 40 fallbacks
-        // 41 invocations would already trigger fallback rejection
-        // no matter @Bulkhead has e.g. value = 15 and waitingTaskQueue = 5
-        testBulkhead(40, baseApplicationUrl + "async?operation=bulkhead-timeout&fail=true", expectedResponses);
-    }
-
-    /**
-     * @tpTestDetails Deploy MP FT application with 1 second @Timeout, @BulkHead
      *                and @Asynchronous and @Retry annotations on service method and call it. Call takes less than defined
      *                timeout.
      * @tpPassCrit Invocation succeeds as fail was present
