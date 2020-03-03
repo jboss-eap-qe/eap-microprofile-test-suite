@@ -35,21 +35,6 @@ public class AsyncHelloService {
         });
     }
 
-    @Bulkhead(value = 15, waitingTaskQueue = 15)
-    @Timeout(value = 1000)
-    @Fallback(fallbackMethod = "processFallback")
-    public CompletionStage<MyConnection> bulkheadTimeout(boolean fail) throws InterruptedException {
-        if (fail) {
-            Thread.sleep(2000);
-        }
-        return CompletableFuture.completedFuture(new MyConnection() {
-            @Override
-            public String getData() {
-                return "Hello from @Bulkhead @Timeout method";
-            }
-        });
-    }
-
     @Bulkhead(value = 15, waitingTaskQueue = 5)
     @Timeout(value = 1, unit = ChronoUnit.SECONDS)
     @Fallback(fallbackMethod = "processFallback")
@@ -144,21 +129,6 @@ public class AsyncHelloService {
             @Override
             public String getData() {
                 return "Hello from @Retry @CircuitBreaker method";
-            }
-        });
-    }
-
-    @Retry(retryOn = IOException.class)
-    @CircuitBreaker(failOn = IOException.class, requestVolumeThreshold = 5, successThreshold = 3, delay = 2, delayUnit = ChronoUnit.SECONDS, failureRatio = 0.75)
-    @Fallback(fallbackMethod = "processFallback")
-    public CompletionStage<MyConnection> retryCircuitBreaker(int counter) throws IOException {
-        if (counter % 4 != 0) { // 3/4 requests trigger IOException
-            throw new IOException("Simulated IOException");
-        }
-        return CompletableFuture.completedFuture(new MyConnection() {
-            @Override
-            public String getData() {
-                return "Hello from @Retry @CircuitBreaker method" + counter;
             }
         });
     }

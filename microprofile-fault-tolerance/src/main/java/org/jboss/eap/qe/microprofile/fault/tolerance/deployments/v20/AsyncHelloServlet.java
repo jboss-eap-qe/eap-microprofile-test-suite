@@ -30,9 +30,6 @@ public class AsyncHelloServlet extends HttpServlet {
                 case "timeout":
                     completionStage = asyncHello.timeout(fail);
                     break;
-                case "bulkhead-timeout":
-                    completionStage = asyncHello.bulkheadTimeout(fail);
-                    break;
                 case "bulkhead-timeout-retry":
                     completionStage = asyncHello.bulkheadTimeoutRetry(fail);
                     break;
