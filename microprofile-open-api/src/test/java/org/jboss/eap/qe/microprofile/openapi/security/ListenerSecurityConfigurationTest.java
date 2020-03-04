@@ -134,7 +134,7 @@ public class ListenerSecurityConfigurationTest {
 
         result = listenersConfigurationOnlineManagementClient.execute(
                 "/subsystem=elytron/key-store=httpsGenKS:generate-key-pair(" +
-                        "alias=localhost,algorithm=RSA,key-size=1024,validity=365," +
+                        "alias=localhost,algorithm=RSA,key-size=2048,validity=365," +
                         "credential-reference={clear-text=secret},distinguished-name=\"CN=localhost\")");
         result.assertSuccess();
 
@@ -202,9 +202,11 @@ public class ListenerSecurityConfigurationTest {
                 "/subsystem=undertow/server=default-server/http-listener=default:remove");
         result.assertSuccess();
 
-        result = listenersConfigurationOnlineManagementClient.execute(
-                "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=https)");
-        result.assertSuccess();
+        if (isHttpRemotingConnectorSet()) {
+            result = listenersConfigurationOnlineManagementClient.execute(
+                    "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=https)");
+            result.assertSuccess();
+        }
 
         new Administration(listenersConfigurationOnlineManagementClient).reload();
     }
@@ -215,11 +217,21 @@ public class ListenerSecurityConfigurationTest {
                         "socket-binding=http,redirect-socket=https,enable-http2=true)");
         result.assertSuccess();
 
-        result = listenersConfigurationOnlineManagementClient.execute(
-                "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=default)");
-        result.assertSuccess();
+        if (isHttpRemotingConnectorSet()) {
+            result = listenersConfigurationOnlineManagementClient.execute(
+                    "/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name=connector-ref, value=default)");
+            result.assertSuccess();
+        }
 
         new Administration(listenersConfigurationOnlineManagementClient).reload();
+    }
+
+    private static boolean isHttpRemotingConnectorSet()
+            throws InterruptedException, TimeoutException, IOException, CliException {
+
+        ModelNodeResult result = listenersConfigurationOnlineManagementClient.execute(
+                "/subsystem=remoting/http-connector=http-remoting-connector:read-resource()");
+        return result.isSuccess();
     }
 
     /**
