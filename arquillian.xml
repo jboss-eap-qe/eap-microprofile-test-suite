@@ -14,4 +14,17 @@
             <property name="allowConnectingToRunningServer">true</property>
         </configuration>
     </container>
+
+    <container qualifier="jboss-manual" mode="manual">
+        <configuration>
+            <property name="jbossHome">${basedir}/target/jboss-as</property>
+            <property name="javaVmArguments">-server -Xms64m -Xmx512m</property>
+            <property name="serverConfig">standalone.xml</property>
+            <property name="managementAddress">127.0.0.1</property>
+            <property name="managementPort">9990</property>
+            <property name="waitForPorts">9990</property>
+            <property name="waitForPortsTimeoutInSeconds">10</property>
+            <property name="allowConnectingToRunningServer">true</property>
+        </configuration>
+    </container>
 </arquillian>
