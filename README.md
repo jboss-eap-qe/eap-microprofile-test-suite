@@ -38,20 +38,6 @@ mvn clean verify -pl microprofile-health -am
 ```
 Please note `allowConnectingToRunningServer` property in `arquillian.xml`.
 
-## Run tests against manual-mode Arquillian container
-
-Tests that should be executed against manually managed Aqruillian containers are implemented in 
-`microprofile-manual-mode` module.
-
-Of course the above mentioned tests can only be executed against a non-running server instance, as it is supposed to be 
-started by test classes:
-
-```
-mvn clean verify -pl microprofile-manual-mode -am -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
-
-./mvnw clean verify -pl microprofile-manual-mode -am -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final
-```
-
 ## Run the testsuite on Jenkins instance using Jenkinsfile:
 
 - Follow instructions on <https://jenkins.io/doc/book/installing/> to install and run Jenkins

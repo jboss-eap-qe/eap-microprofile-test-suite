@@ -1,7 +1,7 @@
-package org.jboss.eap.qe.microprofile.manual.mode.health.delay;
+package org.jboss.eap.qe.microprofile.health.delay;
 
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.END;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.START;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.END;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.START;
 
 import java.util.List;
 

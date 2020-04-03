@@ -25,6 +25,10 @@ public class HealthUrlProvider {
     public static String readyEndpoint() throws ConfigurationException {
         ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
                 ArquillianDescriptorWrapper.getArquillianDescriptor());
+        return readyEndpoint(arqProps);
+    }
+
+    public static String readyEndpoint(ArquillianContainerProperties arqProps) throws ConfigurationException {
         return "http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
                 + "/health/ready";
     }

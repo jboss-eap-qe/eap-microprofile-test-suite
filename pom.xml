@@ -26,7 +26,6 @@
         <module>microprofile-jwt</module>
         <module>microprofile-metrics</module>
         <module>microprofile-open-api</module>
-        <module>microprofile-manual-mode</module>
     </modules>
 
     <properties>
@@ -52,6 +51,8 @@
         <version.org.jboss.shrinkwrap.resolver>3.1.3</version.org.jboss.shrinkwrap.resolver>
         <version.org.postgresql>42.2.8</version.org.postgresql>
         <version.org.apache.maven.plugins.maven-surefire-plugin>2.22.2</version.org.apache.maven.plugins.maven-surefire-plugin>
+        <container.qualifier.manual.mode>jboss-manual</container.qualifier.manual.mode>
+        <container.base.dir.manual.mode>${project.build.directory}${file.separator}${container.qualifier.manual.mode}</container.base.dir.manual.mode>
     </properties>
 
     <dependencyManagement>
@@ -206,6 +207,7 @@
                     </environmentVariables>
                     <systemPropertyVariables>
                         <jboss.home>${jboss.home}</jboss.home>
+                        <container.base.dir.manual.mode>${container.base.dir.manual.mode}</container.base.dir.manual.mode>
                         <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
                         <module.path>${jboss.modules.path}</module.path>
                     </systemPropertyVariables>
@@ -219,6 +221,28 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                 </configuration>
+            </plugin>
+            <!-- Used to prepare content for manually managed Wildfly container-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>initialize-basedirs</id>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <target>
+                                <delete quiet="true" dir="${container.base.dir.manual.mode}" />
+                                <copy todir="${container.base.dir.manual.mode}" overwrite="true" failonerror="false">
+                                    <fileset dir="${jboss.home}/standalone"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

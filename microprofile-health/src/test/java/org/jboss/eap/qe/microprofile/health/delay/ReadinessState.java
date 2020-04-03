@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.manual.mode.health.delay;
+package org.jboss.eap.qe.microprofile.health.delay;
 
 import java.sql.Timestamp;
 import java.util.Date;

@@ -1,12 +1,12 @@
-package org.jboss.eap.qe.microprofile.manual.mode.health.delay;
+package org.jboss.eap.qe.microprofile.health.delay;
 
 import static io.restassured.RestAssured.get;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.DOWN_NO_CHECK;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.DOWN_NO_CONTENT;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.UNABLE_TO_CONNECT;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.UP_NO_CHECK;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.UP_WITH_CHECK;
-import static org.jboss.eap.qe.microprofile.manual.mode.health.delay.ReadinessState.UP_WITH_DEFAULT_CHECK;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.DOWN_NO_CHECK;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.DOWN_NO_CONTENT;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.UNABLE_TO_CONNECT;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.UP_NO_CHECK;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.UP_WITH_CHECK;
+import static org.jboss.eap.qe.microprofile.health.delay.ReadinessState.UP_WITH_DEFAULT_CHECK;
 
 import java.net.ConnectException;
 import java.util.Collections;
@@ -16,8 +16,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jboss.eap.qe.microprofile.manual.mode.health.tools.HealthUrlProvider;
+import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 
 import io.restassured.internal.RestAssuredResponseImpl;
 import io.restassured.response.Response;
@@ -33,12 +34,18 @@ public class ReadinessChecker implements Callable<Boolean> {
 
     public static final String DEFAULT_READINESS_CHECK_NAME_PREFIX = "ready-deployment.";
 
+    private static ArquillianContainerProperties arqProps;
+
+    public ReadinessChecker(ArquillianContainerProperties arqProps) {
+        this.arqProps = arqProps;
+    }
+
     @Override
     public Boolean call() {
         addState(ReadinessState.START());
         while (!shouldStop.get()) {
             try {
-                Response response = get(HealthUrlProvider.readyEndpoint());
+                Response response = get(HealthUrlProvider.readyEndpoint(arqProps));
                 List<Map<String, String>> checks = ((RestAssuredResponseImpl) response).getContent().equals("") ? null
                         : response.getBody().path("checks");
                 if (response.getStatusCode() == 503) {
@@ -66,7 +73,7 @@ public class ReadinessChecker implements Callable<Boolean> {
                     addState(UNABLE_TO_CONNECT());
                 } else {
                     try {
-                        Response response = get(HealthUrlProvider.readyEndpoint());
+                        Response response = get(HealthUrlProvider.readyEndpoint(arqProps));
                         int a = 0;
                     } catch (ConfigurationException e1) {
                         e1.printStackTrace();

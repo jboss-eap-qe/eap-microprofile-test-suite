@@ -18,9 +18,19 @@ public class ArquillianContainerProperties {
     public static final String DEFAULT_MANAGEMENT_PORT_VALUE = "9990";
     public static final String ARQ_MANAGEMENT_ADDRESS_PROPERTY_NAME = "managementAddress";
     public static final String ARQ_MANAGEMENT_PORT_PROPERTY_NAME = "managementPort";
+    public static final int CONTAINER_CONTAINER_GROUP_FIRST = 0;
+    public static final int DEFAULT_CONTAINER_CONTAINER_GROUP_INDEX = CONTAINER_CONTAINER_GROUP_FIRST;
+
+    public String containerName;
 
     public ArquillianContainerProperties(ArquillianDescriptor descriptor) {
         this.arquillianDescriptor = descriptor;
+        containerName = DEFAULT_CONTAINER_NAME;
+    }
+
+    public ArquillianContainerProperties(ArquillianDescriptor descriptor, String containerName) {
+        this.arquillianDescriptor = descriptor;
+        this.containerName = containerName;
     }
 
     /**
@@ -30,7 +40,7 @@ public class ArquillianContainerProperties {
      * @return Instance of {@link ContainerDef} that describes the container
      */
     private Optional<ContainerDef> getNamedContainerDefinition(String container) {
-        return arquillianDescriptor.getContainers().stream()
+        return arquillianDescriptor.getGroups().get(DEFAULT_CONTAINER_CONTAINER_GROUP_INDEX).getGroupContainers().stream()
                 .filter(c -> c.getContainerName().equals(container))
                 .findFirst();
     }
@@ -83,7 +93,7 @@ public class ArquillianContainerProperties {
      */
     public String getDefaultManagementAddress() throws ConfigurationException {
         return getContainerProperty(
-                DEFAULT_CONTAINER_NAME,
+                containerName,
                 ARQ_MANAGEMENT_ADDRESS_PROPERTY_NAME,
                 DEFAULT_MANAGEMENT_ADDRESS_VALUE);
     }
@@ -97,7 +107,7 @@ public class ArquillianContainerProperties {
     public int getDefaultManagementPort() throws ConfigurationException {
         return Integer.parseInt(
                 getContainerProperty(
-                        DEFAULT_CONTAINER_NAME,
+                        containerName,
                         ARQ_MANAGEMENT_PORT_PROPERTY_NAME,
                         DEFAULT_MANAGEMENT_PORT_VALUE));
     }
