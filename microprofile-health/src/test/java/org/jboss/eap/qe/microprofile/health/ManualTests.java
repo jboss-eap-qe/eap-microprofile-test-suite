@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.manual.mode.health;
+package org.jboss.eap.qe.microprofile.health;
 
 public interface ManualTests {
     String ARQUILLIAN_CONTAINER = "jboss-manual";

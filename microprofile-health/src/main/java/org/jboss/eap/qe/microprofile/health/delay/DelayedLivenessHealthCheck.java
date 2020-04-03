@@ -1,17 +1,17 @@
-package org.jboss.eap.qe.microprofile.manual.mode.health.delay;
+package org.jboss.eap.qe.microprofile.health.delay;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.Readiness;
+import org.eclipse.microprofile.health.Liveness;
 
 @ApplicationScoped
-@Readiness
-public class DelayedReadinessHealthCheck implements HealthCheck {
-    public static final String NAME = "delayed-readiness";
+@Liveness
+public class DelayedLivenessHealthCheck implements HealthCheck {
+    public static final String NAME = "delayed-liveness";
 
-    public DelayedReadinessHealthCheck() {
+    public DelayedLivenessHealthCheck() {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -22,6 +22,6 @@ public class DelayedReadinessHealthCheck implements HealthCheck {
 
     @Override
     public HealthCheckResponse call() {
-        return HealthCheckResponse.down(NAME);
+        return HealthCheckResponse.named("live").up().withData("name", NAME).build();
     }
 }
