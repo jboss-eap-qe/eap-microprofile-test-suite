@@ -17,10 +17,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 
-import io.restassured.internal.RestAssuredResponseImpl;
 import io.restassured.response.Response;
 
 /**
@@ -46,39 +44,36 @@ public class ReadinessChecker implements Callable<Boolean> {
         while (!shouldStop.get()) {
             try {
                 Response response = get(HealthUrlProvider.readyEndpoint(arqProps));
-                List<Map<String, String>> checks = ((RestAssuredResponseImpl) response).getContent().equals("") ? null
-                        : response.getBody().path("checks");
-                if (response.getStatusCode() == 503) {
-                    if (checks == null) {
-                        addState(DOWN_NO_CONTENT());
-                    } else if (checks.size() == 0) {
-                        addState(DOWN_NO_CHECK());
-                    } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
-                        addState(ReadinessState.DOWN_WITH_CHECK());
-                    }
-                } else if (response.getStatusCode() == 200) {
-                    if (checks == null) {
-                        throw new RuntimeException("Readiness probe is UP (200) however missing JSON content");
-                    }
-                    if (checks.size() == 0) {
-                        addState(UP_NO_CHECK());
-                    } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
-                        addState(UP_WITH_CHECK());
-                    } else if (checks.get(0).get("name").startsWith(DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
-                        addState(UP_WITH_DEFAULT_CHECK());
+                String responseContent = response.then().extract().asString();
+                if (!responseContent.isEmpty()) {
+                    if (response.getBody().path("checks") instanceof List) {
+                        List<Map<String, String>> checks = response.getBody().path("checks");
+                        if (response.getStatusCode() == 503) {
+                            if (checks == null) {
+                                addState(DOWN_NO_CONTENT());
+                            } else if (checks.size() == 0) {
+                                addState(DOWN_NO_CHECK());
+                            } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
+                                addState(ReadinessState.DOWN_WITH_CHECK());
+                            }
+                        } else if (response.getStatusCode() == 200) {
+                            if (checks == null) {
+                                throw new RuntimeException("Readiness probe is UP (200) however missing JSON content");
+                            }
+                            if (checks.size() == 0) {
+                                addState(UP_NO_CHECK());
+                            } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
+                                addState(UP_WITH_CHECK());
+                            } else if (checks.get(0).get("name").startsWith(DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
+                                addState(UP_WITH_DEFAULT_CHECK());
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
                 if (e instanceof ConnectException) {
                     addState(UNABLE_TO_CONNECT());
                 } else {
-                    try {
-                        Response response = get(HealthUrlProvider.readyEndpoint(arqProps));
-                        int a = 0;
-                    } catch (ConfigurationException e1) {
-                        e1.printStackTrace();
-                    }
-                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }
