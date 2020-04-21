@@ -13,6 +13,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemRule;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
@@ -23,12 +24,16 @@ import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunAsClient
 @RunWith(Arquillian.class)
 public class ExpiredJwtTest {
+
+    @ClassRule
+    public static EnableJwtSubsystemRule enableJwtSubsystemRule = new EnableJwtSubsystemRule();
 
     @Deployment
     public static WebArchive createDeployment() {
