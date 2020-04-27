@@ -11,7 +11,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemRule;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
@@ -32,6 +33,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class KeycloakIntegrationHighLevelScenarioTest {
 
     private static final String KEYCLOAK_REALM_NAME = "foobar";
@@ -71,8 +73,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
 
     @ClassRule
     public static TestRule ruleChain = RuleChain.outerRule(keycloakContainer)
-            .around(keycloakConfigurator)
-            .around(new EnableJwtSubsystemRule());
+            .around(keycloakConfigurator);
 
     @Deployment
     public static Archive<?> createDeployment() {

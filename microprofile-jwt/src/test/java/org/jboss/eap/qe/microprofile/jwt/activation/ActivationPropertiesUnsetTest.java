@@ -4,13 +4,13 @@ import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemRule;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.NonJwtJaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,10 +18,8 @@ import org.junit.runner.RunWith;
  * Set of negative tests for subsystem activation.
  */
 @RunWith(Arquillian.class)
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class ActivationPropertiesUnsetTest {
-
-    @ClassRule
-    public static EnableJwtSubsystemRule enableJwtSubsystemRule = new EnableJwtSubsystemRule();
 
     private static final String UNSET_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME = "PROPERTIES_UNSET_DEPLOYMENT";
     private static final String NON_JWT_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME = "OTHER_VALUE_DEPLOYMENT";
