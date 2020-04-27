@@ -11,6 +11,8 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
@@ -30,6 +32,7 @@ import io.restassured.RestAssured;
  * Set of tests verifying functionality of {@code mp.jwt.verify.publickey} property.
  */
 @RunWith(Arquillian.class)
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class PublicKeyPropertyTestCase {
 
     private static final String DEPLOYMENT_WITH_VALID_KEY = "valid-key-deployment";

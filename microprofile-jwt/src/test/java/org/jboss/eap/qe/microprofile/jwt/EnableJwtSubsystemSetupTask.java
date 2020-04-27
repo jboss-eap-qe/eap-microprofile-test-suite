@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
-import org.junit.rules.ExternalResource;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.OperationException;
@@ -13,9 +13,9 @@ import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 /**
- * A JUnit rule to enable/disable MP-JWT subsystem
+ * A way enable/disable MP-JWT subsystem when not enabled
  */
-public class EnableJwtSubsystemRule extends ExternalResource {
+public class EnableJwtSubsystemSetupTask implements MicroProfileServerSetupTask {
 
     private static final Address MP_JWT_EXTENSION_ADDRESS = Address.extension("org.wildfly.extension.microprofile.jwt");
     private static final Address MP_JWT_ADDRESS = Address.subsystem("microprofile-jwt-smallrye");
@@ -24,7 +24,7 @@ public class EnableJwtSubsystemRule extends ExternalResource {
     private boolean wasSubsystemAdded;
 
     @Override
-    protected void before() throws IOException, OperationException, TimeoutException, InterruptedException,
+    public void setup() throws IOException, OperationException, TimeoutException, InterruptedException,
             ConfigurationException {
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             final Operations ops = new Operations(client);
@@ -43,7 +43,7 @@ public class EnableJwtSubsystemRule extends ExternalResource {
     }
 
     @Override
-    protected void after() {
+    public void tearDown() {
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             final Operations ops = new Operations(client);
             if (wasExtensionAdded) {
@@ -59,4 +59,5 @@ public class EnableJwtSubsystemRule extends ExternalResource {
             throw new IllegalStateException("Unexpected exception when removing MP-JWT subsystem", e);
         }
     }
+
 }

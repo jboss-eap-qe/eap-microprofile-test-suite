@@ -14,7 +14,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemRule;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtClaims;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtDefaultClaimValues;
@@ -26,7 +27,6 @@ import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,10 +38,8 @@ import org.junit.runner.RunWith;
 @Ignore("WFWIP-293")
 @RunAsClient
 @RunWith(Arquillian.class)
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class JwtMinimalClaimSetTest {
-
-    @ClassRule
-    public static EnableJwtSubsystemRule enableJwtSubsystemRule = new EnableJwtSubsystemRule();
 
     private static final String SUBJECT = JwtDefaultClaimValues.SUBJECT;
     private static final String ISSUER = JwtDefaultClaimValues.ISSUER;

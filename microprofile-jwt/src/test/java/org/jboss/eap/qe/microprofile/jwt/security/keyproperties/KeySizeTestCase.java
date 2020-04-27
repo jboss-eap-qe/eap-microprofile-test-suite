@@ -11,6 +11,8 @@ import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
@@ -27,6 +29,7 @@ import io.restassured.RestAssured;
 
 @RunAsClient
 @RunWith(Arquillian.class)
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class KeySizeTestCase {
 
     private static final String BITS_512_KEY_DEPLOYMENT = "512-bits-key-deployment";

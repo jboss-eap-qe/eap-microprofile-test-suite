@@ -9,7 +9,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemRule;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JsonWebToken;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.JwtHelper;
 import org.jboss.eap.qe.microprofile.jwt.auth.tool.RsaKeyTool;
@@ -20,7 +21,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,10 +31,8 @@ import io.restassured.RestAssured;
  * web.xml.
  */
 @RunWith(Arquillian.class)
+@ServerSetup(EnableJwtSubsystemSetupTask.class)
 public class WebXmlActivationCompatibilityTest {
-
-    @ClassRule
-    public static EnableJwtSubsystemRule enableJwtSubsystemRule = new EnableJwtSubsystemRule();
 
     private static RsaKeyTool keyTool;
 
