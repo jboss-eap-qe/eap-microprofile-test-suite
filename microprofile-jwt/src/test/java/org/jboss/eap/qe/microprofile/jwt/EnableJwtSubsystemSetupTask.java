@@ -17,7 +17,8 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
  */
 public class EnableJwtSubsystemSetupTask implements MicroProfileServerSetupTask {
 
-    private static final Address MP_JWT_EXTENSION_ADDRESS = Address.extension("org.wildfly.extension.microprofile.jwt-smallrye");
+    private static final Address MP_JWT_EXTENSION_ADDRESS = Address
+            .extension("org.wildfly.extension.microprofile.jwt-smallrye");
     private static final Address MP_JWT_ADDRESS = Address.subsystem("microprofile-jwt-smallrye");
 
     private boolean wasExtensionAdded;
