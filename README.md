@@ -56,6 +56,61 @@ mvn clean verify -DskipTests -DskipITs -Djboss.dist=foo
 ./mvnw clean verify -DskipTests -DskipITs -Djboss.dist=foo
 ```
 
+## Target distributions and MicroProfile specs
+
+The default Maven behavior when running the above mentioned commands will be to 
+execute the test suite with its default settings - 
+i.e. being about MicroProfile, this resolves to the assumption that:
+
+* all of the MicroProfile specs modules test cases should be executed
+* if a server instance must be started up then the `standalone-microprofile.xml`
+ configuration should be used.
+
+What described above would fit in the scenarios of Wildfly (which includes all 
+of the MP specs since v. 19.0.0.Final) and EAP XP server distributions.
+
+When it comes to the standard EAP stream bits tests, then the test suite 
+behavior should be different. 
+Specifically, only the test cases belonging to the modules which relate to 
+those MicroProfile specs which constitute the so called `Observability layer`
+should be executed and the `standalone.xml` file should be used when starting 
+the server instance up.
+
+The MicroProfile `Observability layer` specs include:
+* MicroProfile Config
+* MicroProfile Metrics
+* Microprofile Health
+* MicroProfile OpenTracing (no tests in here for this one)
+
+In order to test the _just_ this reduced set of MicroProfile specs, then, an 
+additional property should be provided to the command lines described earlier, 
+namely `-Dmp.specs.scope=observability`.
+In such case Arquillian will use the standard `standalone.xml` configuration 
+file, too.
+Consequently, the command lines described earlier and adjusted would be 
+translated into the following variations:
+
+### Quick compilation
+```
+mvn clean verify -DskipTests -DskipITs -Djboss.dist=foo -Dmp.specs.scope=observability
+
+./mvnw clean verify -DskipTests -DskipITs -Djboss.dist=foo -Dmp.specs.scope=observability
+```
+
+### To run tests against a running server instance (let's suppose that who started it up knew which config file to use...):
+```
+mvn clean verify -pl microprofile-health -am -Dmp.specs.scope=observability
+
+./mvnw clean verify -pl microprofile-health -am -Dmp.specs.scope=observability
+```
+
+### To run tests against against a custom build:
+```
+mvn clean verify -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final -Dmp.specs.scope=observability
+
+./mvnw clean verify -Djboss.dist=/Users/rsvoboda/Downloads/wildfly-18.0.0.Final -Dmp.specs.scope=observability
+```
+
 ## Zip distribution bundle
 Distribution bundle contains this testsuite, pre-loaded local maven repository and dump of Docker images used in tests.
 Creation of the `eap-microprofile-test-suite-dist.zip` bundle is managed via `./mp-ts.sh` script.
