@@ -21,8 +21,8 @@ public class EnableJwtSubsystemSetupTask implements MicroProfileServerSetupTask 
             .extension("org.wildfly.extension.microprofile.jwt-smallrye");
     private static final Address MP_JWT_ADDRESS = Address.subsystem("microprofile-jwt-smallrye");
 
-    private boolean wasExtensionAdded;
-    private boolean wasSubsystemAdded;
+    private boolean wasExtensionAdded = false;
+    private boolean wasSubsystemAdded = false;
 
     @Override
     public void setup() throws IOException, OperationException, TimeoutException, InterruptedException,
@@ -37,7 +37,9 @@ public class EnableJwtSubsystemSetupTask implements MicroProfileServerSetupTask 
                 ops.add(MP_JWT_ADDRESS).assertSuccess();
                 wasSubsystemAdded = true;
             }
-            new Administration(client).reload();
+            if (wasExtensionAdded || wasSubsystemAdded) {
+                new Administration(client).reload();
+            }
         }
     }
 
