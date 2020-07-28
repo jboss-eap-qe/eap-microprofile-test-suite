@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>org.wildfly.arquillian</groupId>
-            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <artifactId>wildfly-arquillian-common</artifactId>
             <scope>compile</scope>
         </dependency>
         <!-- Arquillian container test SPI for extension -->
