@@ -66,6 +66,7 @@
         <!-- Test against Bootable JAR -->
         <profile>
             <id>bootablejar.profile</id>
+            <!-- TBD - remove once https://issues.redhat.com/browse/WFARQ-74 is done and wildfly-arquillian-3.0.0.Beta2 is out -->
             <properties>
                 <jboss.home>${project.build.directory}</jboss.home>
             </properties>
