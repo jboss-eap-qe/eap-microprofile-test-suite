@@ -65,7 +65,6 @@
         <testsuite.galleon.pack.version>${env.WILDFLY_GALLEON_PACK_VERSION}</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
         <version.org.wildfly.jar.plugin>${env.BOOTABLE_JAR_MAVEN_PLUGIN_VERSION}</version.org.wildfly.jar.plugin>
-        <!--        <version.org.wildfly.arquillian.bootable>3.0.0.Beta1-SNAPSHOT</version.org.wildfly.arquillian.bootable>-->
     </properties>
 
     <dependencyManagement>

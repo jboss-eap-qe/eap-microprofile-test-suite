@@ -59,8 +59,8 @@
         <!-- Test against Bootable JAR -->
         <profile>
             <id>bootablejar.profile</id>
-            <!-- TBD - remove once https://issues.redhat.com/browse/WFARQ-74 is done and wildfly-arquillian-3.0.0.Beta2 is out -->
             <properties>
+                <!-- TBD - remove once https://issues.redhat.com/browse/WFARQ-74 is done and wildfly-arquillian-3.0.0.Beta2 is out -->
                 <jboss.home>${project.build.directory}</jboss.home>
             </properties>
             <activation>
@@ -115,9 +115,7 @@
                                     <hollowJar>true</hollowJar>
                                     <record-state>false</record-state>
                                     <log-time>${galleon.log.time}</log-time>
-                                    <!--                                    <offline>true</offline>-->
                                     <plugin-options>
-                                        <!--                                        <jboss-maven-dist/>-->
                                         <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
                                     </plugin-options>
                                     <feature-packs>
@@ -161,12 +159,6 @@
                                             org.wildfly.arquillian:wildfly-arquillian-container-managed
                                         </classpathDependencyExclude>
                                     </classpathDependencyExcludes>
-<!--                                    <excludes>-->
-<!--                                        &lt;!&ndash; Need MP FaultTolerance &ndash;&gt;-->
-<!--                                        <exclude>org/jboss/eap/qe/microprofile/health/integration/FailSafe*Test.java</exclude>-->
-<!--                                        &lt;!&ndash; Needs manual container &ndash;&gt;-->
-<!--                                        <exclude>org/jboss/eap/qe/microprofile/health/delay/*Test.java</exclude>-->
-<!--                                    </excludes>-->
                                 </configuration>
                             </execution>
                         </executions>
