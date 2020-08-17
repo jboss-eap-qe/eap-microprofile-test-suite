@@ -1,5 +1,8 @@
 package org.jboss.eap.qe.microprofile.openapi.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.Operation;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -19,8 +22,9 @@ public class OpenApiFilter implements OASFilter {
     public Operation filterOperation(Operation operation) {
         if ((operation.getExtensions() != null)
                 && operation.getExtensions().containsKey(RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME)) {
-            operation.getExtensions().replace(RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME,
-                    LOCAL_TEST_ROUTER_FQDN);
+            Map<String, Object> extensions = new HashMap<>(operation.getExtensions());
+            extensions.replace(RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, LOCAL_TEST_ROUTER_FQDN);
+            operation.setExtensions(extensions);
         }
         return operation;
     }
