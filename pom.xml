@@ -39,11 +39,11 @@
         <version.org.eclipse.microprofile>3.3</version.org.eclipse.microprofile>
         <version.org.jboss.arquillian>1.5.0.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>20.0.0.Final</version.org.jboss.wildfly.dist>
-        <version.org.wildfly.arquillian>3.0.0.Beta1</version.org.wildfly.arquillian>
+        <version.org.wildfly.arquillian>3.0.0.Beta3</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
-        <version.org.wildfly.core>13.0.0.Beta2</version.org.wildfly.core>
+        <version.org.wildfly.core>13.0.0.Beta5</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.24</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
@@ -60,11 +60,11 @@
         <!-- Galleon -->
         <galleon.fork.embedded>true</galleon.fork.embedded>
         <galleon.log.time>true</galleon.log.time>
-        <testsuite.galleon.pack.groupId>${env.WILDFLY_GALLEON_PACK_GROUP_ID}</testsuite.galleon.pack.groupId>
+        <testsuite.galleon.pack.groupId>org.wildfly</testsuite.galleon.pack.groupId>
         <testsuite.galleon.pack.artifactId>wildfly-galleon-pack</testsuite.galleon.pack.artifactId>
-        <testsuite.galleon.pack.version>${env.WILDFLY_GALLEON_PACK_VERSION}</testsuite.galleon.pack.version>
+        <testsuite.galleon.pack.version>20.0.1.Final</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
-        <version.org.wildfly.jar.plugin>${env.BOOTABLE_JAR_MAVEN_PLUGIN_VERSION}</version.org.wildfly.jar.plugin>
+        <version.org.wildfly.jar.plugin>2.0.0.Beta3</version.org.wildfly.jar.plugin>
     </properties>
 
     <dependencyManagement>
@@ -208,35 +208,10 @@
                 <artifactId>postgresql</artifactId>
                 <version>${version.org.postgresql}</version>
             </dependency>
-            <!-- Bootable JAR related dependencies -->
-            <dependency>
-                <groupId>org.wildfly.arquillian</groupId>
-                <artifactId>wildfly-arquillian-container-bootable</artifactId>
-                <version>${version.org.wildfly.arquillian}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jboss.sasl</groupId>
-                        <artifactId>jboss-sasl</artifactId>
-                    </exclusion>
-                    <!-- TODO remove this exclusion once this depends on Jakarta Inject -->
-                    <!-- superseded by jakarta.inject:jakarta.inject-api -->
-                    <exclusion>
-                        <groupId>javax.inject</groupId>
-                        <artifactId>javax.inject</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
             <dependency>
                 <groupId>org.wildfly.arquillian</groupId>
                 <artifactId>wildfly-arquillian-common</artifactId>
                 <version>${version.org.wildfly.arquillian}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly.core</groupId>
-                <artifactId>wildfly-launcher</artifactId>
-                <version>${version.org.wildfly.core}</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -526,6 +501,81 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <!-- Test against Bootable JAR -->
+        <profile>
+            <id>bootablejar.profile</id>
+            <activation>
+                <property>
+                    <name>ts.bootable</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-jboss-as</id>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Disable downloaded WildFly distribution filesystem setup -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>rename-unpacked-jboss-as</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>initialize-basedirs</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencyManagement>
+                <dependencies>
+                    <!-- Bootable JAR related dependencies -->
+                    <dependency>
+                        <groupId>org.wildfly.arquillian</groupId>
+                        <artifactId>wildfly-arquillian-container-bootable</artifactId>
+                        <version>${version.org.wildfly.arquillian}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.jboss.sasl</groupId>
+                                <artifactId>jboss-sasl</artifactId>
+                            </exclusion>
+                            <!-- TODO remove this exclusion once this depends on Jakarta Inject -->
+                            <!-- superseded by jakarta.inject:jakarta.inject-api -->
+                            <exclusion>
+                                <groupId>javax.inject</groupId>
+                                <artifactId>javax.inject</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.wildfly.core</groupId>
+                        <artifactId>wildfly-launcher</artifactId>
+                        <version>${version.org.wildfly.core}</version>
+                        <scope>test</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
     </profiles>
 </project>

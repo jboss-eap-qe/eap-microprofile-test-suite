@@ -37,20 +37,9 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Bootable JAR related dependencies -->
         <dependency>
             <groupId>org.wildfly.arquillian</groupId>
             <artifactId>wildfly-arquillian-common</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.core</groupId>
-            <artifactId>wildfly-launcher</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.arquillian</groupId>
-            <artifactId>wildfly-arquillian-container-bootable</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -59,51 +48,33 @@
         <!-- Test against Bootable JAR -->
         <profile>
             <id>bootablejar.profile</id>
-            <properties>
-                <!-- TBD - remove once https://issues.redhat.com/browse/WFARQ-74 is done and wildfly-arquillian-3.0.0.Beta2 is out -->
-                <jboss.home>${project.build.directory}</jboss.home>
-            </properties>
             <activation>
                 <property>
                     <name>ts.bootable</name>
                 </property>
             </activation>
+            <dependencies>
+                <!-- Bootable JAR related dependencies -->
+                <dependency>
+                    <groupId>org.wildfly.core</groupId>
+                    <artifactId>wildfly-launcher</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-bootable</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>unpack-jboss-as</id>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <phase>none</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- Disable downloaded WildFly distribution filesystem setup -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>rename-unpacked-jboss-as</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <phase>none</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <!-- Bootable JAR Maven plugin -->
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-jar-maven-plugin</artifactId>
                         <version>${version.org.wildfly.jar.plugin}</version>
                         <executions>
-                            <!-- Provision a server with the core functionality we will provide in OpenShift images -->
+                            <!-- Package a cloud-server -->
                             <execution>
                                 <id>bootable-jar-packaging</id>
                                 <goals>
@@ -129,7 +100,6 @@
                                     </feature-packs>
                                     <layers>
                                         <layer>cloud-server</layer>
-                                        <layer>undertow-legacy-https</layer>
                                     </layers>
                                 </configuration>
                             </execution>
@@ -167,5 +137,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
