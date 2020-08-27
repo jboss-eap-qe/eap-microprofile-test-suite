@@ -101,8 +101,6 @@
                                             <groupId>${testsuite.galleon.pack.groupId}</groupId>
                                             <artifactId>${testsuite.galleon.pack.artifactId}</artifactId>
                                             <version>${testsuite.galleon.pack.version}</version>
-                                            <inherit-configs>false</inherit-configs>
-                                            <inherit-packages>false</inherit-packages>
                                         </feature-pack>
                                     </feature-packs>
                                     <layers>

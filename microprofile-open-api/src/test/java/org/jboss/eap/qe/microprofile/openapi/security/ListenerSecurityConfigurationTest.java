@@ -102,8 +102,11 @@ public class ListenerSecurityConfigurationTest {
 
         @Override
         public void setup() throws Exception {
-            jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome");
-
+            if (Boolean.getBoolean("ts.bootable")) {
+                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "installDir");
+            } else {
+                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome");
+            }
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 //  configured server ports for HTTP and HTTPS bindings, offset is taken into account
                 configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
