@@ -64,7 +64,7 @@
         <testsuite.galleon.pack.artifactId>wildfly-galleon-pack</testsuite.galleon.pack.artifactId>
         <testsuite.galleon.pack.version>20.0.1.Final</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
-        <version.org.wildfly.jar.plugin>2.0.0.Beta3</version.org.wildfly.jar.plugin>
+        <version.org.wildfly.jar.plugin>2.0.0.Beta5</version.org.wildfly.jar.plugin>
     </properties>
 
     <dependencyManagement>
