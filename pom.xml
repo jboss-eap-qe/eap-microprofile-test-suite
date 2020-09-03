@@ -267,6 +267,8 @@
                         <configuration>
                             <environmentVariables>
                                 <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
+                                <JAEGER_SAMPLER_PARAM>1.0</JAEGER_SAMPLER_PARAM>
+                                <JAEGER_SAMPLER_TYPE>const</JAEGER_SAMPLER_TYPE>
                             </environmentVariables>
                             <systemPropertyVariables>
                                 <jboss.home>${jboss.home}</jboss.home>                                
