@@ -48,4 +48,53 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+
+    <profiles>
+        <profile>
+            <id>metrics-default</id>
+            <activation>
+                <property>
+                    <name>!skip-metrics-default</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
+                    <executions>
+                        <execution>
+                            <id>default-test</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <excludes>
+                                    <exclude>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceTest.java</exclude>
+                                    <exclude>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceProviderTest.java</exclude>
+                                </excludes>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>two-test</id>
+                            <phase>integration-test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <includes>
+                                    <include>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceTest.java</include>
+                                    <include>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceProviderTest.java</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
