@@ -248,7 +248,8 @@ public class NotReadyHealthCheckTest {
                 get(HealthUrlProvider.readyEndpoint(arqProps)).then()
                         .statusCode(503)
                         .body("status", is("DOWN"),
-                                "checks.name", containsInAnyOrder(DelayedReadinessHealthCheck.NAME));
+                                "checks.name", containsInAnyOrder(DelayedReadinessHealthCheck.NAME, "deployments-status",
+                                        "boot-errors", "server-state"));
             } finally {
                 controller.stop(ManualTests.ARQUILLIAN_CONTAINER);
             }
@@ -300,7 +301,8 @@ public class NotReadyHealthCheckTest {
                         .statusCode(200)
                         .body("status", is("UP"),
                                 "checks.name", containsInAnyOrder(
-                                        "ready-deployment." + DelayedLivenessHealthCheck.class.getSimpleName() + ".war"));
+                                        "ready-deployment." + DelayedLivenessHealthCheck.class.getSimpleName() + ".war",
+                                        "deployments-status", "boot-errors", "server-state"));
             } finally {
                 controller.stop(ManualTests.ARQUILLIAN_CONTAINER);
             }

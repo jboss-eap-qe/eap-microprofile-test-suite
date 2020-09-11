@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.not;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.shrinkwrap.api.Archive;
@@ -24,6 +25,7 @@ import io.restassured.http.ContentType;
 
 @RunAsClient
 @RunWith(Arquillian.class)
+@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class })
 public class HealthTest {
 
     @Deployment(testable = false)
