@@ -51,20 +51,20 @@ public class ReadinessChecker implements Callable<Boolean> {
                         if (response.getStatusCode() == 503) {
                             if (checks == null) {
                                 addState(DOWN_NO_CONTENT());
-                            } else if (checks.size() == 0) {
+                            } else if ((checks.size() == 4) && contains(checks, "empty-readiness-checks")) {
                                 addState(DOWN_NO_CHECK());
-                            } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
+                            } else if ((checks.size() == 4) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
                                 addState(ReadinessState.DOWN_WITH_CHECK());
                             }
                         } else if (response.getStatusCode() == 200) {
                             if (checks == null) {
                                 throw new RuntimeException("Readiness probe is UP (200) however missing JSON content");
                             }
-                            if (checks.size() == 0) {
+                            if ((checks.size() == 4) && contains(checks, "empty-readiness-checks")) {
                                 addState(UP_NO_CHECK());
-                            } else if (checks.get(0).get("name").equals(DelayedReadinessHealthCheck.NAME)) {
+                            } else if ((checks.size() == 4) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
                                 addState(UP_WITH_CHECK());
-                            } else if (checks.get(0).get("name").startsWith(DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
+                            } else if ((checks.size() == 4) && contains(checks, DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
                                 addState(UP_WITH_DEFAULT_CHECK());
                             }
                         }
@@ -90,6 +90,23 @@ public class ReadinessChecker implements Callable<Boolean> {
 
     private int lastIndexOfStates() {
         return states.size() - 1;
+    }
+
+    /**
+     * @param list collection to find in
+     * @param key which we are looking for
+     * @return true if key {@code name} atribute startsWith {@code key}. False otherwise.
+     */
+    private boolean contains(List<Map<String, String>> list, String key) {
+        if (list == null) {
+            return false;
+        }
+        for (Map<String, String> item : list) {
+            if (item.get("name").startsWith(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void stop() {
