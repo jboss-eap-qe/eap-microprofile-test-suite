@@ -53,19 +53,6 @@
                     <name>ts.bootable</name>
                 </property>
             </activation>
-            <dependencies>
-                <!-- Bootable JAR related dependencies -->
-                <dependency>
-                    <groupId>org.wildfly.core</groupId>
-                    <artifactId>wildfly-launcher</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.wildfly.arquillian</groupId>
-                    <artifactId>wildfly-arquillian-container-bootable</artifactId>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <!-- Bootable JAR Maven plugin -->
