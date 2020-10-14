@@ -1,11 +1,9 @@
 package org.jboss.eap.qe.microprofile.health;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+
+import java.nio.file.Paths;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -15,6 +13,7 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationE
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,9 +39,11 @@ public class DefaultReadinessProcedureHealthTest {
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
-        return ShrinkWrap.create(WebArchive.class, ARCHIVE_NAME)
+        WebArchive webArchive = ShrinkWrap.create(WebArchive.class, ARCHIVE_NAME)
                 .addClasses(LivenessHealthCheck.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        webArchive.as(ZipExporter.class).exportTo(Paths.get("/tmp/" + ARCHIVE_NAME).toFile(), true);
+        return webArchive;
     }
 
     /**
@@ -59,12 +60,11 @@ public class DefaultReadinessProcedureHealthTest {
     public void testHealthEndpoint() throws ConfigurationException {
         RestAssured.get(HealthUrlProvider.healthEndpoint()).then()
                 .contentType(ContentType.JSON)
-                .body("status", is("UP"),
-                        "checks", hasSize(2),
-                        "checks.status", hasItems("UP", "UP"),
-                        "checks.name", containsInAnyOrder(String.format("ready-deployment.%s", ARCHIVE_NAME), "live"),
-                        "checks.data", hasSize(2),
-                        "checks.data.key", contains("value"));
+                .body(
+                        "status", is("UP"),
+                        "checks.find { it.name == 'live' }.status", is("UP")
+                        ,String.format("checks.find {it.name == 'ready-deployment.%s' }.status", ARCHIVE_NAME), is("UP")
+                        ,"checks.find { it.name == 'live' }.data.key", is("value"));
     }
 
     /**
@@ -80,11 +80,8 @@ public class DefaultReadinessProcedureHealthTest {
         RestAssured.get(HealthUrlProvider.liveEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .body("status", is("UP"),
-                        "checks", hasSize(1),
-                        "checks.status", hasItems("UP"),
-                        "checks.name", contains("live"),
-                        "checks.data", hasSize(1),
-                        "checks.data[0].key", is("value"));
+                        "checks.find { it.name == 'live' }.status", is("UP"),
+                        "checks.find { it.name == 'live' }.data.key", is("value"));
     }
 
     /**
@@ -100,9 +97,7 @@ public class DefaultReadinessProcedureHealthTest {
         RestAssured.get(HealthUrlProvider.readyEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .body("status", is("UP"),
-                        "checks", hasSize(1),
-                        "checks.status", hasItems("UP"),
-                        "checks.name", contains(String.format("ready-deployment.%s", ARCHIVE_NAME)),
-                        "checks.data", contains(nullValue()));
+                        String.format("checks.find {it.name == 'ready-deployment.%s' }.status", ARCHIVE_NAME), is("UP"),
+                        String.format("checks.find {it.name == 'ready-deployment.%s' }.data", ARCHIVE_NAME), is(nullValue()));
     }
 }
