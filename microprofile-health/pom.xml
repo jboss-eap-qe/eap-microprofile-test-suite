@@ -93,6 +93,7 @@
                                     <layers>
                                         <layer>cloud-server</layer>
                                         <layer>undertow-legacy-https</layer>
+                                        <layer>h2-default-datasource</layer>
                                     </layers>
                                 </configuration>
                             </execution>
