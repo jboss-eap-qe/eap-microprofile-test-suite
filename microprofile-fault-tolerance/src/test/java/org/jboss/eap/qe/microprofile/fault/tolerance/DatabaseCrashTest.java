@@ -90,7 +90,7 @@ public class DatabaseCrashTest {
     public static void startDatabase() throws Exception {
         // create data dir for postgres database
         postgresDataDir = Files.createTempDir();
-        postgresDB = new Docker.Builder("postgres", "postgres:12")
+        postgresDB = new Docker.Builder("postgres", "quay.io/jbossqe-eap/postgres:13.1")
                 .setContainerReadyCondition(() -> {
                     // checking port 5432 is not an option as PostgreSQL opens it before it's ready when started for the 1st time
                     // thus try to create JDBC connection directly
