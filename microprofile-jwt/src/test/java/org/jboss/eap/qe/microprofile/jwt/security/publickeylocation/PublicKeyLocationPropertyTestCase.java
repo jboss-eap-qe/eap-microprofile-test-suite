@@ -58,13 +58,14 @@ public class PublicKeyLocationPropertyTestCase {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        keyTool = RsaKeyTool.newKeyTool(getFileFromResources("pki/key.private.pkcs8.pem"));
+        keyTool = RsaKeyTool.newKeyTool(getFileFromResources("pki/RS256/key.private.pkcs8.pem"));
 
         server = Undertow.builder()
                 .addHttpListener(8123, "localhost")
                 .setHandler(exchange -> {
                     exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                    exchange.getResponseSender().send(readLineByLine(Paths.get(getFileFromResources("pki/key.public.pem"))));
+                    exchange.getResponseSender()
+                            .send(readLineByLine(Paths.get(getFileFromResources("pki/RS256/key.public.pem"))));
                 })
                 .build();
         server.start();
@@ -89,7 +90,7 @@ public class PublicKeyLocationPropertyTestCase {
 
     @Deployment(name = DEPLOYMENT_KEY_FROM_FILE)
     public static WebArchive createDeploymentObtainingKeyFromFile() throws URISyntaxException, MalformedURLException {
-        return initDeployment(getFileFromResources("pki/key.public.pem").toURL().toExternalForm(),
+        return initDeployment(getFileFromResources("pki/RS256/key.public.pem").toURL().toExternalForm(),
                 DEPLOYMENT_KEY_FROM_FILE + PublicKeyLocationPropertyTestCase.class.getSimpleName() + ".war");
     }
 
@@ -128,7 +129,8 @@ public class PublicKeyLocationPropertyTestCase {
     /**
      * @tpTestDetails Send a request to server with a proper, signed JWT. The server has configured public key location
      *                aiming at HTTP location which doesn't exist.
-     * @tpPassCrit Server fails to obtain key from HTTP source and client receives 401/unauthorized.
+     * @tpPassCrit Server fails to obtain key from HTTP source and client receives 500
+     *             (see https://github.com/smallrye/smallrye-jwt/issues/372).
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -139,7 +141,7 @@ public class PublicKeyLocationPropertyTestCase {
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
-                .statusCode(401);
+                .statusCode(500);
     }
 
     /**
@@ -161,7 +163,8 @@ public class PublicKeyLocationPropertyTestCase {
     /**
      * @tpTestDetails Send a request to server with a proper, signed JWT. The server has configured public key location
      *                aiming at {@code file} location which doesn't exist.
-     * @tpPassCrit Server fails to obtain key from file source and client receives 401/unauthorized.
+     * @tpPassCrit Server fails to obtain key from file source and client receives 500
+     *             (see https://github.com/smallrye/smallrye-jwt/issues/372).
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -172,7 +175,7 @@ public class PublicKeyLocationPropertyTestCase {
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
-                .statusCode(401);
+                .statusCode(500);
     }
 
     private static URI getFileFromResources(final String filePath) throws URISyntaxException {

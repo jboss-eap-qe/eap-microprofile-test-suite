@@ -39,7 +39,7 @@ public class WebXmlActivationCompatibilityTest {
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
         final URL privateKeyUrl = WebXmlActivationCompatibilityTest.class.getClassLoader()
-                .getResource("pki/key.private.pkcs8.pem");
+                .getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -54,10 +54,11 @@ public class WebXmlActivationCompatibilityTest {
                 .setWebXML(
                         WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("activation-web.xml"))
                 .addAsManifestResource(
-                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        WebXmlActivationCompatibilityTest.class.getClassLoader()
+                                .getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
                 .addAsManifestResource(
-                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                        WebXmlActivationCompatibilityTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 

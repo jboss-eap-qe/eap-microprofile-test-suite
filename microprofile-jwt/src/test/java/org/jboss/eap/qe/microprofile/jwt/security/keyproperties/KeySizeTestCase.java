@@ -42,9 +42,9 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_512_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key512.public.pem"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/key512.public.pem"),
                         "key.public.pem");
     }
 
@@ -53,9 +53,9 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_1024_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key1024.public.pem"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/key1024.public.pem"),
                         "key.public.pem");
     }
 
@@ -64,9 +64,9 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_2048_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
@@ -75,9 +75,9 @@ public class KeySizeTestCase {
         return ShrinkWrap.create(WebArchive.class, BITS_4096_KEY_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key4096.public.pem"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/key4096.public.pem"),
                         "key.public.pem");
     }
 
@@ -87,7 +87,6 @@ public class KeySizeTestCase {
      * @tpPassCrit Authentication is successful and client receives raw token value in response.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("https://issues.redhat.com/browse/WFLY-12979")
     @Test
     @OperateOnDeployment(BITS_1024_KEY_DEPLOYMENT)
     public void testJwtSignedBy1024bitsKey(@ArquillianResource URL url) throws URISyntaxException {
@@ -144,6 +143,8 @@ public class KeySizeTestCase {
      * @tpPassCrit Authentication is not successful and client receives "unauthorized" response.
      * @tpSince EAP 7.4.0.CD19
      */
+    //TODO: resurrect this test once support for keys length less than 1024 will be dropped definitely
+    @Ignore("smallrye.jwt.verify.relax-key-validation=true to support keys length less than 1024, see https://smallrye.io/docs/smallrye-jwt/configuration.html")
     @Test
     @OperateOnDeployment(BITS_512_KEY_DEPLOYMENT)
     public void testJwtSignedBy512bitsKey(@ArquillianResource URL url) throws URISyntaxException {
@@ -161,7 +162,7 @@ public class KeySizeTestCase {
     }
 
     private URI getPrivateKey(final String fileName) throws URISyntaxException {
-        final URL privateKeyUrl = KeySizeTestCase.class.getClassLoader().getResource("pki/" + fileName);
+        final URL privateKeyUrl = KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/" + fileName);
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }

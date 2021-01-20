@@ -37,9 +37,9 @@ public class CorruptedJwtTest {
         return ShrinkWrap.create(WebArchive.class, CorruptedJwtTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(CorruptedJwtTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(CorruptedJwtTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(CorruptedJwtTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(CorruptedJwtTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
@@ -50,7 +50,7 @@ public class CorruptedJwtTest {
      */
     @Test
     public void supplyCorruptedJwtToServerTest(@ArquillianResource URL url) throws URISyntaxException {
-        final URL privateKeyUrl = CorruptedJwtTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = CorruptedJwtTest.class.getClassLoader().getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }

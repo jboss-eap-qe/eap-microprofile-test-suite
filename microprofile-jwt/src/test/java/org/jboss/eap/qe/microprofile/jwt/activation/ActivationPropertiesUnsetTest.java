@@ -33,10 +33,10 @@ public class ActivationPropertiesUnsetTest {
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(NonJwtJaxRsTestApplication.class)
                 .addAsManifestResource(
-                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
                 .addAsManifestResource(
-                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
@@ -50,10 +50,10 @@ public class ActivationPropertiesUnsetTest {
                 .addClass(NonJwtJaxRsTestApplication.class)
                 .setWebXML(ActivationPropertiesUnsetTest.class.getClassLoader().getResource("basic-auth-web.xml"))
                 .addAsManifestResource(
-                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
                 .addAsManifestResource(
-                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 

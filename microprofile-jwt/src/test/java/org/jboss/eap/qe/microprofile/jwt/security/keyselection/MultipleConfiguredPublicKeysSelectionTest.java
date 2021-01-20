@@ -46,9 +46,9 @@ public class MultipleConfiguredPublicKeysSelectionTest {
     private static final String ORANGE_KEY = "orange-key";
     private static final String PINK_KEY = "pink-key";
 
-    private static RsaKeyTool rsaKeyToolOrange = initializeKeyTool("pki/key.private.pkcs8.pem", ORANGE_KEY);
-    private static RsaKeyTool rsaKeyToolBlue = initializeKeyTool("pki/key4096.private.pkcs8.pem", BLUE_KEY);
-    private static RsaKeyTool rsaKeyToolPink = initializeKeyTool("pki/key2048_2.private.pkcs8.pem", PINK_KEY);
+    private static RsaKeyTool rsaKeyToolOrange = initializeKeyTool("pki/RS256/key.private.pkcs8.pem", ORANGE_KEY);
+    private static RsaKeyTool rsaKeyToolBlue = initializeKeyTool("pki/RS256/key4096.private.pkcs8.pem", BLUE_KEY);
+    private static RsaKeyTool rsaKeyToolPink = initializeKeyTool("pki/RS256/key2048_2.private.pkcs8.pem", PINK_KEY);
 
     private static JsonObject JWKS_DOCUMENT = Json.createObjectBuilder()
             .add("keys", Json.createArrayBuilder()

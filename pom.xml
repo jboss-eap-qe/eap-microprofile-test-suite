@@ -65,6 +65,7 @@
         <testsuite.galleon.pack.version>20.0.1.Final</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
         <version.org.wildfly.jar.plugin>2.0.0.Beta5</version.org.wildfly.jar.plugin>
+        <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
     </properties>
 
     <dependencyManagement>
@@ -235,6 +236,11 @@
                 <groupId>org.wildfly.core</groupId>
                 <artifactId>wildfly-launcher</artifactId>
                 <version>${version.org.wildfly.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bitbucket.b_c</groupId>
+                <artifactId>jose4j</artifactId>
+                <version>${version.org.bitbucket.b_c.jose4j}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
