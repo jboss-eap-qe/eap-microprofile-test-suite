@@ -1,0 +1,6 @@
+<!--This web.xml configuration activates role based access for RestEasy-->
+<web-app>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
+</web-app>

@@ -36,7 +36,7 @@ public class JwtIssuerValueTest {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = JwtIssuerValueTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = JwtIssuerValueTest.class.getClassLoader().getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -49,9 +49,10 @@ public class JwtIssuerValueTest {
         return ShrinkWrap.create(WebArchive.class, JwtIssuerValueTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(JwtIssuerValueTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(
+                        JwtIssuerValueTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(JwtIssuerValueTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(JwtIssuerValueTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 

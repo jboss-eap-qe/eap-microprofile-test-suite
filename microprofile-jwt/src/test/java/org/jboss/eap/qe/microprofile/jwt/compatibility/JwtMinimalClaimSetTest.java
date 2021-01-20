@@ -48,7 +48,7 @@ public class JwtMinimalClaimSetTest {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = JwtMinimalClaimSetTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = JwtMinimalClaimSetTest.class.getClassLoader().getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -61,9 +61,10 @@ public class JwtMinimalClaimSetTest {
         return ShrinkWrap.create(WebArchive.class, JwtMinimalClaimSetTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(JwtMinimalClaimSetTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(
+                        JwtMinimalClaimSetTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(JwtMinimalClaimSetTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(JwtMinimalClaimSetTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
@@ -245,35 +246,4 @@ public class JwtMinimalClaimSetTest {
                 .then()
                 .statusCode(401);
     }
-
-    /**
-     * @tpTestDetails Supply a JWT with missing groups claim to the server.
-     * @tpPassCrit Groups claim is recommended by specification to be required and such JWT must be rejected and user
-     *             must receive 401/Unauthorized.
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    public void missingGroupsRejectedTest(@ArquillianResource URL url) {
-        final Instant now = Instant.now();
-        final Instant later = now.plus(1, ChronoUnit.HOURS);
-
-        //groups claim intentionally missing
-        final JwtClaims jwtClaims = new JwtClaims.Builder()
-                .jwtId(UUID.randomUUID().toString())
-                .audience(JwtDefaultClaimValues.AUDIENCE)
-                .issuer(ISSUER)
-                .subject(SUBJECT)
-                .userPrincipalName(SUBJECT)
-                .issuedAtTime(now.getEpochSecond())
-                .expirationTime(later.getEpochSecond())
-                .build();
-
-        final JsonWebToken jwt = JwtHelper.generateProperSignedJwtWithClaims(keyTool, jwtClaims);
-
-        given().header("Authorization", "Bearer " + jwt.getRawValue())
-                .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
-                .then()
-                .statusCode(401);
-    }
-
 }

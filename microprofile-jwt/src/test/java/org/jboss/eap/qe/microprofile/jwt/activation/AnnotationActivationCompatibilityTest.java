@@ -39,7 +39,7 @@ public class AnnotationActivationCompatibilityTest {
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
         final URL privateKeyUrl = AnnotationActivationCompatibilityTest.class.getClassLoader()
-                .getResource("pki/key.private.pkcs8.pem");
+                .getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -52,10 +52,11 @@ public class AnnotationActivationCompatibilityTest {
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
                 .addAsManifestResource(
-                        AnnotationActivationCompatibilityTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        AnnotationActivationCompatibilityTest.class.getClassLoader()
+                                .getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
                 .addAsManifestResource(
-                        AnnotationActivationCompatibilityTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                        AnnotationActivationCompatibilityTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 

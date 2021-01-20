@@ -56,6 +56,16 @@
             <artifactId>tooling-docker</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <profiles>

@@ -134,6 +134,17 @@ public final class JwtHelper {
         }
     }
 
+    /**
+     * @deprecated Replace with {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.generateProperSignedJwt}
+     *             which leverages the {@code jose4j} library;
+     *             {@code jose4j} library, among other thongs, makes it easy to do the following:
+     *             <ul>
+     *             <li>JWT: produce and consume JSON Web Tokens</li>
+     *             <li>JWS: apply and verify signatures to JWT</li>
+     *             <li>JWE: encrypt and decrypt JWS Tokens</li>
+     *             </ul>
+     */
+    @Deprecated
     public static JsonWebToken generateProperSignedJwtWithClaims(final RsaKeyTool keyTool, final JwtClaims claims) {
         final JoseHeader joseHeader = new JoseHeader(keyTool.getJwkKeyId());
 
