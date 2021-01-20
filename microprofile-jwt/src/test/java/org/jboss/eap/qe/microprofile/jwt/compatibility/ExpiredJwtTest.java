@@ -38,9 +38,9 @@ public class ExpiredJwtTest {
         return ShrinkWrap.create(WebArchive.class, ExpiredJwtTest.class.getSimpleName() + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(ExpiredJwtTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(ExpiredJwtTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(ExpiredJwtTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(ExpiredJwtTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
@@ -51,7 +51,7 @@ public class ExpiredJwtTest {
      */
     @Test
     public void supplyExpiredJwtToServerTest(@ArquillianResource URL url) throws URISyntaxException {
-        final URL privateKeyUrl = ExpiredJwtTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = ExpiredJwtTest.class.getClassLoader().getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }

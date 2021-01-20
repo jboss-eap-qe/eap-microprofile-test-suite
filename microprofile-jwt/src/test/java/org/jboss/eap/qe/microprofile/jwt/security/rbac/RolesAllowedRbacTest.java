@@ -44,7 +44,7 @@ public class RolesAllowedRbacTest {
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = RolesAllowedRbacTest.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = RolesAllowedRbacTest.class.getClassLoader().getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }
@@ -59,9 +59,10 @@ public class RolesAllowedRbacTest {
                 .addClass(UnsecuredJaxRsEndpoint.class)
                 .addClass(JwtRbacTestEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(RolesAllowedRbacTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(
+                        RolesAllowedRbacTest.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(RolesAllowedRbacTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(RolesAllowedRbacTest.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 

@@ -31,7 +31,15 @@ import javax.json.JsonObject;
  * <p>
  *
  * @author Daniel Pfeifer
+ * 
+ * @deprecated This class is expected to be replaced by {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.AbstractKeyLoader};
+ *             Please consider switching to {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.AbstractKeyLoader} when modifying
+ *             users
+ *             of this class;
+ *             Please consider adding to {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.AbstractKeyLoader} when in need for
+ *             modifications or additions to this class;
  */
+@Deprecated
 public final class RsaKeyTool {
     private RSAPublicKey publicKey;
     private RSAPrivateCrtKey privateKey;

@@ -46,7 +46,7 @@ public class CorruptedKeyTest {
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
         final URL privateKeyUrl = PublicKeyPropertyTestCase.class.getClassLoader()
-                .getResource("pki/key.private.pkcs8.pem");
+                .getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }

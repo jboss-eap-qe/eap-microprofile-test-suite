@@ -48,15 +48,16 @@ public class JoseHeaderAlgorithmTestCase {
         return ShrinkWrap.create(WebArchive.class, DEFAULT_DEPLOYMENT + ".war")
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class)
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic.properties"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("mp-config-basic-RS256.properties"),
                         "microprofile-config.properties")
-                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/key.public.pem"),
+                .addAsManifestResource(KeySizeTestCase.class.getClassLoader().getResource("pki/RS256/key.public.pem"),
                         "key.public.pem");
     }
 
     @BeforeClass
     public static void beforeClass() throws URISyntaxException {
-        final URL privateKeyUrl = JoseHeaderAlgorithmTestCase.class.getClassLoader().getResource("pki/key.private.pkcs8.pem");
+        final URL privateKeyUrl = JoseHeaderAlgorithmTestCase.class.getClassLoader()
+                .getResource("pki/RS256/key.private.pkcs8.pem");
         if (privateKeyUrl == null) {
             throw new IllegalStateException("Private key wasn't found in resources!");
         }

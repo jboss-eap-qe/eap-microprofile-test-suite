@@ -59,6 +59,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
                     .withPortMapping(KEYCLOAK_EXPOSED_MANAGEMENT_PORT + ":9990")
                     .withEnvVar("KEYCLOAK_USER", KEYCLOAK_ADMIN_USERNAME)
                     .withEnvVar("KEYCLOAK_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
+                    .withEnvVar("DB_VENDOR", "h2")
                     .withCmdArg("-b=0.0.0.0")
                     .withCmdArg("-bmanagement=0.0.0.0")
                     .build();
