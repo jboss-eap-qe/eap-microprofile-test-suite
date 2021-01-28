@@ -18,7 +18,7 @@ public class CDIBasedReadinessHealthCheck implements HealthCheck {
     public HealthCheckResponse call() {
         try {
             return HealthCheckResponse.named("dummyReadiness")
-                    .state(dummyService.isReady())
+                    .status(dummyService.isReady())
                     .build();
         } catch (IOException e) {
             throw new Error("dummy service is should be fail safe");
