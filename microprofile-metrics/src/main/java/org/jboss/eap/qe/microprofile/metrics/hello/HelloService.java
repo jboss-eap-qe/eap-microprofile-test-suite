@@ -12,7 +12,7 @@ import org.eclipse.microprofile.metrics.annotation.Timed;
 
 @ApplicationScoped
 public class HelloService {
-    @Counted(name = "hello-count", absolute = true, displayName = "Hello Count", description = "Number of hello invocations", reusable = true)
+    @Counted(name = "hello-count", absolute = true, displayName = "Hello Count", description = "Number of hello invocations")
     @Timed(unit = MetricUnits.MILLISECONDS, name = "hello-time", absolute = true, displayName = "Hello Time", description = "Time of hello invocations")
     @Metered(name = "hello-freq", absolute = true, displayName = "Hello Freq", description = "Frequency of hello invocations")
     @ConcurrentGauge(name = "hello-invocations", absolute = true, displayName = "Hello Invocations", description = "Number of current hello invocations")
