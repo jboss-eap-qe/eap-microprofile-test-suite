@@ -7,7 +7,7 @@
  
  Maven is not a hard requirement as `mvnw` is delivered with this repository.
 
- Podman with docker command bridge can be used as a Docker alternative.
+ Podman with docker command bridge can be used as a Docker alternative or you can use a system property `-Ddocker.command=podman`.
 
 ## Run the testsuite
 ```

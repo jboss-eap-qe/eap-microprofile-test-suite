@@ -37,6 +37,8 @@ public class Docker extends ExternalResource {
     private ExecutorService outputPrinter;
     private Process dockerRunProcess;
 
+    public static final String DOCKER_CMD = System.getProperty("docker.command", "docker");
+
     private Docker() {
     } // avoid instantiation, use Builder
 
@@ -46,7 +48,7 @@ public class Docker extends ExternalResource {
 
         List<String> cmd = new ArrayList<>();
 
-        cmd.add("docker");
+        cmd.add(DOCKER_CMD);
         cmd.add("run");
         cmd.add("--name");
         cmd.add(uuid);
@@ -121,7 +123,7 @@ public class Docker extends ExternalResource {
     private void checkDockerPresent() throws Exception {
         Process dockerInfoProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
-                .command(new String[] { "docker", "info" })
+                .command(new String[] { DOCKER_CMD, "info" })
                 .start();
         dockerInfoProcess.waitFor();
         if (dockerInfoProcess.exitValue() != 0) {
@@ -136,7 +138,7 @@ public class Docker extends ExternalResource {
     public boolean isRunning() throws Exception {
         Process dockerRunProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
-                .command(new String[] { "docker", "ps" })
+                .command(new String[] { DOCKER_CMD, "ps" })
                 .start();
 
         dockerRunProcess.waitFor();
@@ -161,7 +163,7 @@ public class Docker extends ExternalResource {
                 .a(" with ID ").fgYellow().a(uuid).reset());
 
         new ProcessBuilder()
-                .command("docker", "stop", uuid)
+                .command(DOCKER_CMD, "stop", uuid)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
         terminateThreadPools();
@@ -173,7 +175,7 @@ public class Docker extends ExternalResource {
                 .a(" with ID ").fgYellow().a(uuid).reset());
 
         new ProcessBuilder()
-                .command("docker", "kill", uuid)
+                .command(DOCKER_CMD, "kill", uuid)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
         terminateThreadPools();
@@ -187,7 +189,7 @@ public class Docker extends ExternalResource {
 
     private void removeDockerContainer() throws Exception {
         new ProcessBuilder()
-                .command("docker", "rm", uuid)
+                .command(DOCKER_CMD, "rm", uuid)
                 .start()
                 .waitFor(10, TimeUnit.SECONDS);
     }
@@ -262,7 +264,7 @@ public class Docker extends ExternalResource {
         /**
          * Adds options into starting docker command.
          * <p>
-         * See "docker run --help" for full list of options
+         * See "<docker_command> run --help" for full list of options
          *
          * @param option additional docker parameters
          */
