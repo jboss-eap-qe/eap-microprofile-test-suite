@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
+import static org.jboss.eap.qe.ts.common.docker.Docker.DOCKER_CMD;
 
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,7 @@ public class MalformedDockerConfigTest {
                         .build();
 
         thrown.expect(DockerException.class);
-        thrown.expectMessage(containsString("Starting of docker container using command: \"docker run --name"));
+        thrown.expectMessage(containsString("Starting of docker container using command: \"" + DOCKER_CMD + " run --name"));
         thrown.expectMessage(endsWith("failed. Check that provided command is correct."));
 
         containerWithInvalidVersion.start();
