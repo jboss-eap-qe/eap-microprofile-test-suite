@@ -19,7 +19,6 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationE
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,25 +34,19 @@ import io.restassured.specification.RequestSpecification;
 public class MultipleDeploymentsMetricsTest {
 
     public static final String PING_ONE_SERVICE = "ping-one-service";
-    public static final String PING_ONE_SERVICE_TAG = "ping-one-service-tag";
     public static final String PING_TWO_SERVICE = "ping-two-service";
-    public static final String PING_TWO_SERVICE_TAG = "ping-two-service-tag";
 
     @Deployment(name = PING_ONE_SERVICE, order = 1)
     public static WebArchive createDeployment1() {
         return ShrinkWrap.create(WebArchive.class, PING_ONE_SERVICE + ".war")
-                .addClasses(PingApplication.class, PingOneService.class, PingOneResource.class)
-                .addAsManifestResource(new StringAsset("mp.metrics.appName=" + PING_ONE_SERVICE_TAG),
-                        "microprofile-config.properties");
+                .addClasses(PingApplication.class, PingOneService.class, PingOneResource.class);
 
     }
 
     @Deployment(name = PING_TWO_SERVICE, order = 2)
     public static WebArchive createDeployment2() {
         return ShrinkWrap.create(WebArchive.class, PING_TWO_SERVICE + ".war")
-                .addClasses(PingApplication.class, PingTwoService.class, PingTwoResource.class)
-                .addAsManifestResource(new StringAsset("mp.metrics.appName=" + PING_TWO_SERVICE_TAG),
-                        "microprofile-config.properties");
+                .addClasses(PingApplication.class, PingTwoService.class, PingTwoResource.class);
     }
 
     private static RequestSpecification jsonMetricsRequest;
@@ -93,7 +86,7 @@ public class MultipleDeploymentsMetricsTest {
                         "application.ping-count.tags[0]", hasSize(1),
                         "application.ping-count.tags[1]", hasSize(1),
                         "application.ping-count.tags.flatten()",
-                        contains("_app=" + PING_ONE_SERVICE_TAG, "_app=" + PING_TWO_SERVICE_TAG));
+                        contains("_app=" + PingOneService.PING_ONE_SERVICE_TAG, "_app=" + PingTwoService.PING_TWO_SERVICE_TAG));
     }
 
     /**
@@ -136,11 +129,11 @@ public class MultipleDeploymentsMetricsTest {
                 .contentType(ContentType.JSON)
                 .header("Content-Type", containsString("application/json"))
                 .body("$", hasKey("application"),
-                        "application", hasKey("ping-count;_app=" + PING_ONE_SERVICE_TAG),
-                        "application.ping-count;_app=" + PING_ONE_SERVICE_TAG, equalTo(2),
+                        "application", hasKey("ping-count;_app=" + PingOneService.PING_ONE_SERVICE_TAG),
+                        "application.ping-count;_app=" + PingOneService.PING_ONE_SERVICE_TAG, equalTo(2),
 
-                        "application", hasKey("ping-count;_app=" + PING_TWO_SERVICE_TAG),
-                        "application.ping-count;_app=" + PING_TWO_SERVICE_TAG, equalTo(4));
+                        "application", hasKey("ping-count;_app=" + PingTwoService.PING_TWO_SERVICE_TAG),
+                        "application.ping-count;_app=" + PingTwoService.PING_TWO_SERVICE_TAG, equalTo(4));
     }
 
     /**
@@ -151,7 +144,9 @@ public class MultipleDeploymentsMetricsTest {
                 .contentType(ContentType.TEXT)
                 .header("Content-Type", containsString("text/plain"))
                 .body(
-                        containsString("application_ping_count_total{_app=\"" + PING_TWO_SERVICE_TAG + "\"} 4.0"),
-                        containsString("application_ping_count_total{_app=\"" + PING_ONE_SERVICE_TAG + "\"} 2.0"));
+                        containsString(
+                                "application_ping_count_total{_app=\"" + PingTwoService.PING_TWO_SERVICE_TAG + "\"} 4.0"),
+                        containsString(
+                                "application_ping_count_total{_app=\"" + PingOneService.PING_ONE_SERVICE_TAG + "\"} 2.0"));
     }
 }
