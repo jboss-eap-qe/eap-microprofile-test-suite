@@ -15,7 +15,7 @@ public class CDIBasedLivenessHealthCheck implements HealthCheck {
     @Override
     public HealthCheckResponse call() {
         return HealthCheckResponse.named("dummyLiveness")
-                .state(dummyService.isLive())
+                .status(dummyService.isLive())
                 .build();
     }
 }

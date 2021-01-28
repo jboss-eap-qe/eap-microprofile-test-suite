@@ -2,6 +2,7 @@ package org.jboss.eap.qe.microprofile.config.testapp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
@@ -38,5 +39,10 @@ public class ResolverConfigSource implements ConfigSource {
     @Override
     public int getOrdinal() {
         return 500;
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        return getProperties().keySet();
     }
 }

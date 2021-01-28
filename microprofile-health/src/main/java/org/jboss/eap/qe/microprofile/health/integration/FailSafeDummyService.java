@@ -55,7 +55,7 @@ public class FailSafeDummyService {
         return readyInMaintenance.get();
     }
 
-    @Counted(name = "simulation-count", absolute = true, displayName = "Simulation Count", description = "Number of simulateOpeningResources invocations", reusable = true)
+    @Counted(name = "simulation-count", absolute = true, displayName = "Simulation Count", description = "Number of simulateOpeningResources invocations")
     public void simulateOpeningResources() throws IOException {
         if (inMaintenance.get()) {
             throw new IOException("In Maintenance");
