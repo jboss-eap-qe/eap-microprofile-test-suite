@@ -1,8 +1,11 @@
 package org.jboss.eap.qe.ts.common.docker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 
 import java.util.concurrent.TimeUnit;
@@ -25,7 +28,7 @@ public class MalformedDockerConfigTest {
                         .withPortMapping("bad:mapping")
                         .build();
 
-        thrown.expect(DockerException.class);
+        thrown.expect(ContainerStartException.class);
         thrown.expectMessage(containsString("Starting of docker container using command: \"docker run --name"));
         thrown.expectMessage(endsWith("failed. Check that provided command is correct."));
 
@@ -47,9 +50,10 @@ public class MalformedDockerConfigTest {
                         }) // it's expected that server never starts and fails fast thus return false
                         .build();
 
-        thrown.expect(ContainerReadyConditionException.class);
-        thrown.expectMessage(
-                containsString("Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout"));
+        thrown.expect(ContainerStartException.class);
+        thrown.expectCause(allOf(instanceOf(ContainerReadyConditionException.class),
+                hasProperty("message", containsString(
+                        "Provided ContainerReadyCondition.isReady() method took longer than containerReadyTimeout"))));
         // throws expected Exception
         try {
             containerWithHangingReadyCondition.start();
@@ -68,7 +72,7 @@ public class MalformedDockerConfigTest {
                 .setContainerReadyCondition(() -> false) // never ready
                 .build();
 
-        thrown.expect(DockerTimeoutException.class);
+        thrown.expect(ContainerStartException.class);
         thrown.expectMessage(containsString("Container was not ready in"));
 
         try {

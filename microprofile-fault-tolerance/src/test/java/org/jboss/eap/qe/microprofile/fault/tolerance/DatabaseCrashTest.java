@@ -205,6 +205,7 @@ public class DatabaseCrashTest {
     public static void tearDown() throws Exception {
         // stop DB if still running and delete data directory
         postgresDB.stop();
+        postgresDB.remove();
         postgresDataDir.delete();
         MicroProfileFaultToleranceServerConfiguration.disableFaultTolerance();
     }
