@@ -17,6 +17,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.health.DisableDefaultHealthProceduresSetupTask;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
@@ -28,7 +29,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -57,7 +57,7 @@ import io.restassured.specification.RequestSpecification;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-@ServerSetup(MicroProfileFTSetupTask.class)
+@ServerSetup({ MicroProfileFTSetupTask.class, DisableDefaultHealthProceduresSetupTask.class })
 public class FailSafeCDIConfigFileHealthTest {
 
     private static final String MPConfigContent = String.format("%s=%s\n%s=%s\n%s=%s\n%s=%s",
@@ -101,7 +101,6 @@ public class FailSafeCDIConfigFileHealthTest {
      *             according to the specification.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testHealthEndpointDownInMaintenance() throws Exception {
         // TODO Java 11 Map<String, String> liveCheck = Map.of( "name", "dummyLiveness", "status", "DOWN");
@@ -126,24 +125,18 @@ public class FailSafeCDIConfigFileHealthTest {
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
+                .validateInvocationsTotal(1, true)
                 .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateRetryCallsTotalMaxRetriesReached(1);
 
         // same request have been validated above, now we need to increase metrics
         get(HealthUrlProvider.healthEndpoint()).then().statusCode(503);
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(2)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2) // 2N retries
-                .validateRetryCallsFailedTotal(2)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(2);
+                .validateInvocationsTotal(2, true)
+                .validateRetryCallsTotalMaxRetriesReached(2)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 
     /**
@@ -170,7 +163,6 @@ public class FailSafeCDIConfigFileHealthTest {
      *             according to the specification.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testReadinessEndpointDownInMaintenance() throws Exception {
         get(HealthUrlProvider.readyEndpoint()).then()
@@ -183,23 +175,15 @@ public class FailSafeCDIConfigFileHealthTest {
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateInvocationsTotal(1, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
 
         // same request have been validated above, now we need to increase metrics
         get(HealthUrlProvider.readyEndpoint()).then().statusCode(503);
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(2)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2) // 2N retries
-                .validateRetryCallsFailedTotal(2)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(2);
+                .validateInvocationsTotal(2, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 }

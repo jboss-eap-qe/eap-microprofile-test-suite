@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
@@ -178,7 +177,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      *             according to the specification.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testHealthEndpointDownInMaintenance() throws Exception {
         setConfigProperties(false, true, true, false);
@@ -204,24 +202,16 @@ public abstract class FailSafeCDIHealthBaseTest {
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateInvocationsTotal(1, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
 
         // same request have been validated above, now we need to increase metrics
         get(HealthUrlProvider.healthEndpoint()).then().statusCode(503);
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(2)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2) // 2N retries
-                .validateRetryCallsFailedTotal(2)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(2);
+                .validateInvocationsTotal(2, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 
     /**
@@ -249,7 +239,6 @@ public abstract class FailSafeCDIHealthBaseTest {
      *             according to the specification.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testReadinessEndpointDownInMaintenance() throws Exception {
         setConfigProperties(false, true, true, false);
@@ -263,24 +252,16 @@ public abstract class FailSafeCDIHealthBaseTest {
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateInvocationsTotal(1, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
 
         // same request have been validated above, now we need to increase metrics
         get(HealthUrlProvider.readyEndpoint()).then().statusCode(503);
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(2)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2) // 2N retries
-                .validateRetryCallsFailedTotal(2)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(2);
+                .validateInvocationsTotal(2, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 
 }
