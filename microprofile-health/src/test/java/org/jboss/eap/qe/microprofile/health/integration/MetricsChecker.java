@@ -34,69 +34,53 @@ public class MetricsChecker {
     }
 
     /**
-     * Validate MP FT metric {@code isReady.retry.retries.total} for {@link FailSafeDummyService#isReady()}
+     * Validate MP FT metric {@code ft.retry.retries.total} for {@link FailSafeDummyService#isReady()}
      */
     public MetricsChecker validateRetryRetriesTotal(int retriesTotal) {
-        response.body("application.'ft." + FailSafeDummyService.class.getName() + ".isReady.retry.retries.total'",
+        response.body("base.'ft.retry.retries.total;method=" + FailSafeDummyService.class.getName() + ".isReady'",
                 equalTo(retriesTotal));
         return this;
     }
 
     /**
-     * Validate MP FT metric {@code isReady.retry.callsFailed.total} for {@link FailSafeDummyService#isReady()}
+     * Validate MP FT metric {@code ft.retry.calls.total} with {@code retryResult=maxRetriesReached}
+     * for {@link FailSafeDummyService#isReady()}
      */
-    public MetricsChecker validateRetryCallsFailedTotal(int callsFailedTotal) {
-        response.body("application.'ft." + FailSafeDummyService.class.getName() + ".isReady.retry.callsFailed.total'",
-                equalTo(callsFailedTotal));
-        return this;
-    }
-
-    /**
-     * Validate MP FT metric {@code isReady.retry.callsSucceededRetried.total} for {@link FailSafeDummyService#isReady()}
-     */
-    public MetricsChecker validateRetryCallsSucceededTotal(int callsSucceededTotal) {
+    public MetricsChecker validateRetryCallsTotalMaxRetriesReached(int maxRetriesReached) {
         response.body(
-                "application.'ft." + FailSafeDummyService.class.getName() + ".isReady.retry.callsSucceededRetried.total'",
-                equalTo(callsSucceededTotal));
+                "base.'ft.retry.calls.total;method=" + FailSafeDummyService.class.getName()
+                        + ".isReady;retried=true;retryResult=maxRetriesReached'",
+                equalTo(maxRetriesReached));
         return this;
     }
 
     /**
-     * Validate MP FT metric {@code isReady.retry.callsSucceededNotRetried.total} for {@link FailSafeDummyService#isReady()}
+     * Validate MP FT metric {@code ft.retry.calls.total} for {@link FailSafeDummyService#isReady()}
      */
     public MetricsChecker validateRetryCallsSucceededNotTriedTotal(int callsSucceededNotTriedTotal) {
         response.body(
-                "application.'ft." + FailSafeDummyService.class.getName()
-                        + ".isReady.retry.callsSucceededNotRetried.total'",
+                "base.'ft.retry.calls.total;method=" + FailSafeDummyService.class.getName()
+                        + ".isReady;retried=false;retryResult=valueReturned'",
                 equalTo(callsSucceededNotTriedTotal));
         return this;
     }
 
     /**
-     * Validate MP FT metric {@code isReady.invocations.total} for {@link FailSafeDummyService#isReady()}
+     * Validate MP FT metric {@code ft.invocations.total} with {@code fallback=notApplied}
+     * for {@link FailSafeDummyService#isReady()}
      */
     public MetricsChecker validateInvocationsTotal(int invocationsTotal) {
-        response.body("application.'ft." + FailSafeDummyService.class.getName() + ".isReady.invocations.total'",
+        validateInvocationsTotal(invocationsTotal, false);
+        return this;
+    }
+
+    /**
+     * Validate MP FT metric {@code ft.invocations.total} for {@link FailSafeDummyService#isReady()}
+     */
+    public MetricsChecker validateInvocationsTotal(int invocationsTotal, boolean fallbackApplied) {
+        response.body("base.'ft.invocations.total;fallback=" + (fallbackApplied ? "applied" : "notApplied") +
+                ";method=" + FailSafeDummyService.class.getName() + ".isReady;result=valueReturned'",
                 equalTo(invocationsTotal));
         return this;
     }
-
-    /**
-     * Validate MP FT metric {@code isReady.invocations.failed.total} for {@link FailSafeDummyService#isReady()}
-     */
-    public MetricsChecker validateInvocationsFailedTotal(int invocationsFailedTotal) {
-        response.body("application.'ft." + FailSafeDummyService.class.getName() + ".isReady.invocations.failed.total'",
-                equalTo(invocationsFailedTotal));
-        return this;
-    }
-
-    /**
-     * Validate MP FT metric {@code isReady.fallback.calls.total} for {@link FailSafeDummyService#isReadyFallback()}
-     */
-    public MetricsChecker validateFallbackCallsTotal(int fallbackCallsTotal) {
-        response.body("application.'ft." + FailSafeDummyService.class.getName() + ".isReady.fallback.calls.total'",
-                equalTo(fallbackCallsTotal));
-        return this;
-    }
-
 }
