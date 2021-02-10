@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import io.restassured.http.ContentType;
@@ -151,7 +150,6 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
      *             correctly.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testHealthEndpointDownToUpInMaintenance() throws Exception {
         setConfigProperties(true, true, true, false);
@@ -177,14 +175,10 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateInvocationsTotal(1, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
 
-        setConfigProperties(true, false, true, true);
+        setConfigProperties(true, true, false, true);
         // TODO Java11 readyCheck = Map.of("name", "dummyReadiness", "status", "UP");
         readyCheck = Collections.unmodifiableMap(new HashMap<String, String>() {
             {
@@ -201,12 +195,8 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 2) // previous + 1
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(1)
+                .validateInvocationsTotal(1)
                 .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1)
                 .validateRetryCallsSucceededNotTriedTotal(1);
     }
 
@@ -245,7 +235,6 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
      *             correctly.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("WFLY-12924, WFLY-12925")
     @Test
     final public void testReadinessEndpointDownToUpInMaintenance() throws Exception {
         setConfigProperties(true, true, true, false);
@@ -259,14 +248,10 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1)
-                .validateInvocationsFailedTotal(1)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1);
+                .validateInvocationsTotal(1, true)
+                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
 
-        setConfigProperties(false, false, true, true);
+        setConfigProperties(false, true, false, true);
         get(HealthUrlProvider.readyEndpoint()).then()
                 .statusCode(200)
                 .contentType(ContentType.JSON)
@@ -277,12 +262,8 @@ public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealth
 
         MetricsChecker.get(metricsRequest)
                 .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 2) // previous + 1
-                .validateInvocationsTotal(2)
-                .validateInvocationsFailedTotal(1)
+                .validateInvocationsTotal(1)
                 .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsFailedTotal(1)
-                .validateRetryCallsSucceededTotal(0)
-                .validateFallbackCallsTotal(1)
                 .validateRetryCallsSucceededNotTriedTotal(1);
     }
 }
