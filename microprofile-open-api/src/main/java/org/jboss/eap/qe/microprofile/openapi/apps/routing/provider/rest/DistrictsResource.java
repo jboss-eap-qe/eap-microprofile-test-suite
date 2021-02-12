@@ -19,8 +19,11 @@ import org.eclipse.microprofile.openapi.annotations.extensions.Extension;
 import org.eclipse.microprofile.openapi.annotations.extensions.Extensions;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.media.SchemaProperty;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBodySchema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
@@ -85,7 +88,9 @@ public class DistrictsResource {
     @Path("/{code}")
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Requested district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = DistrictEntity.class))),
+            @APIResponse(responseCode = "200", description = "Requested district", content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = DistrictEntity.class, properties = {
+                    @SchemaProperty(name = "alias", description = "Alias of district")
+            }))),
             @APIResponse(responseCode = "204", description = "Requested district was not found") })
     @Extensions({
             @Extension(name = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, value = RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_DEFAULT_VALUE)
@@ -130,6 +135,33 @@ public class DistrictsResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         else {
 
+            return Response.ok().entity(toEntity(districtService.update(code, district))).build();
+        }
+    }
+
+    /***
+     * Updates a district data. Has the same functionality as a previous method
+     * but has a MP OpenAPI v2.0 annotations such as @APIResponseSchema and @RequestBodySchema.
+     * It was decided to apply these annotations rather in a new method than replacing a standard @RequestBody and @APIResponse
+     * annotations
+     *
+     * @param code String that uniquely identifies a District
+     * @param district instance carrying data to update the stored entity
+     * @return DistrictEntity instance representing the updated stored entity
+     */
+    @PATCH
+    @Path("/{code}/v20")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @APIResponseSchema(value = DistrictEntity.class, responseCode = "200", responseDescription = "Updated district")
+    @APIResponse(responseCode = "404", description = "Requested district was not found")
+    @Operation(summary = "Updates a district data", description = "Retrieves, updates and returns the requested district data", operationId = "updateDistrict")
+    public Response updateDistrictV20(@PathParam("code") String code,
+            @RequestBodySchema(DistrictEntity.class) DistrictEntity district) {
+        District result = districtService.getByCode(code);
+        if (result == null)
+            return Response.status(Response.Status.NOT_FOUND).build();
+        else {
             return Response.ok().entity(toEntity(districtService.update(code, district))).build();
         }
     }
