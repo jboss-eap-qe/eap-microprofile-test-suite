@@ -109,7 +109,7 @@ public class DatabaseCrashTest {
                 .withEnvVar("POSTGRES_DB", "test-database") // creates "test-database" database after 1st start
                 .withEnvVar("POSTGRES_PASSWORD", "pass")
                 .withCmdOption("-v")
-                .withCmdOption(postgresDataDir.getAbsolutePath() + ":/var/lib/postgresql/data")
+                .withCmdOption(postgresDataDir.getAbsolutePath() + ":/var/lib/postgresql/data:Z")
                 .withCmdOption("-u")
                 .withCmdOption(String.valueOf(new UnixSystem().getUid()))
                 .build();
