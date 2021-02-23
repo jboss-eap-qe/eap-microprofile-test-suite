@@ -88,12 +88,20 @@ public class MultipleFaultToleranceModuleEarTest {
     }
 
     /**
-     * @tpTestDetails Deploy EAR with two MP FT modules. Both of them are the same (same classes/methods)
+     * @tpTestDetails Deploy EAR with two MP FT modules. Both of them are the same (same classes/methods).
+     *                MicroProfile specs are not currently supporting multiple deployments, which makes sense in most common
+     *                microservices/cloud-native scenarios, so the behavior of such a configuration depends on the vendor
+     *                implementation. This topic has also been discussed in a JIRA involving the MP Health subsystem, see
+     *                https://issues.redhat.com/browse/WFLY-12835?focusedCommentId=14115173&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-14115173
+     *                So WildFly still doesn't support the above mentioned configuration and the @Ignore clause references
+     *                WFLY-12835
+     *                accordingly.
+     *                It could be enabled in the future depending on whether WildFly will support MP FT for sub-deployments.
      * @tpPassCrit Verify that MP FT Metrics are the same for both (as there are same classes/methods)
      *             and that they are summed.
      * @tpSince EAP 7.4.0.CD19
      */
-    @Ignore("https://issues.redhat.com/browse/WFWIP-287")
+    @Ignore("https://issues.redhat.com/browse/WFLY-12835")
     @Test
     public void testFaultToleranceMetricsAreSummedWithSameDeployments(
             @ArquillianResource @OperateOnDeployment(DEPLOYMENT_EAR) URL baseUrl) throws ConfigurationException {
@@ -110,29 +118,11 @@ public class MultipleFaultToleranceModuleEarTest {
                 + "/metrics").then()
                         .assertThat()
                         .body(containsString(
-                                "application_ft_org_jboss_eap_qe_microprofile_fault_tolerance_deployments_v10_HelloService_timeout_invocations_total 2.0"));
-    }
-
-    /**
-     * @tpTestDetails Deploy EAR with two MP FT modules. Both of them are the same (same classes/methods) however the second
-     *                module configures Hystrix to disable @Timeout
-     * @tpPassCrit Verify that Hystrix is configured by first module and that @Timeout is enabled
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Ignore("https://issues.redhat.com/browse/WFWIP-287")
-    @Test
-    public void testFirstModuleConfiguresHystrix(@ArquillianResource @OperateOnDeployment(DEPLOYMENT_EAR) URL baseUrl) {
-        get(baseUrl + "/" + FIRST_MODULE_NAME + "/?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-        get(baseUrl + "/" + SECOND_MODULE_NAME + "/?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
+                                "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 2.0"));
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
         MicroProfileFaultToleranceServerConfiguration.disableFaultTolerance();
     }
-
 }
