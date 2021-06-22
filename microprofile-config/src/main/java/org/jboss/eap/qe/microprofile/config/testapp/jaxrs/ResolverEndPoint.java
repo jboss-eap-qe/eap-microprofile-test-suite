@@ -88,7 +88,7 @@ public class ResolverEndPoint {
             resolver.registerConfig(specificConfig2, ResolverEndPoint.class.getClassLoader());
             return ILLEGAL_STATE_EXCEPTION_ERROR_MESSAGE;
         } catch (IllegalStateException ise) {
-            if (!ise.getMessage().equals("Configuration already registered for the given class loader")) {
+            if (!ise.getMessage().equals("SRCFG00017: Configuration already registered for the given class loader")) {
                 return ILLEGAL_STATE_EXCEPTION_ERROR_MESSAGE;
             }
         }
