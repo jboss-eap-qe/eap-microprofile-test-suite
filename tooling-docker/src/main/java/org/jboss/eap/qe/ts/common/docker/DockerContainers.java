@@ -13,7 +13,7 @@ public class DockerContainers {
     } // avoid instantiation
 
     public static Docker jaeger() {
-        return new Docker.Builder("jaeger", "quay.io/jbossqe-eap/all-in-one:1.21")
+        return new Docker.Builder("jaeger", "quay.io/jaegertracing/all-in-one:1.23")
                 .setContainerReadyCondition(() -> {
                     try {
                         new Socket("127.0.0.1", 16686).close();
