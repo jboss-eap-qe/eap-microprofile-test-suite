@@ -44,9 +44,13 @@ public class ResolverEndPoint {
         ConfigBuilder builder = resolver.getBuilder();
         Config specificConfig = builder.addDefaultSources().withSources(new ResolverConfigSource()).build();
         resolver.registerConfig(specificConfig, ResolverEndPoint.class.getClassLoader());
-        Config customConfig = resolver.getConfig();
-        response.append(customConfig.getValue(PROPERTY_NAME, String.class));
-        resolver.releaseConfig(customConfig);
+        try {
+            Config customConfig = resolver.getConfig();
+            response.append(customConfig.getValue(PROPERTY_NAME, String.class));
+        } finally {
+            // we need to make sure that the newly created config is cleaned up when we're done with it
+            resolver.releaseConfig(specificConfig);
+        }
 
         // get default config
         originalConfig = resolver.getConfig();
@@ -82,7 +86,6 @@ public class ResolverEndPoint {
 
         // register first config
         resolver.registerConfig(specificConfig1, ResolverEndPoint.class.getClassLoader());
-
         // try to register second config, exception is expected
         try {
             resolver.registerConfig(specificConfig2, ResolverEndPoint.class.getClassLoader());
@@ -91,16 +94,16 @@ public class ResolverEndPoint {
             if (!ise.getMessage().equals("SRCFG00017: Configuration already registered for the given class loader")) {
                 return ILLEGAL_STATE_EXCEPTION_ERROR_MESSAGE;
             }
+            // get value from first config
+            Config customConfig1 = resolver.getConfig();
+            response.append(customConfig1.getValue(PROPERTY_NAME, String.class));
+        } finally {
+            // but anyway we need to make sure that the newly created config is cleaned up when we're done with it
+            resolver.releaseConfig(specificConfig1);
         }
-
-        // get value from first config
-        Config customConfig1 = resolver.getConfig();
-        response.append(customConfig1.getValue(PROPERTY_NAME, String.class));
-        resolver.releaseConfig(customConfig1);
 
         // get value from second config
         response.append(specificConfig2.getValue(PROPERTY_NAME, String.class));
-        resolver.releaseConfig(specificConfig2);
 
         // return response
         return response.toString();
