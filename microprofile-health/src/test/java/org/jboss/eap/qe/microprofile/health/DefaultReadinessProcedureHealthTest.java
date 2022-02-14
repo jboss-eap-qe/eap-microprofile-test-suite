@@ -75,12 +75,13 @@ public class DefaultReadinessProcedureHealthTest {
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(ContentType.JSON)
                 .body("status", is("UP"),
-                        "checks", hasSize(5),
+                        "checks", hasSize(6),
                         "checks.status", hasItems("UP", "UP"),
                         "checks.name",
                         containsInAnyOrder("deployments-status", "boot-errors", "server-state",
-                                String.format("ready-deployment.%s", ARCHIVE_NAME), "live"),
-                        "checks.data", hasSize(5),
+                                String.format("ready-deployment.%s", ARCHIVE_NAME),
+                                String.format("started-deployment.%s", ARCHIVE_NAME), "live"),
+                        "checks.data", hasSize(6),
                         "checks.find{it.name == 'live'}.data.key", is("value"));
     }
 
