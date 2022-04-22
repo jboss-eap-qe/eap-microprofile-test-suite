@@ -12,8 +12,9 @@ There are three main key pairs:
 
 Just run `gen-keys.sh`. For details inspect the script.
 
-## Create a inline value from public key for properties files
+## How to create an inline value from public key for properties files
 
+Just run:
 ```bash
 sed '$d' key.public.pem | sed '1d' | tr -d '\n'
 ```

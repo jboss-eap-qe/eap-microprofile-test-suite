@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'linux' }
     tools {
-        jdk 'java-1.8.0-oracle'
+        jdk 'oracle-java-11'
     }
     parameters {
         string(name: 'wfRepo', description: 'WildFly repository', defaultValue: "https://github.com/wildfly/wildfly.git" )
