@@ -112,6 +112,20 @@
                 <artifactId>wildfly-arquillian-container-managed</artifactId>
                 <version>${version.org.wildfly.arquillian}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <!-- We need to avoid using the transitive WildFly Core dependency since it might not work on JDK 17 -->
+                    <exclusion>
+                        <groupId>org.wildfly.core</groupId>
+                        <artifactId>wildfly-launcher</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- We need to lock the WIldFly Core launcher version to let it work on JDK 17 -->
+            <dependency>
+                <groupId>org.wildfly.core</groupId>
+                <artifactId>wildfly-launcher</artifactId>
+                <version>19.0.0.Beta8</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wildfly</groupId>
