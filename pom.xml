@@ -32,7 +32,7 @@
     <properties>
         <jboss.home>IF-NOT-DEFINED-WILDFLY-WILL-BE-DOWNLOADED-UNZIPPED-AND-USED-AUTOMATICALLY</jboss.home>
         <maven.test.redirectTestOutputToFile>false</maven.test.redirectTestOutputToFile>
-        <version.io.rest-assured>4.1.2</version.io.rest-assured>
+        <version.io.rest-assured>5.0.1</version.io.rest-assured>
         <version.javax.servlet.javax.servlet-api>3.0.1</version.javax.servlet.javax.servlet-api>
         <version.junit>4.13.1</version.junit>
         <version.org.apache.maven.plugins.maven-release-plugin>3.0.0-M1</version.org.apache.maven.plugins.maven-release-plugin>
