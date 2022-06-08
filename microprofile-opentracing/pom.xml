@@ -79,6 +79,34 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jboss.args/>
+                                        <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
+                                        <install.dir>${project.build.directory}/jboss-as-bootable</install.dir>
+                                        <bootable.jar>${project.build.directory}/test-microprofile-opentracing-bootable.jar</bootable.jar>
+                                        <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
+                                        <module.path>${jboss.modules.path}</module.path>
+                                    </systemPropertyVariables>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExclude>
+                                            org.wildfly.arquillian:wildfly-arquillian-container-managed
+                                        </classpathDependencyExclude>
+                                    </classpathDependencyExcludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!-- Bootable JAR Maven plugin -->
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
@@ -111,35 +139,6 @@
                                         <layer>cloud-server</layer>
                                         <layer>undertow-legacy-https</layer>
                                     </layers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <phase>test</phase>
-                                <configuration>
-                                    <systemPropertyVariables>
-                                        <jboss.args/>
-                                        <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
-                                        <install.dir>${project.build.directory}/jboss-as-bootable</install.dir>
-                                        <bootable.jar>${project.build.directory}/test-microprofile-opentracing-bootable.jar</bootable.jar>
-                                        <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
-                                        <module.path>${jboss.modules.path}</module.path>
-                                    </systemPropertyVariables>
-                                    <classpathDependencyExcludes>
-                                        <classpathDependencyExclude>
-                                            org.wildfly.arquillian:wildfly-arquillian-container-managed
-                                        </classpathDependencyExclude>
-                                    </classpathDependencyExcludes>
                                 </configuration>
                             </execution>
                         </executions>

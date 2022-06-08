@@ -62,6 +62,39 @@
             </activation>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jboss.args/>
+                                        <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
+                                        <install.dir>${project.build.directory}/jboss-as-bootable</install.dir>
+                                        <bootable.jar>${project.build.directory}/test-microprofile-health-bootable.jar</bootable.jar>
+                                        <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
+                                    </systemPropertyVariables>
+                                    <classpathDependencyExcludes>
+                                        <classpathDependencyExclude>
+                                            org.wildfly.arquillian:wildfly-arquillian-container-managed
+                                        </classpathDependencyExclude>
+                                    </classpathDependencyExcludes>
+                                    <excludes>
+                                        <!-- Need MP FaultTolerance -->
+                                        <exclude>org/jboss/eap/qe/microprofile/health/integration/FailSafe*Test.java</exclude>
+                                        <!-- Needs manual container -->
+                                        <exclude>org/jboss/eap/qe/microprofile/health/delay/*Test.java</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!-- Bootable JAR Maven plugin -->
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
@@ -95,40 +128,6 @@
                                         <layer>undertow-legacy-https</layer>
                                         <layer>h2-default-datasource</layer>
                                     </layers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-test</id>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <phase>test</phase>
-                                <configuration>
-                                    <systemPropertyVariables>
-                                        <jboss.args/>
-                                        <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
-                                        <install.dir>${project.build.directory}/jboss-as-bootable</install.dir>
-                                        <bootable.jar>${project.build.directory}/test-microprofile-health-bootable.jar</bootable.jar>
-                                        <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
-                                    </systemPropertyVariables>
-                                    <classpathDependencyExcludes>
-                                        <classpathDependencyExclude>
-                                            org.wildfly.arquillian:wildfly-arquillian-container-managed
-                                        </classpathDependencyExclude>
-                                    </classpathDependencyExcludes>
-                                    <excludes>
-                                        <!-- Need MP FaultTolerance -->
-                                        <exclude>org/jboss/eap/qe/microprofile/health/integration/FailSafe*Test.java</exclude>
-                                        <!-- Needs manual container -->
-                                        <exclude>org/jboss/eap/qe/microprofile/health/delay/*Test.java</exclude>
-                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>

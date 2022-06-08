@@ -65,42 +65,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!-- Bootable JAR Maven plugin -->
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-jar-maven-plugin</artifactId>
-                        <version>${version.org.wildfly.jar.plugin}</version>
-                        <executions>
-                            <!-- Provision a server with the core functionality we will provide in OpenShift images -->
-                            <execution>
-                                <id>bootable-jar-packaging</id>
-                                <goals>
-                                    <goal>package</goal>
-                                </goals>
-                                <phase>process-test-resources</phase>
-                                <configuration>
-                                    <output-file-name>test-microprofile-metrics-bootable.jar</output-file-name>
-                                    <hollowJar>true</hollowJar>
-                                    <record-state>false</record-state>
-                                    <log-time>${galleon.log.time}</log-time>
-                                    <plugin-options>
-                                        <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
-                                    </plugin-options>
-                                    <feature-packs>
-                                        <feature-pack>
-                                            <groupId>${testsuite.galleon.pack.groupId}</groupId>
-                                            <artifactId>${testsuite.galleon.pack.artifactId}</artifactId>
-                                            <version>${testsuite.galleon.pack.version}</version>
-                                        </feature-pack>
-                                    </feature-packs>
-                                    <layers>
-                                        <layer>cloud-server</layer>
-                                        <layer>undertow-legacy-https</layer>
-                                    </layers>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
 
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -134,6 +98,42 @@
                                         <exclude>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceProviderTest</exclude>
                                         <exclude>org/jboss/eap/qe/microprofile/metrics/integration/config/CustomMetricCustomConfigSourceTest</exclude>
                                     </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Bootable JAR Maven plugin -->
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-jar-maven-plugin</artifactId>
+                        <version>${version.org.wildfly.jar.plugin}</version>
+                        <executions>
+                            <!-- Provision a server with the core functionality we will provide in OpenShift images -->
+                            <execution>
+                                <id>bootable-jar-packaging</id>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                                <phase>process-test-resources</phase>
+                                <configuration>
+                                    <output-file-name>test-microprofile-metrics-bootable.jar</output-file-name>
+                                    <hollowJar>true</hollowJar>
+                                    <record-state>false</record-state>
+                                    <log-time>${galleon.log.time}</log-time>
+                                    <plugin-options>
+                                        <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                                    </plugin-options>
+                                    <feature-packs>
+                                        <feature-pack>
+                                            <groupId>${testsuite.galleon.pack.groupId}</groupId>
+                                            <artifactId>${testsuite.galleon.pack.artifactId}</artifactId>
+                                            <version>${testsuite.galleon.pack.version}</version>
+                                        </feature-pack>
+                                    </feature-packs>
+                                    <layers>
+                                        <layer>cloud-server</layer>
+                                        <layer>undertow-legacy-https</layer>
+                                    </layers>
                                 </configuration>
                             </execution>
                         </executions>
