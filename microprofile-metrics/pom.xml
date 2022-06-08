@@ -115,7 +115,7 @@
                                 <configuration>
                                     <systemPropertyVariables>
                                         <jboss.args/>
-                                        <server.jvm.args/>
+                                        <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
                                         <install.dir>${project.build.directory}/jboss-as-bootable</install.dir>
                                         <bootable.jar>${project.build.directory}/test-microprofile-metrics-bootable.jar</bootable.jar>
                                         <arquillian.xml>arquillian-bootable.xml</arquillian.xml>
