@@ -262,6 +262,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                     <configuration>
+                        <systemPropertyVariables>
+                            <server.jvm.args>${server.jvm.jpms.args}</server.jvm.args>
+                        </systemPropertyVariables>
                         <argLine>${client.jvm.jpms.args}</argLine>
                     </configuration>
                 </plugin>
