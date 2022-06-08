@@ -52,7 +52,7 @@
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.3</version.org.jboss.shrinkwrap.resolver>
         <version.org.postgresql>42.2.8</version.org.postgresql>
-        <version.org.apache.maven.plugins.maven-surefire-plugin>2.22.2</version.org.apache.maven.plugins.maven-surefire-plugin>
+        <version.org.apache.maven.plugins.maven-surefire-plugin>3.0.0-M6</version.org.apache.maven.plugins.maven-surefire-plugin>
         <version.io.opentracing.api>0.31.0</version.io.opentracing.api>
         <version.io.jaegertracing.jaeger-client>1.0.0</version.io.jaegertracing.jaeger-client>
         <container.qualifier.manual.mode>jboss-manual</container.qualifier.manual.mode>
