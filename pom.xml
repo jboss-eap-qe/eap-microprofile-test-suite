@@ -62,9 +62,9 @@
         <galleon.log.time>true</galleon.log.time>
         <testsuite.galleon.pack.groupId>org.wildfly</testsuite.galleon.pack.groupId>
         <testsuite.galleon.pack.artifactId>wildfly-galleon-pack</testsuite.galleon.pack.artifactId>
-        <testsuite.galleon.pack.version>20.0.1.Final</testsuite.galleon.pack.version>
+        <testsuite.galleon.pack.version>24.0.0.Final</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
-        <version.org.wildfly.jar.plugin>2.0.0.Beta5</version.org.wildfly.jar.plugin>
+        <version.org.wildfly.jar.plugin>7.0.1.Final</version.org.wildfly.jar.plugin>
         <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
         <!-- Modular JDK JPMS options -->
         <server.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</server.jvm.jpms.args>
