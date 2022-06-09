@@ -255,6 +255,17 @@
         </dependencies>
     </dependencyManagement>
 
+    <!--
+        The ttransitive WildFly Core Launcher pull has been excluded in dependncyManagement, we want one that
+        works with JDK17
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-launcher</artifactId>
+        </dependency>
+    </dependencies>
+
     <scm>
         <url>scm:git:git@github.com:jboss-eap-qe/eap-microprofile-test-suite.git</url>
         <connection>scm:git:git@github.com:jboss-eap-qe/eap-microprofile-test-suite.git</connection>
@@ -608,14 +619,6 @@
                 <dependency>
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-bootable</artifactId>
-                </dependency>
-                <!--
-                    It looks like container-bootable DOES NOT pull the transitive WildFly Core dependency in,
-                    (which also explains while it's defined below) so no need to exclude anything.
-                -->
-                <dependency>
-                    <groupId>org.wildfly.core</groupId>
-                    <artifactId>wildfly-launcher</artifactId>
                 </dependency>
             </dependencies>            
         </profile>
