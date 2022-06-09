@@ -43,7 +43,7 @@
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
-        <version.org.wildfly.core>13.0.0.Beta5</version.org.wildfly.core>
+        <version.org.wildfly.core>19.0.0.Beta8</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.26</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
@@ -119,13 +119,6 @@
                         <artifactId>wildfly-launcher</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- We need to lock the WIldFly Core launcher version to let it work on JDK 17 -->
-            <dependency>
-                <groupId>org.wildfly.core</groupId>
-                <artifactId>wildfly-launcher</artifactId>
-                <version>19.0.0.Beta8</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.wildfly</groupId>
@@ -248,7 +241,7 @@
                         <artifactId>javax.inject</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.wildfly.core</groupId>
                 <artifactId>wildfly-launcher</artifactId>
@@ -616,6 +609,10 @@
                     <groupId>org.wildfly.arquillian</groupId>
                     <artifactId>wildfly-arquillian-container-bootable</artifactId>
                 </dependency>
+                <!--
+                    It looks like container-bootable DOES NOT pull the transitive WildFly Core dependency in,
+                    (which also explains while it's defined below) so no need to exclude anything.
+                -->
                 <dependency>
                     <groupId>org.wildfly.core</groupId>
                     <artifactId>wildfly-launcher</artifactId>
