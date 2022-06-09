@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>36</version>
+        <version>39</version>
     </parent>
 
     <groupId>org.jboss.eap.qe</groupId>
@@ -256,7 +256,7 @@
     </dependencyManagement>
 
     <!--
-        The ttransitive WildFly Core Launcher pull has been excluded in dependncyManagement, we want one that
+        The transitive WildFly Core Launcher pull has been excluded in dependencyManagement, we want one that
         works with JDK17
     -->
     <dependencies>
