@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.load;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Service with MP FT annotations to verify correct work under high CPU load.

@@ -1,5 +1,17 @@
 package org.jboss.eap.qe.microprofile.openapi.security;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeoutException;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -39,18 +51,7 @@ import org.wildfly.extras.creaper.core.online.operations.Batch;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.TimeoutException;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.not;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for security scenarios involving HTTP/HTTPS listeners

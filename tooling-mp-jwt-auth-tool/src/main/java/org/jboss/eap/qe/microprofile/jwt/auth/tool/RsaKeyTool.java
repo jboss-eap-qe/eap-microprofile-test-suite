@@ -19,8 +19,8 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 /**
  * Utility class for this test suite to return a RSA key in various formats (such as JWK, PEM, etc).

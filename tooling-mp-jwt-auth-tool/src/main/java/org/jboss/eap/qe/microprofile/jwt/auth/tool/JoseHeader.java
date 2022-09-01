@@ -1,7 +1,7 @@
 package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 /**
  * A class representing a header of JWT

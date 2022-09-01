@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.metrics.integration.config;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Metric;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class CustomCounterMetric implements Metric, Counter {

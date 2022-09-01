@@ -5,14 +5,14 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Class providing service with MP FT @Asynchronous calls.

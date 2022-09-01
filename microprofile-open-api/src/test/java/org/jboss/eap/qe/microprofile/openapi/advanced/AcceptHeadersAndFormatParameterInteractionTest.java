@@ -6,9 +6,6 @@ import static io.restassured.RestAssured.given;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,6 +29,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
+
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Test cases to verify negative scenario in which "Accept" HTTP header and {@code format} query parameter are
@@ -132,7 +132,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_PLAIN} {@code Accept} header and no {@code format} query
      *                parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -149,7 +149,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_XML} {@code Accept} header and no {@code format} query
      *                parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -166,7 +166,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#TEXT_HTML} {@code Accept} header and no {@code format} query
      *                parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -183,7 +183,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_XML} {@code Accept} header and no {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -200,7 +200,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_ATOM_XML} {@code Accept} header and no {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -217,7 +217,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_XHTML_XML} {@code Accept} header and no
      *                {@code format} query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -234,7 +234,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#APPLICATION_SVG_XML} {@code Accept} header and no {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -251,7 +251,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#SERVER_SENT_EVENTS} {@code Accept} header and no {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -269,7 +269,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      *                {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -287,7 +287,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      *                {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -305,7 +305,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@link MediaType#MULTIPART_FORM_DATA} {@code Accept} header and no {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -323,7 +323,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      * @tpTestDetails Sends HTTP request with {@code application/*} {@code Accept} header and no {@code format} query
      *                parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
@@ -343,7 +343,7 @@ public class AcceptHeadersAndFormatParameterInteractionTest {
      *                {@code format}
      *                query parameter.
      * @tpPassCrit As unexpected information is sent to server through the "Accept" HTTP header,
-     *             {@link javax.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
+     *             {@link jakarta.ws.rs.core.Response.Status#NOT_ACCEPTABLE} status code is returned by the server.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test

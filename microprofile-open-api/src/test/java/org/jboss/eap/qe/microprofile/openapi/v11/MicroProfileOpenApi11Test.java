@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.MediaType;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -36,6 +34,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.yaml.snakeyaml.Yaml;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for MP OpenAPI v. 1.1 annotations on JAX-RS components (migrated from TT QE TS)

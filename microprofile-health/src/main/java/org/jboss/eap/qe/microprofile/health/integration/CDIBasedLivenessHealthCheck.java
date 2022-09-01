@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.health.integration;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
+
+import jakarta.inject.Inject;
 
 @Liveness
 public class CDIBasedLivenessHealthCheck implements HealthCheck {

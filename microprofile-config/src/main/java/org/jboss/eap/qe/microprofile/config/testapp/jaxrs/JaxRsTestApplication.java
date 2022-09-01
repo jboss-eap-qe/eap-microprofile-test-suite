@@ -1,7 +1,7 @@
 package org.jboss.eap.qe.microprofile.config.testapp.jaxrs;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 /**
  * JAX-RS Application

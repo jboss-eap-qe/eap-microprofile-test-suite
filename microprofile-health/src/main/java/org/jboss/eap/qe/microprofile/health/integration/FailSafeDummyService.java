@@ -2,14 +2,14 @@ package org.jboss.eap.qe.microprofile.health.integration;
 
 import java.io.IOException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.metrics.annotation.Counted;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 @ApplicationScoped
 public class FailSafeDummyService {

@@ -3,12 +3,12 @@ package org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * In-memory implementation of {@link DistrictService}

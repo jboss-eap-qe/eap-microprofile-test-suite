@@ -6,8 +6,6 @@ import static org.hamcrest.Matchers.is;
 
 import java.net.URL;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.faulttolerance.exceptions.FaultToleranceException;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -32,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.restassured.RestAssured;
+import jakarta.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class PriorityOrderTest {

@@ -9,8 +9,6 @@ import static org.hamcrest.Matchers.not;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.ws.rs.core.MediaType;
-
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -35,6 +33,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for MP OpenAPI programming model (migrated from TT QE TS)

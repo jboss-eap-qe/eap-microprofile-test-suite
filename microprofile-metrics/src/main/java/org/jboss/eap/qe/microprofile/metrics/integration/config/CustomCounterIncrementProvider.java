@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.metrics.integration.config;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 @ApplicationScoped
 public class CustomCounterIncrementProvider {

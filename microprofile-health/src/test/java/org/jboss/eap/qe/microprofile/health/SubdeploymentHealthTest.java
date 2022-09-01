@@ -46,7 +46,7 @@ public class SubdeploymentHealthTest {
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml"));
 
         ear.setApplicationXML(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<application xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd\" version=\"7\">\n"
+                + "<application xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_9.xsd\" version=\"9\">\n"
                 + "  <display-name>metrics</display-name>\n"
                 + "  <module>\n"
                 + "    <web>\n"

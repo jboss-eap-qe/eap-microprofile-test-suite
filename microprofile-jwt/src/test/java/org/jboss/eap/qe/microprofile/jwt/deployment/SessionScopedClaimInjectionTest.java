@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * MP-JWT implementations are required to generate a {@code javax.enterprise.inject.spi.DeploymentException} for a claim value
+ * MP-JWT implementations are required to generate a {@code jakarta.enterprise.inject.spi.DeploymentException} for a claim value
  * injection into Passivation capable beans, for example, @SessionScoped
  * (see https://github.com/eclipse/microprofile-jwt-auth/issues/183)
  *
@@ -43,7 +43,7 @@ public class SessionScopedClaimInjectionTest {
 
     /**
      * @tpTestDetails Deploys and app containing a @SessionScoped bean with a claim value injection
-     * @tpPassCrit Expect deployment to fail with javax.enterprise.inject.spi.DeploymentException
+     * @tpPassCrit Expect deployment to fail with jakarta.enterprise.inject.spi.DeploymentException
      * @tpSince EAP 7.4.0.CD23
      */
     @Test(expected = org.jboss.arquillian.container.spi.client.container.DeploymentException.class)

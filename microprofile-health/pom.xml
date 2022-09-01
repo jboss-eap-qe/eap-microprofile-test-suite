@@ -49,6 +49,10 @@
             <artifactId>wildfly-arquillian-common</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-controller</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -124,7 +128,7 @@
                                     </feature-packs>
                                     <layers>
                                         <layer>cloud-server</layer>
-                                        <layer>undertow-legacy-https</layer>
+                                        <layer>undertow-https</layer>
                                         <layer>h2-default-datasource</layer>
                                     </layers>
                                 </configuration>

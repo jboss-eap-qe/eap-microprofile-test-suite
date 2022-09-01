@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.ws.rs.core.MediaType;
-
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -46,6 +44,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
+
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test to assess that the process of generating OpenAPI document is properly executed by following all the

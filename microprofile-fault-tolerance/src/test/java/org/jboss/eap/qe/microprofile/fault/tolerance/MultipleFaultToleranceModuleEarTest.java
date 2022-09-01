@@ -48,9 +48,9 @@ public class MultipleFaultToleranceModuleEarTest {
         final WebArchive secondModule = createModule(SECOND_MODULE_NAME, false);
 
         String applicationXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<application xmlns=\"http://java.sun.com/xml/ns/javaee\"\n" +
+                "<application xmlns=\"https://jakarta.ee/xml/ns/jakartaee\"\n" +
                 "             xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "             xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd\"\n"
+                "             xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_9.xsd\"\n"
                 +
                 "             version=\"6\">\n" +
                 "    <initialize-in-order>true</initialize-in-order>\n" +

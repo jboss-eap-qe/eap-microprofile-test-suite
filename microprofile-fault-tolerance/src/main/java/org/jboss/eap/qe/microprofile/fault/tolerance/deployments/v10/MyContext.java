@@ -1,6 +1,6 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 /**
  * Simple context class injected into MP FT services to check that medhods are invoked in given CDI request scope context

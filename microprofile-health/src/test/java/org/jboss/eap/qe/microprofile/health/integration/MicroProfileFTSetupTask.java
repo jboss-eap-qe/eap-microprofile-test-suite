@@ -14,6 +14,7 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
  * Setup server to provide support for MP FT.
  */
 public class MicroProfileFTSetupTask implements MicroProfileServerSetupTask {
+
     private static final PathAddress FT_EXTENSION_ADDRESS = PathAddress.pathAddress().append(EXTENSION,
             "org.wildfly.extension.microprofile.fault-tolerance-smallrye");
     private static final PathAddress FT_SUBSYSTEM_ADDRESS = PathAddress.pathAddress().append(SUBSYSTEM,

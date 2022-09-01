@@ -1,11 +1,10 @@
 package org.jboss.eap.qe.microprofile.opentracing.v10;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.opentracing.Traced;
 
 import io.opentracing.Tracer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * A simple service with traced method. Each call of this method is logged by Jaeger tracer and can be analyzed afterwards.
