@@ -2,17 +2,6 @@ package org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest;
 
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.extensions.Extension;
@@ -29,6 +18,17 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServic
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.api.DistrictService;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.data.DistrictEntity;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.model.District;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Rest resource exposing operations which provide access to districts management services

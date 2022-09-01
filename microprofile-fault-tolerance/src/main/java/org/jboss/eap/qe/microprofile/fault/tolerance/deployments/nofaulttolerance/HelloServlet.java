@@ -2,11 +2,11 @@ package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.nofaulttoleran
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.inject.Inject;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Simple deployment without MP FT stuff. Used to test that MP FT subsystem does not get activated.

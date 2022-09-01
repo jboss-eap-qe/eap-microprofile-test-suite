@@ -1,13 +1,13 @@
 package org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs;
 
-import javax.annotation.security.PermitAll;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
+
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/" + Endpoints.UNSECURED_ENDPOINT)
 @ApplicationScoped

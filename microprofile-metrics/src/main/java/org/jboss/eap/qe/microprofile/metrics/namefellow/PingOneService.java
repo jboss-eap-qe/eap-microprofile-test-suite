@@ -1,8 +1,8 @@
 package org.jboss.eap.qe.microprofile.metrics.namefellow;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.metrics.annotation.Counted;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class PingOneService {

@@ -1,6 +1,6 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.nofaulttolerance;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Simple deployment without MP FT stuff. Used to test that MP FT subsystem does not get activated.

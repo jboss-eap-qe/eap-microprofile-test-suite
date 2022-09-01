@@ -2,10 +2,10 @@ package org.jboss.eap.qe.microprofile.metrics.integration.ft;
 
 import java.io.IOException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.faulttolerance.Fallback;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FTCustomCounterIncrementProviderService {

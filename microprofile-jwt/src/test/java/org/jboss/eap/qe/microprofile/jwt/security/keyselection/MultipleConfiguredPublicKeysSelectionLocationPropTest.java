@@ -6,9 +6,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -24,6 +21,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 /**
  * Set of tests verifying key selection functionality. See chapter 9.2.3. JSON Web Key Set (JWKS) of MP-JWT 1.1

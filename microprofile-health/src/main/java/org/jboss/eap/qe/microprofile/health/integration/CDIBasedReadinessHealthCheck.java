@@ -2,11 +2,11 @@ package org.jboss.eap.qe.microprofile.health.integration;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Readiness;
+
+import jakarta.inject.Inject;
 
 @Readiness
 public class CDIBasedReadinessHealthCheck implements HealthCheck {

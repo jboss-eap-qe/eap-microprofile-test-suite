@@ -2,8 +2,6 @@ package org.jboss.eap.qe.microprofile.fault.tolerance;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.faulttolerance.FallbackHandler;
 import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -22,6 +20,8 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import jakarta.inject.Inject;
 
 /**
  * Tests multiple deploy/undeploy of MP FT deployments (just JAR archives). This in in-container test which injects

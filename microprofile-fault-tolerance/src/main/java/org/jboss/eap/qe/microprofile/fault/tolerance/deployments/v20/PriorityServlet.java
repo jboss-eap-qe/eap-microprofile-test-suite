@@ -2,13 +2,13 @@ package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20.priority.InterceptorsContext;
+
+import jakarta.inject.Inject;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Servlet using {@link PriorityService} with MP FT annotations for testing that annotation are triggered in given order

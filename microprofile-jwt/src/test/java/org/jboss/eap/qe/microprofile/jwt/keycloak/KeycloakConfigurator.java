@@ -6,12 +6,12 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
 import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 import org.junit.rules.ExternalResource;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 /**
  * Keycloak configurator specifically for JWT purposes. It configures a realm, a client and then allows adding users and

@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 
 /**
  * JWT claims as described in specification. See https://github.com/eclipse/microprofile-jwt-auth/releases

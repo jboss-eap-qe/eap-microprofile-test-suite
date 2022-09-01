@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.health.delay;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.Liveness;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @Liveness

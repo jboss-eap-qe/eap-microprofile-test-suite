@@ -1,14 +1,14 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20.priority.AfterFT;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20.priority.BeforeFT;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20.priority.InterceptorsContext;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Service with MP FT annotations for testing that annotation are triggered in given order

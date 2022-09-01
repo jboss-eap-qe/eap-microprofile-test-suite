@@ -3,7 +3,7 @@ package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20.priority;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 @RequestScoped
 public class InterceptorsContext {

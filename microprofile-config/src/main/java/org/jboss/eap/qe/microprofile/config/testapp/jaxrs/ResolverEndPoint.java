@@ -2,14 +2,14 @@ package org.jboss.eap.qe.microprofile.config.testapp.jaxrs;
 
 import static org.jboss.eap.qe.microprofile.config.testapp.ResolverConfigSource.PROPERTY_NAME;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.jboss.eap.qe.microprofile.config.testapp.ResolverConfigSource;
+
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * This EndPoint class tests ConfigProviderResolver#registerConfig and ConfigProviderResolver#releaseConfig methods

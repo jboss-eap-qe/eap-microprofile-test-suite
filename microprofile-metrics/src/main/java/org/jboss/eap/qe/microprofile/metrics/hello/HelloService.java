@@ -2,13 +2,13 @@ package org.jboss.eap.qe.microprofile.metrics.hello;
 
 import java.util.Random;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class HelloService {

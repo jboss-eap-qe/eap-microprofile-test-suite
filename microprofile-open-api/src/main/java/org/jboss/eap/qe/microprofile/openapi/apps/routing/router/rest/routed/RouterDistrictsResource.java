@@ -3,23 +3,23 @@ package org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictObject;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * Rest resource exposing Service Provider operations for districts management services - Local Service Router
