@@ -22,9 +22,10 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.rest.District
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.services.InMemoryDistrictService;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class MicroProfileOpenApi20Test {
                         InMemoryDistrictService.class,
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
                 .addAsResource(MicroProfileOpenApi20Test.class.getClassLoader().getResource(
                         "META-INF/schema-microprofile-config.properties"),
                         "META-INF/microprofile-config.properties");

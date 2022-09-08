@@ -12,10 +12,10 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloFallba
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.MyContext;
 import org.jboss.eap.qe.microprofile.fault.tolerance.util.FaultToleranceServerSetup;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.log.LogChecker;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public class MultipleJarDeploymentTest {
 
         return ShrinkWrap.create(JavaArchive.class, FIRST_DEPLOYMENT_JAR + ".jar")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
@@ -55,7 +55,7 @@ public class MultipleJarDeploymentTest {
         return ShrinkWrap.create(JavaArchive.class, SECOND_DEPLOYMENT_JAR + ".jar")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
                 .addClasses(MultipleJarDeploymentTest.class, LogChecker.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

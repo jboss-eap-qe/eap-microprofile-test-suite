@@ -5,6 +5,7 @@ import java.util.Base64;
 
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -67,6 +68,7 @@ final class DeploymentBuilder {
         final WebArchive archive = ShrinkWrap.create(WebArchive.class, this.name)
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class);
+        archive.addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
 
         if (this.passAsInlineValue) {
             stringBuilder.append(MP_PUBLIC_KEY_PROPERTY).append(":").append(jwksString).append(String.format("%n"));

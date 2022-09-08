@@ -18,9 +18,10 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.RouterApplicati
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.legacy.Contact;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class IntegrationWithCDITest {
     public static Archive<?> localServicesRouterDeployment() {
         return ShrinkWrap.create(WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
                 .addClasses(RouterApplication.class, Contact.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {

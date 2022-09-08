@@ -19,9 +19,9 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToler
 import org.jboss.eap.qe.microprofile.tooling.cpu.load.HighCPUUtils;
 import org.jboss.eap.qe.microprofile.tooling.cpu.load.utils.ProcessUtils;
 import org.jboss.eap.qe.microprofile.tooling.cpu.load.utils.ProcessUtilsProvider;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
@@ -51,7 +51,7 @@ public class CpuLoadTest {
         String mpConfig = "Timeout/enabled=true";
         return ShrinkWrap.create(WebArchive.class, CpuLoadTest.class.getSimpleName() + ".war")
                 .addPackage(LoadService.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

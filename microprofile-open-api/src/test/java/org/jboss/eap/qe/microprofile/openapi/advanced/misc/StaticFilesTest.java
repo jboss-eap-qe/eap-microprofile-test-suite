@@ -41,9 +41,9 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.Arq
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientRelatedException;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -105,7 +105,7 @@ public class StaticFilesTest {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsManifestResource(new StringAsset("mp.openapi.extensions.enabled=false"), "microprofile-config.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     /**
@@ -146,7 +146,7 @@ public class StaticFilesTest {
                 .addAsResource("META-INF/openapi.yaml")
                 .addAsResource("META-INF/openapi.yml")
                 .addAsResource("META-INF/openapi.json")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     @Deployment(name = PARENT_PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
@@ -181,7 +181,7 @@ public class StaticFilesTest {
                 .addAsManifestResource(new StringAsset(buildMicroProfileConfigProperties() + "\n" + props),
                         "microprofile-config.properties")
                 .addAsResource("META-INF/openapi-broken.yaml", "META-INF/openapi.yaml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     @Deployment(name = BIG_STATIC_FILE_ROUTER_DEPLOYMENT_NAME, order = 3, testable = false)
@@ -237,7 +237,7 @@ public class StaticFilesTest {
                 .addAsManifestResource(new StringAsset(buildMicroProfileConfigProperties() + "\n" + props),
                         "microprofile-config.properties")
                 .addAsResource(new StringAsset(bigFileContents), "META-INF/openapi.yaml")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {
