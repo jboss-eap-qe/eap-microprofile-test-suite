@@ -14,9 +14,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.config.testapp.ResolverConfigSource;
 import org.jboss.eap.qe.microprofile.config.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.config.testapp.jaxrs.ResolverEndPoint;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class RegisterConfigAndReleaseConfigMethodsTest {
                         ResolverConfigSource.class)
                 .addAsManifestResource(new StringAsset(String.format("%s=%s", PROPERTY_NAME, ORIGINAL_PROPERTY_VALUE)),
                         "microprofile-config.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
     }
 
     /**

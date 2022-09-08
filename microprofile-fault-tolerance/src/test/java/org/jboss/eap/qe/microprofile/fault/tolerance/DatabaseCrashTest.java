@@ -21,9 +21,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.database.DatabaseService;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.database.DatabaseServlet;
 import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToleranceServerConfiguration;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -57,7 +57,7 @@ public class DatabaseCrashTest {
     public static WebArchive createDatabaseService() {
         final WebArchive databaseService = ShrinkWrap.create(WebArchive.class, APPLICATION_NAME + ".war");
         databaseService.addClasses(DatabaseService.class, DatabaseServlet.class);
-        databaseService.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        databaseService.addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
 
         String postgresDS = "<datasources xmlns=\"http://www.jboss.org/ironjacamar/schema\">\n" +
                 "    <datasource jndi-name=\"java:jboss/datasources/PostgresDS\" pool-name=\"exampleDS\">\n" +

@@ -3,8 +3,8 @@ package org.jboss.eap.qe.microprofile.metrics.integration.config;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ public class CustomMetricConfigFileTest extends CustomMetricBaseTest {
                         CustomMetricApplication.class, CustomMetricAppInitializer.class)
                 .addAsManifestResource(new StringAsset(INCREMENT_CONFIG_PROPERTY + "=" + DEFAULT_VALUE),
                         "microprofile-config.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
         return webArchive;
     }
 

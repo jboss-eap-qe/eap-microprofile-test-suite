@@ -16,11 +16,11 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.opentracing.MicroProfileOpenTracingServerHelper;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 import org.jboss.eap.qe.ts.common.docker.DockerContainers;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
@@ -60,7 +60,7 @@ public class MicroProfileOpenTracing10Test {
         return ShrinkWrap.create(WebArchive.class, APPLICATION_NAME + ".war")
                 .addPackage(RestApplication.class.getPackage())
                 .addPackage(Tracer.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
