@@ -129,7 +129,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
-                .statusCode(401);
+                .statusCode(500); // 401 -> 500 https://github.com/smallrye/smallrye-jwt/pull/373
     }
 
     /**
@@ -188,7 +188,7 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
         given().header("Authorization", "Bearer " + token.getRawValue())
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)
                 .then()
-                .statusCode(401);
+                .statusCode(500); // 401 -> 500 https://github.com/smallrye/smallrye-jwt/pull/373
     }
 
     private static URL getFileFromResources(final String filePath) {
