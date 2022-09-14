@@ -29,7 +29,6 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToler
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -51,7 +50,7 @@ public class FaultTolerance20AsyncPartialTest {
         return ShrinkWrap.create(WebArchive.class, FaultTolerance20AsyncPartialTest.class.getSimpleName() + ".war")
                 .addPackages(true, AsyncHelloService.class.getPackage())
                 .addClasses(TimeoutException.class, FaultToleranceException.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @BeforeClass

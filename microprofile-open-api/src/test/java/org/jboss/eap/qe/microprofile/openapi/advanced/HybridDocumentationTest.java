@@ -99,7 +99,7 @@ public class HybridDocumentationTest {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsManifestResource(new StringAsset("mp.openapi.extensions.enabled=false"), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**
@@ -143,7 +143,7 @@ public class HybridDocumentationTest {
                         OpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsResource("META-INF/openapi.yaml")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {

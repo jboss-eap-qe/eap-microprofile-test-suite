@@ -39,11 +39,11 @@ public class SubdeploymentHealthTest {
 
         ear.addAsModule(ShrinkWrap.create(WebArchive.class, "dep1.war")
                 .addClasses(BothHealthCheck.class)
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml"));
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml"));
 
         ear.addAsModule(ShrinkWrap.create(JavaArchive.class, "dep2.jar")
                 .addClasses(LivenessHealthCheck.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml"));
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml"));
 
         ear.setApplicationXML(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 + "<application xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_9.xsd\" version=\"9\">\n"

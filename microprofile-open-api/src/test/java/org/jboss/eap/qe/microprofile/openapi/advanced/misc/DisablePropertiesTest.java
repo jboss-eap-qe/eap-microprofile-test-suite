@@ -84,7 +84,7 @@ public class DisablePropertiesTest {
                         DisablePropertiesTest.class.getClassLoader().getResource(
                                 "META-INF/microprofile-config-disabled.properties"),
                         "META-INF/microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**
@@ -126,7 +126,7 @@ public class DisablePropertiesTest {
                         "microprofile-config.properties")
                 .addAsResource(DisablePropertiesTest.class.getClassLoader().getResource("META-INF/openapi-server-path.yaml"),
                         "META-INF/openapi.yaml")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {

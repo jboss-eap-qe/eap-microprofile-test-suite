@@ -57,7 +57,7 @@ public class DatabaseCrashTest {
     public static WebArchive createDatabaseService() {
         final WebArchive databaseService = ShrinkWrap.create(WebArchive.class, APPLICATION_NAME + ".war");
         databaseService.addClasses(DatabaseService.class, DatabaseServlet.class);
-        databaseService.addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+        databaseService.addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
 
         String postgresDS = "<datasources xmlns=\"http://www.jboss.org/ironjacamar/schema\">\n" +
                 "    <datasource jndi-name=\"java:jboss/datasources/PostgresDS\" pool-name=\"exampleDS\">\n" +

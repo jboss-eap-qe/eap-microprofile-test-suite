@@ -23,7 +23,6 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.Manage
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +53,7 @@ public class DefaultReadinessProcedureHealthTest {
     public static Archive<?> deployment() {
         return ShrinkWrap.create(WebArchive.class, ARCHIVE_NAME)
                 .addClasses(LivenessHealthCheck.class)
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**

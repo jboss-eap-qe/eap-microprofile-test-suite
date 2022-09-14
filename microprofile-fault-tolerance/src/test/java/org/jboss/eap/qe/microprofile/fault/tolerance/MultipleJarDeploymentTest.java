@@ -44,7 +44,7 @@ public class MultipleJarDeploymentTest {
 
         return ShrinkWrap.create(JavaArchive.class, FIRST_DEPLOYMENT_JAR + ".jar")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
@@ -55,7 +55,7 @@ public class MultipleJarDeploymentTest {
         return ShrinkWrap.create(JavaArchive.class, SECOND_DEPLOYMENT_JAR + ".jar")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
                 .addClasses(MultipleJarDeploymentTest.class, LogChecker.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

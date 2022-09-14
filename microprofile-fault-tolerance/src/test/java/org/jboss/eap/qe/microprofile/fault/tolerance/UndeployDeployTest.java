@@ -54,7 +54,7 @@ public class UndeployDeployTest {
 
         return ShrinkWrap.create(WebArchive.class, FIRST_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
@@ -64,7 +64,7 @@ public class UndeployDeployTest {
 
         return ShrinkWrap.create(WebArchive.class, SECOND_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
@@ -73,7 +73,7 @@ public class UndeployDeployTest {
         return ShrinkWrap.create(WebArchive.class, NO_MP_FT_DEPLOYMENT + ".war")
                 .addPackage(org.jboss.eap.qe.microprofile.fault.tolerance.deployments.nofaulttolerance.HelloService.class
                         .getPackage())
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @BeforeClass

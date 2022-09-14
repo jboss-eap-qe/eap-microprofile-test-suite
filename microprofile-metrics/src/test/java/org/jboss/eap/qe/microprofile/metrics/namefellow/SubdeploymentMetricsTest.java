@@ -54,13 +54,13 @@ public class SubdeploymentMetricsTest {
                 .addClasses(PingApplication.class, PingOneService.class, PingOneResource.class, PingTwoResource.class)
                 .addAsManifestResource(new StringAsset("mp.metrics.appName=" + PING_ONE_SERVICE_TAG),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml"));
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml"));
 
         ear.addAsModule(ShrinkWrap.create(JavaArchive.class, PING_TWO_SERVICE + ".jar")
                 .addClasses(PingTwoService.class)
                 .addAsManifestResource(new StringAsset("mp.metrics.appName=" + PING_TWO_SERVICE_TAG),
                         "microprofile-config.properties")
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml"));
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml"));
 
         ear.setApplicationXML(new StringAsset("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 + "<application xmlns=\"https://jakarta.ee/xml/ns/jakartaee\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/application_9.xsd\" version=\"9\">\n"

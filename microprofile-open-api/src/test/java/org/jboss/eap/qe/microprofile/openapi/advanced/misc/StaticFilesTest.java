@@ -105,7 +105,7 @@ public class StaticFilesTest {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsManifestResource(new StringAsset("mp.openapi.extensions.enabled=false"), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**
@@ -146,7 +146,7 @@ public class StaticFilesTest {
                 .addAsResource("META-INF/openapi.yaml")
                 .addAsResource("META-INF/openapi.yml")
                 .addAsResource("META-INF/openapi.json")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @Deployment(name = PARENT_PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
@@ -181,7 +181,7 @@ public class StaticFilesTest {
                 .addAsManifestResource(new StringAsset(buildMicroProfileConfigProperties() + "\n" + props),
                         "microprofile-config.properties")
                 .addAsResource("META-INF/openapi-broken.yaml", "META-INF/openapi.yaml")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @Deployment(name = BIG_STATIC_FILE_ROUTER_DEPLOYMENT_NAME, order = 3, testable = false)
@@ -237,7 +237,7 @@ public class StaticFilesTest {
                 .addAsManifestResource(new StringAsset(buildMicroProfileConfigProperties() + "\n" + props),
                         "microprofile-config.properties")
                 .addAsResource(new StringAsset(bigFileContents), "META-INF/openapi.yaml")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {

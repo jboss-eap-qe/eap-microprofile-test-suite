@@ -78,7 +78,7 @@ public class MultipleFaultToleranceModuleEarTest {
         String mpConfig = "Timeout/enabled=" + faultToleranceTimeoutEnabled;
         return ShrinkWrap.create(WebArchive.class, moduleName + ".war")
                 .addClasses(HelloService.class, HelloServlet.class, HelloFallback.class, MyContext.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

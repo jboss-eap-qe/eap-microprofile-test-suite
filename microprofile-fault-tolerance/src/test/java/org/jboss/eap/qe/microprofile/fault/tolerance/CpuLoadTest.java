@@ -51,7 +51,7 @@ public class CpuLoadTest {
         String mpConfig = "Timeout/enabled=true";
         return ShrinkWrap.create(WebArchive.class, CpuLoadTest.class.getSimpleName() + ".war")
                 .addPackage(LoadService.class.getPackage())
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

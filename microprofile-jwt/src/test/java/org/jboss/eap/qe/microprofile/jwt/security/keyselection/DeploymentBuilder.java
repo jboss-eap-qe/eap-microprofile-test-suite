@@ -68,7 +68,7 @@ final class DeploymentBuilder {
         final WebArchive archive = ShrinkWrap.create(WebArchive.class, this.name)
                 .addClass(SecuredJaxRsEndpoint.class)
                 .addClass(JaxRsTestApplication.class);
-        archive.addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+        archive.addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
 
         if (this.passAsInlineValue) {
             stringBuilder.append(MP_PUBLIC_KEY_PROPERTY).append(":").append(jwksString).append(String.format("%n"));

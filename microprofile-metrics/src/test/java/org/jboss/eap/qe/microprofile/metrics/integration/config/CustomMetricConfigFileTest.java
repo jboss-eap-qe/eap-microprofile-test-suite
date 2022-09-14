@@ -23,7 +23,7 @@ public class CustomMetricConfigFileTest extends CustomMetricBaseTest {
                         CustomMetricApplication.class, CustomMetricAppInitializer.class)
                 .addAsManifestResource(new StringAsset(INCREMENT_CONFIG_PROPERTY + "=" + DEFAULT_VALUE),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
         return webArchive;
     }
 

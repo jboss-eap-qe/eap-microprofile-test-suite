@@ -69,7 +69,7 @@ public class ProgrammingModelTest {
                         OpenApiModelReader.class,
                         OpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {
