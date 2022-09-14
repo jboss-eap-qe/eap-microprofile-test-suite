@@ -41,6 +41,9 @@
         <version.org.jboss.wildfly.dist>27.0.0.Alpha4</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
+        <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
+        <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
+        <version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>2.0</version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
         <version.org.wildfly.core>19.0.0.Beta15</version.org.wildfly.core>
@@ -48,7 +51,6 @@
         <version.org.yaml.snakeyaml>1.26</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
-        <version.org.glassfish.javax.json>1.1.4</version.org.glassfish.javax.json>
         <version.org.glassfish.jakarta.json>2.0.1</version.org.glassfish.jakarta.json>
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.4</version.org.jboss.shrinkwrap.resolver>
@@ -260,19 +262,19 @@
             <dependency>
                 <groupId>io.undertow</groupId>
                 <artifactId>undertow-core</artifactId>
-                <version>2.3.0.Alpha2</version>
+                <version>${version.io.undertow.undertow-core}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.jboss.threads</groupId>
                 <artifactId>jboss-threads</artifactId>
-                <version>2.4.0.Final</version>
+                <version>${version.org.jboss.threads.jboss-threads}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.microprofile.jwt</groupId>
                 <artifactId>microprofile-jwt-auth-api</artifactId>
-                <version>2.0</version>
+                <version>${version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
