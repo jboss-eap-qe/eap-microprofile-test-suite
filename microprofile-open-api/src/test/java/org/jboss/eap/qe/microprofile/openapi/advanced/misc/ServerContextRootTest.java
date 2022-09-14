@@ -95,7 +95,7 @@ public class ServerContextRootTest {
                         RoutingServiceConstants.class,
                         EchoResource.class)
                 .addAsManifestResource(new StringAsset("mp.openapi.extensions.enabled=false"), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**
@@ -137,7 +137,7 @@ public class ServerContextRootTest {
                         "microprofile-config.properties")
                 .addAsResource(ServerContextRootTest.class.getClassLoader().getResource("META-INF/openapi-server-path.yaml"),
                         "META-INF/openapi.yaml")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {

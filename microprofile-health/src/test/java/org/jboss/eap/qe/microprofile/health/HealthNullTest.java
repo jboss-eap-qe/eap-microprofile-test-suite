@@ -32,7 +32,7 @@ public class HealthNullTest {
                 .addClasses(NullLivenessHealthCheck.class)
                 .addAsManifestResource(new StringAsset("mp.health.disable-default-procedures=true"),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**

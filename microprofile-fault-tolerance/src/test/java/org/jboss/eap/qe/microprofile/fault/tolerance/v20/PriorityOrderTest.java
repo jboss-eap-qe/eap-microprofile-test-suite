@@ -44,7 +44,7 @@ public class PriorityOrderTest {
         return ShrinkWrap.create(WebArchive.class, PriorityOrderTest.class.getSimpleName() + ".war")
                 .addPackages(true, AsyncHelloService.class.getPackage())
                 .addClasses(TimeoutException.class, FaultToleranceException.class)
-                .addAsManifestResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 

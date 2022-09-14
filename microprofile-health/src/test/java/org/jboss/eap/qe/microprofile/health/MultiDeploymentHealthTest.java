@@ -36,7 +36,7 @@ public class MultiDeploymentHealthTest {
                 .addClasses(BothHealthCheck.class)
                 .addAsManifestResource(new StringAsset("mp.health.disable-default-procedures=true"),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @Deployment(name = "deployment2", order = 2, testable = false)
@@ -45,7 +45,7 @@ public class MultiDeploymentHealthTest {
                 .addClasses(LivenessHealthCheck.class)
                 .addAsManifestResource(new StringAsset("mp.health.disable-default-procedures=true"),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**

@@ -47,7 +47,7 @@ public class RegisterConfigAndReleaseConfigMethodsTest {
                         ResolverConfigSource.class)
                 .addAsManifestResource(new StringAsset(String.format("%s=%s", PROPERTY_NAME, ORIGINAL_PROPERTY_VALUE)),
                         "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**

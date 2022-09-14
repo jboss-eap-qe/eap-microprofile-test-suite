@@ -28,7 +28,6 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.Arq
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
@@ -131,7 +130,7 @@ public class NotReadyHealthCheckTest {
 
         ShrinkWrap.create(WebArchive.class, NotReadyHealthCheckTest.class.getSimpleName() + ".war")
                 .addClasses(DelayedReadinessHealthCheck.class)
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .as(ZipExporter.class)
                 .exportTo(deployment, true);
 
@@ -158,7 +157,7 @@ public class NotReadyHealthCheckTest {
 
         ShrinkWrap.create(WebArchive.class, DelayedLivenessHealthCheck.class.getSimpleName() + ".war")
                 .addClasses(DelayedLivenessHealthCheck.class)
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml")
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .as(ZipExporter.class)
                 .exportTo(deployment, true);
 

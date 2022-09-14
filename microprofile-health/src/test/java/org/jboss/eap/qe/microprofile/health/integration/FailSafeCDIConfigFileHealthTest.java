@@ -91,7 +91,7 @@ public class FailSafeCDIConfigFileHealthTest {
                 .create(WebArchive.class, FailSafeCDIHealthBaseTest.class.getSimpleName() + ".war")
                 .addClasses(FailSafeDummyService.class, CDIBasedLivenessHealthCheck.class, CDIBasedReadinessHealthCheck.class)
                 .addAsManifestResource(new StringAsset(MPConfigContent), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     /**

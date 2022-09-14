@@ -74,7 +74,7 @@ public class RestClientIntegrationTest {
                         DistrictsResource.class,
                         RoutingServiceConstants.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     @Deployment(name = ROUTER_DEPLOYMENT_NAME, order = 2, testable = false)
@@ -107,7 +107,7 @@ public class RestClientIntegrationTest {
                         RouterDistrictsResource.class,
                         DistrictServiceClient.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
-                .addAsWebInfResource(new StringAsset(ConfigurationUtil.BEANS_XML_FILE_CONTENT), "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     static class OpenApiExtensionSetup implements MicroProfileServerSetupTask {
