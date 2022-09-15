@@ -345,89 +345,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
+                <configuration>
+                    <environmentVariables>
+                        <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
+                        <JAEGER_SAMPLER_PARAM>1.0</JAEGER_SAMPLER_PARAM>
+                        <JAEGER_SAMPLER_TYPE>const</JAEGER_SAMPLER_TYPE>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <jboss.home>${jboss.home}</jboss.home>
+                        <container.base.dir.manual.mode>${container.base.dir.manual.mode}</container.base.dir.manual.mode>
+                        <module.path>${jboss.modules.path}</module.path>
+                        <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
-        <!--
-            When the `mp.specs.scope` property is not set the TS will
-            build/execute the full set of MicroProfile specs modules.
-            E.g.: when testing Wildfly, which has all of the MicroProfile specs
-            in since v. 19.0.0.Final, or when testing against EAP XP.
-        -->
-        <profile>
-            <id>enable-all-specs</id>
-            <activation>
-                <property>
-                    <name>!mp.specs.scope</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
-                        <configuration>
-                            <environmentVariables>
-                                <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
-                                <JAEGER_SAMPLER_PARAM>1.0</JAEGER_SAMPLER_PARAM>
-                                <JAEGER_SAMPLER_TYPE>const</JAEGER_SAMPLER_TYPE>
-                            </environmentVariables>
-                            <systemPropertyVariables>
-                                <jboss.home>${jboss.home}</jboss.home>
-                                <container.base.dir.manual.mode>${container.base.dir.manual.mode}</container.base.dir.manual.mode>
-                                <module.path>${jboss.modules.path}</module.path>
-                                <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!--
-            When it comes to non-XP EAP testing then only the MicroProfile
-            specs belonging to the so called "observability layer" should be
-            tested, hence this profile should be activated by providing the
-            `mp.specs.scope` property with the "observability-layer" value
-        -->
-        <profile>
-            <id>enable-observability-layer-specs</id>
-            <activation>
-                <property>
-                    <name>mp.specs.scope</name>
-                    <value>observability</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
-                        <configuration>
-                            <environmentVariables>
-                                <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
-                            </environmentVariables>
-                            <systemPropertyVariables>
-                                <jboss.home>${jboss.home}</jboss.home>
-                                <jboss.configuration.file>standalone.xml</jboss.configuration.file>
-                                <container.base.dir.manual.mode>${container.base.dir.manual.mode}</container.base.dir.manual.mode>
-                                <module.path>${jboss.modules.path}</module.path>
-                                <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
-                            </systemPropertyVariables>
-                            <!-- MP Health integration tests with
-                            MP Fault Tolerance must be excluded when testing
-                            just the MP "observability layer" specs-->
-                            <excludes>
-                                <exclude>org.jboss.eap.qe.microprofile.health.integration.*Test</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
         <profile>
             <id>copy-wildfly</id>
             <activation>
