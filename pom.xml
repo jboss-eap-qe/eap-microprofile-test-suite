@@ -45,7 +45,7 @@
         the server up -->
         <version.org.wildfly.core>19.0.0.Beta8</version.org.wildfly.core>
         <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
-        <version.org.yaml.snakeyaml>1.26</version.org.yaml.snakeyaml>
+        <version.org.yaml.snakeyaml>1.31</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
         <version.org.glassfish.javax.json>1.1</version.org.glassfish.javax.json>
