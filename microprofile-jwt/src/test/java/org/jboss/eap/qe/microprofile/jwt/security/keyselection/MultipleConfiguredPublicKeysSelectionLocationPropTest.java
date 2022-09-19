@@ -117,7 +117,8 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
      * @tpTestDetails A JWT signed by a "pink" private key is send to the server which has configured public key to be a
      *                JSON Web Key set in JSON. There are multiple keys in this set and there is no "pink" public key among
      *                them.
-     * @tpPassCrit JWt is rejected and user receives "501/internal server error" because there is no matching configured public key on
+     * @tpPassCrit JWt is rejected and user receives "501/internal server error" because there is no matching configured public
+     *             key on
      *             the server.
      * @tpSince EAP 7.4.0.CD19
      */
@@ -176,7 +177,8 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
      * @tpTestDetails A JWT signed by a "pink" private key is send to the server which has configured public key to be a
      *                JSON Web Key set Base64 encoded. There are multiple keys in this set and there is no "pink" public
      *                key among them.
-     * @tpPassCrit JWt is rejected and user receives "501/internal server error" because there is no matching configured public key on
+     * @tpPassCrit JWt is rejected and user receives "501/internal server error" because there is no matching configured public
+     *             key on
      *             the server.
      * @tpSince EAP 7.4.0.CD19
      */
