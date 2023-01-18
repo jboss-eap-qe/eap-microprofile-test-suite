@@ -46,6 +46,9 @@ import com.sun.security.auth.module.UnixSystem;
 public class DatabaseCrashTest {
 
     private static final String APPLICATION_NAME = "DatabaseServlet";
+    private static final String POSTGRESQL_USER = "user";
+    private static final String POSTGRESQL_PASSWORD = "pass";
+    private static final String POSTGRESQL_DATABASE = "test-database";
 
     private static Docker postgresDB = null;
     private static File postgresDataDir = null;
@@ -62,18 +65,16 @@ public class DatabaseCrashTest {
         String postgresDS = "<datasources xmlns=\"http://www.jboss.org/ironjacamar/schema\">\n" +
                 "    <datasource jndi-name=\"java:jboss/datasources/PostgresDS\" pool-name=\"exampleDS\">\n" +
                 "        <driver>DatabaseServlet.war_org.postgresql.Driver_42_2</driver>\n" +
-                "        <connection-url>jdbc:postgresql://127.0.0.1:5432/test-database</connection-url>\n" +
+                "        <connection-url>jdbc:postgresql://127.0.0.1:5432/" + POSTGRESQL_DATABASE + "</connection-url>\n" +
                 "        <security>\n" +
-                "            <user-name>postgres</user-name>\n" +
-                "            <password>pass</password>\n" +
+                "            <user-name>" + POSTGRESQL_USER + "</user-name>\n" +
+                "            <password>" + POSTGRESQL_PASSWORD + "</password>\n" +
                 "        </security>\n" +
                 "           <validation>\n" +
-                "                <valid-connection-checker class-name=\"org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker\">\n"
+                "                <valid-connection-checker class-name=\"org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker\"/>\n"
                 +
-                "                </valid-connection-checker>\n" +
-                "                <exception-sorter class-name=\"org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter\">\n"
+                "                <exception-sorter class-name=\"org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter\"/>\n"
                 +
-                "                </exception-sorter>\n" +
                 "</validation>\n" +
                 "    </datasource>\n" +
                 "</datasources>";
@@ -90,15 +91,16 @@ public class DatabaseCrashTest {
     public static void startDatabase() throws Exception {
         // create data dir for postgres database
         postgresDataDir = Files.createTempDir();
-        postgresDB = new Docker.Builder("postgres", "quay.io/jbossqe-eap/postgres:13.1")
+        // https://github.com/sclorg/postgresql-container/tree/generated/13
+        postgresDB = new Docker.Builder("postgres", "quay.io/centos7/postgresql-13-centos7")
                 .setContainerReadyCondition(() -> {
                     // checking port 5432 is not an option as PostgreSQL opens it before it's ready when started for the 1st time
                     // thus try to create JDBC connection directly
                     Properties props = new Properties();
-                    props.setProperty("user", "postgres");
-                    props.setProperty("password", "pass");
+                    props.setProperty("user", POSTGRESQL_USER);
+                    props.setProperty("password", POSTGRESQL_PASSWORD);
                     try {
-                        DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/test-database", props).close();
+                        DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/" + POSTGRESQL_DATABASE, props).close();
                         return true;
                     } catch (SQLException ex) {
                         return false;
@@ -106,10 +108,11 @@ public class DatabaseCrashTest {
                 })
                 .setContainerReadyTimeout(3, TimeUnit.MINUTES)
                 .withPortMapping("5432:5432")
-                .withEnvVar("POSTGRES_DB", "test-database") // creates "test-database" database after 1st start
-                .withEnvVar("POSTGRES_PASSWORD", "pass")
+                .withEnvVar("POSTGRESQL_DATABASE", POSTGRESQL_DATABASE) // creates POSTGRESQL_DATABASE database after 1st start
+                .withEnvVar("POSTGRESQL_USER", POSTGRESQL_USER)
+                .withEnvVar("POSTGRESQL_PASSWORD", POSTGRESQL_PASSWORD)
                 .withCmdOption("-v")
-                .withCmdOption(postgresDataDir.getAbsolutePath() + ":/var/lib/postgresql/data:Z")
+                .withCmdOption(postgresDataDir.getAbsolutePath() + ":/var/lib/pgsql/data:Z")
                 .withCmdOption("-u")
                 .withCmdOption(String.valueOf(new UnixSystem().getUid()))
                 .build();
