@@ -20,7 +20,7 @@ public class MalformedDockerConfigTest {
     @Test
     public void testFailFastWithMalformedDockerCommand() throws Exception {
         Docker containerWithInvalidVersion = new Docker.Builder("wildfly",
-                "registry.hub.docker.com/jboss/wildfly:InvalidVersion")
+                "quay.io/wildfly/wildfly:InvalidVersion")
                         .setContainerReadyTimeout(2, TimeUnit.SECONDS) // shorten timeout as this should fail fast
                         .setContainerReadyCondition(() -> false) // it's expected that server never starts and fails fast thus return false
                         .withPortMapping("bad:mapping")
@@ -36,7 +36,7 @@ public class MalformedDockerConfigTest {
     @Test
     public void testContainerWithHangingReadyCondition() throws Exception {
         Docker containerWithHangingReadyCondition = new Docker.Builder("wildfly",
-                "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
+                "quay.io/wildfly/wildfly")
                         .setContainerReadyTimeout(1, TimeUnit.SECONDS) // shorten timeout as this should fail fast
                         .setContainerReadyCondition(() -> { // simulate hanging isReady() condition
                             try {
@@ -55,16 +55,20 @@ public class MalformedDockerConfigTest {
         try {
             containerWithHangingReadyCondition.start();
         } finally {
+            final boolean isRunning = containerWithHangingReadyCondition.isRunning();
+            if (isRunning) {
+                containerWithHangingReadyCondition.stop();
+            }
             assertThat("ContainerReadyConditionException was thrown and starting container is expected to be stopped/killed. " +
                     "However this did not happen and there is still container running which is bug.",
-                    not(containerWithHangingReadyCondition.isRunning()));
+                    not(isRunning));
         }
 
     }
 
     @Test
     public void testContainerReadyTimeout() throws Exception {
-        Docker containerWithShortTimeout = new Docker.Builder("wildlfy", "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
+        Docker containerWithShortTimeout = new Docker.Builder("wildlfy", "quay.io/wildfly/wildfly")
                 .setContainerReadyTimeout(2, TimeUnit.SECONDS)
                 .setContainerReadyCondition(() -> false) // never ready
                 .build();
@@ -75,9 +79,13 @@ public class MalformedDockerConfigTest {
         try {
             containerWithShortTimeout.start();
         } finally {
+            final boolean isRunning = containerWithShortTimeout.isRunning();
+            if (isRunning) {
+                containerWithShortTimeout.stop();
+            }
             assertThat("DockerTimeoutException was thrown and starting container is expected to be stopped/killed. " +
                     "However this did not happen and there is still container running which is bug.",
-                    not(containerWithShortTimeout.isRunning()));
+                    not(isRunning));
         }
     }
 }

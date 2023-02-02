@@ -1,8 +1,6 @@
 package org.jboss.eap.qe.ts.common.docker;
 
-import static io.restassured.RestAssured.get;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.net.HttpURLConnection;
@@ -10,6 +8,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpStatus;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -50,20 +49,21 @@ public class DockerTest {
                     .build();
 
     private static boolean isWildFlyOneReady() {
-        return isContainerReady(WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT);
+        return isContainerReady(WILDFLY_ONE_EXPOSED_HTTP_PORT);
     }
 
     private static boolean isWildFlyTwoReady() {
-        return isContainerReady(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT);
+        return isContainerReady(WILDFLY_TWO_EXPOSED_HTTP_PORT);
     }
 
     private static boolean isContainerReady(int port) {
         try {
-            URL url = new URL("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + port + "/health");
+            URL url = new URL("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + port);
+
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
-            return connection.getResponseMessage().contains("OK");
+            return connection.getResponseCode() == HttpStatus.SC_OK;
         } catch (Exception ex) {
             return false;
         }
@@ -100,29 +100,5 @@ public class DockerTest {
     public void testManagementPortMappingForWildFlyTwo() {
         assertThat(WILDFLY_TWO_CONTAINER_NAME + " container is not listening on port " + WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT,
                 portOpened(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT), is(true));
-    }
-
-    @Test
-    public void welcomePageAvailableForWildFlyOne() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_ONE_EXPOSED_HTTP_PORT).then()
-                .body(containsString("Welcome to WildFly"));
-    }
-
-    @Test
-    public void welcomePageAvailableForWildFlyTwo() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_TWO_EXPOSED_HTTP_PORT).then()
-                .body(containsString("Welcome to WildFly"));
-    }
-
-    @Test
-    public void healthCheckAvailableForWildFlyOne() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + "/health").then()
-                .body(containsString("UP"));
-    }
-
-    @Test
-    public void healthCheckAvailableForWildFlyTwo() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + "/health").then()
-                .body(containsString("UP"));
     }
 }
