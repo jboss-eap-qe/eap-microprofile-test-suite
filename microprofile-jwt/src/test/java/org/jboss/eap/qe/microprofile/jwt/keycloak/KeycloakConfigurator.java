@@ -37,6 +37,7 @@ public class KeycloakConfigurator extends ExternalResource {
         createRealmOnKeycloak(this.realmName);
         createClientOnKeycloak(this.realmName, this.clientId);
         createClientRole(this.realmName, this.clientId, "USER");
+        createGroupOnKeycloak(Roles.MONITOR);
     }
 
     @Override
@@ -90,6 +91,18 @@ public class KeycloakConfigurator extends ExternalResource {
                         .add("name", roleName)
                         .build().toString())
                 .post(this.baseApiUrl.toExternalForm() + "/admin/realms/" + realmName + "/clients/" + clientId + "/roles")
+                .then()
+                .statusCode(201);
+    }
+
+    private void createGroupOnKeycloak(final String groupName) {
+        given().header("Authorization", "Bearer " + this.rawAdminToken)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .body(Json.createObjectBuilder()
+                        .add("name", groupName)
+                        .build().toString())
+                .post(this.baseApiUrl.toExternalForm() + "/admin/realms/" + realmName + "/groups")
                 .then()
                 .statusCode(201);
     }
@@ -152,7 +165,7 @@ public class KeycloakConfigurator extends ExternalResource {
         this.adminPassword = builder.adminPassword;
         this.adminUsername = builder.adminUsername;
         try {
-            this.baseApiUrl = new URL("http", builder.keycloakBindAddress, builder.keycloakHttpPort, "/auth");
+            this.baseApiUrl = new URL("http", builder.keycloakBindAddress, builder.keycloakHttpPort, "");
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Malformed URL!", e);
         }
