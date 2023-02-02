@@ -197,19 +197,16 @@ public class Docker extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         System.out.println(
-                Ansi.ansi().reset().a("About to run Docker initialization: ").fgBrightGreen().a(name).reset()
-        );
+                Ansi.ansi().reset().a("About to run Docker initialization: ").fgBrightGreen().a(name).reset());
         start();
         System.out.println(
-                Ansi.ansi().reset().a("Docker initialization was successfully run: ").fgBrightGreen().a(name).reset()
-        );
+                Ansi.ansi().reset().a("Docker initialization was successfully run: ").fgBrightGreen().a(name).reset());
     }
 
     @Override
     protected void after() {
         System.out.println(
-                Ansi.ansi().reset().a("About to run Docker finalization: ").fgBrightGreen().a(name).reset()
-        );
+                Ansi.ansi().reset().a("About to run Docker finalization: ").fgBrightGreen().a(name).reset());
         try {
             stop();
         } catch (Exception e) {
@@ -217,8 +214,7 @@ public class Docker extends ExternalResource {
                     .a(" with ID ").fgYellow().a(uuid).reset());
         }
         System.out.println(
-                Ansi.ansi().reset().a("Docker finalization was successfully run: ").fgBrightGreen().a(name).reset()
-        );
+                Ansi.ansi().reset().a("Docker finalization was successfully run: ").fgBrightGreen().a(name).reset());
     }
 
     public static class Builder {
