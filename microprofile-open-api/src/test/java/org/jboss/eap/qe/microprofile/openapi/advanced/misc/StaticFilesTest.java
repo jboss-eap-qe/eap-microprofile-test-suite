@@ -48,7 +48,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -192,10 +191,12 @@ public class StaticFilesTest {
         try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
         }
-        String props = String.format(
-                "mp.openapi.extensions.path=/big/openapi\nservices.provider.host=%s\nservices.provider.port=%d",
+        final Integer maximumFileSize = 64 * 1024 * 1024;
+        final String props = String.format(
+                "mp.openapi.extensions.path=/big/openapi\nservices.provider.host=%s\nservices.provider.port=%d\nmp.openapi.extensions.smallrye.maximumStaticFileSize=%s",
                 arquillianContainerProperties.getDefaultManagementAddress(),
-                configuredHTTPPort);
+                configuredHTTPPort,
+                maximumFileSize);
 
         //  let's build a big openapi file
         String bigFileContents = "";
@@ -325,8 +326,6 @@ public class StaticFilesTest {
     }
 
     @Test
-    @Ignore("This should fail but currently there are no log messages neither Exceptions to expect in order to assess " +
-            "this, see https://issues.redhat.com/projects/WFWIP/issues/WFWIP-292")
     public void testDocumentValidityWhenOpenApiStaticFileIsNotValid(
             @ArquillianResource @OperateOnDeployment(BROKEN_STATIC_FILE_ROUTER_DEPLOYMENT_NAME) URL baseURL)
             throws URISyntaxException {
