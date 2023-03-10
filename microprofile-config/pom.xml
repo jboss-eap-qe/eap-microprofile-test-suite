@@ -64,7 +64,6 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-jar-maven-plugin</artifactId>
-                        <version>${version.org.wildfly.jar.plugin}</version>
                         <executions>
                             <!-- Package a cloud-server -->
                             <execution>
