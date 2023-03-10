@@ -58,7 +58,7 @@ public class ModuleUtil {
          * Add jar resource to the module. ShrinkWrap is used to create JAR archive. It create archive in temp directory
          * if possible or in a project root directory. Archive is deleted at the end of
          * {@link #executeOn(OnlineManagementClient)} execution.
-         * 
+         *
          * @param jarName - desired name - shall lead to `{@param jarName}.jar`
          * @param classes - classes to be added
          * @return

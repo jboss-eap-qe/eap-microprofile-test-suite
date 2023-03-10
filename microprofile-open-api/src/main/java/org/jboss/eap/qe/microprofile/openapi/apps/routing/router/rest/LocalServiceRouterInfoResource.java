@@ -1,5 +1,11 @@
 package org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest;
 
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -12,12 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirements;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
-
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 /**
  * Rest resource exposing operations which provide information about Local Service Router, this is a "non-routed"

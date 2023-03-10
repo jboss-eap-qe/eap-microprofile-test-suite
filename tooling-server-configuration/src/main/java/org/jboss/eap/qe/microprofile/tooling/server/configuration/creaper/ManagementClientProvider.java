@@ -46,7 +46,7 @@ public class ManagementClientProvider {
     /**
      * Creates {@link OnlineManagementClient} for <b>standalone</b> mode, based on
      * {@link org.jboss.as.arquillian.container.ManagementClient}
-     * 
+     *
      * @param managementClient {@link org.jboss.as.arquillian.container.ManagementClient} instance which is going
      *        to provide the
      *        {@link org.jboss.as.controller.client.ModelControllerClient} to be wrapped by Creaper

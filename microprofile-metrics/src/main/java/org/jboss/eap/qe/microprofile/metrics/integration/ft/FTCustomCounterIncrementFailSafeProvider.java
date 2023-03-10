@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.metrics.integration.ft;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class FTCustomCounterIncrementFailSafeProvider {

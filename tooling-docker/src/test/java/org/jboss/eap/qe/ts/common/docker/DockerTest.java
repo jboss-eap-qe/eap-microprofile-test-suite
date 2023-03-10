@@ -27,26 +27,26 @@ public class DockerTest {
     @ClassRule
     public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME,
             "quay.io/wildfly/wildfly")
-                    .setContainerReadyTimeout(2, TimeUnit.MINUTES)
-                    .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
-                    .withPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
-                    .withPortMapping(WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + ":9990")
-                    .withCmdArg("/opt/jboss/wildfly/bin/standalone.sh")
-                    .withCmdArg("-b=0.0.0.0")
-                    .withCmdArg("-bmanagement=0.0.0.0")
-                    .build();
+            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
+            .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
+            .withPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
+            .withPortMapping(WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + ":9990")
+            .withCmdArg("/opt/jboss/wildfly/bin/standalone.sh")
+            .withCmdArg("-b=0.0.0.0")
+            .withCmdArg("-bmanagement=0.0.0.0")
+            .build();
 
     @ClassRule
     public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME,
             "quay.io/wildfly/wildfly")
-                    .setContainerReadyTimeout(2, TimeUnit.MINUTES)
-                    .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
-                    .withPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
-                    .withPortMapping(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + ":9990")
-                    .withCmdArg("/opt/jboss/wildfly/bin/standalone.sh")
-                    .withCmdArg("-b=0.0.0.0")
-                    .withCmdArg("-bmanagement=0.0.0.0")
-                    .build();
+            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
+            .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
+            .withPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
+            .withPortMapping(WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + ":9990")
+            .withCmdArg("/opt/jboss/wildfly/bin/standalone.sh")
+            .withCmdArg("-b=0.0.0.0")
+            .withCmdArg("-bmanagement=0.0.0.0")
+            .build();
 
     private static boolean isWildFlyOneReady() {
         return isContainerReady(WILDFLY_ONE_EXPOSED_HTTP_PORT);

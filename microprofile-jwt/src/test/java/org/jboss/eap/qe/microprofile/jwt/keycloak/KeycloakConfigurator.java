@@ -2,16 +2,16 @@ package org.jboss.eap.qe.microprofile.jwt.keycloak;
 
 import static io.restassured.RestAssured.given;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 import org.junit.rules.ExternalResource;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 
 /**
  * Keycloak configurator specifically for JWT purposes. It configures a realm, a client and then allows adding users and
@@ -109,7 +109,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
     /**
      * Create new user on Keycloak server. Realm name and client ID are pre-defined.
-     * 
+     *
      * @param username a username
      * @param password a password
      */
@@ -136,7 +136,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
     /**
      * Generate raw JWT for a user
-     * 
+     *
      * @param username a username
      * @param password a matching password
      * @return a raw JWT
@@ -189,7 +189,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
         /**
          * Set ID of keycloak client which will be used for both client ID and its name
-         * 
+         *
          * @param clientId client ID
          * @return instance of this builder
          */
@@ -200,7 +200,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
         /**
          * Set username for Keycloak administrator
-         * 
+         *
          * @param adminUsername a username
          * @return instance of this builder
          */
@@ -211,7 +211,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
         /**
          * Set password for Keycloak administrator
-         * 
+         *
          * @param adminPassword a adminPassword
          * @return instance of this builder
          */
@@ -222,7 +222,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
         /**
          * A hostname on which the Keycloak instance is available
-         * 
+         *
          * @param keycloakBindAddress a hostname
          * @return instance of this builder
          */
@@ -233,7 +233,7 @@ public class KeycloakConfigurator extends ExternalResource {
 
         /**
          * A port on which the Keycloak instance is available
-         * 
+         *
          * @param keycloakHttpPort a port
          * @return instance of this builder
          */

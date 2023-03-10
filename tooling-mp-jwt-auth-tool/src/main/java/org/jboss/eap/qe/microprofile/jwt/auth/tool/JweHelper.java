@@ -148,7 +148,7 @@ public class JweHelper {
 
     /**
      * Generates a valid JWE and then removes the "alg" header: used in tests to verify JWE without "alg" header is not valid
-     * 
+     *
      * @param jwsAlgorithm Algorithm used to sign the nested JWT token
      * @param jwsPrivateKey location of the private key used to sign the JWT token
      * @param kid Key ID of the private key used to sign the JWT token

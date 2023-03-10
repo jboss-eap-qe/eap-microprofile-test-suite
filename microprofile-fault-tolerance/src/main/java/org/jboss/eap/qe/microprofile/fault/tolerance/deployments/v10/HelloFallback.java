@@ -1,9 +1,9 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10;
 
+import jakarta.inject.Inject;
+
 import org.eclipse.microprofile.faulttolerance.ExecutionContext;
 import org.eclipse.microprofile.faulttolerance.FallbackHandler;
-
-import jakarta.inject.Inject;
 
 /**
  * Class providing @Fallback medhod for {@link HelloService} service

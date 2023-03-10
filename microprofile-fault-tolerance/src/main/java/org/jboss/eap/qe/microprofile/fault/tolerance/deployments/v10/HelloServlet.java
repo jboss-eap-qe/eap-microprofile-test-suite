@@ -1,13 +1,13 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10;
 
-import java.io.IOException;
-
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 /**
  * Servlet using {@link HelloService} for testing MP FT annotations

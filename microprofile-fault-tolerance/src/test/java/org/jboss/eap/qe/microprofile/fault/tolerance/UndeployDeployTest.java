@@ -206,15 +206,15 @@ public class UndeployDeployTest {
                 ArquillianDescriptorWrapper.getArquillianDescriptor());
         get("http://" + arqProperties.getDefaultManagementAddress() + ":" + arqProperties.getDefaultManagementPort()
                 + "/metrics").then()
-                        .assertThat()
-                        .body(containsString(
-                                "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 1.0"))
-                        .and()
-                        .body(containsString(
-                                "base_ft_invocations_total{fallback=\"applied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"))
-                        .and()
-                        .body(containsString(
-                                "base_ft_invocations_total{fallback=\"notApplied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"));
+                .assertThat()
+                .body(containsString(
+                        "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 1.0"))
+                .and()
+                .body(containsString(
+                        "base_ft_invocations_total{fallback=\"applied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"))
+                .and()
+                .body(containsString(
+                        "base_ft_invocations_total{fallback=\"notApplied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"));
         ;
 
         deployer.undeploy(FIRST_DEPLOYMENT);

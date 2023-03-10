@@ -1,5 +1,8 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -9,9 +12,6 @@ import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 /**
  * Class providing service with MP FT annotations calls used by tests.

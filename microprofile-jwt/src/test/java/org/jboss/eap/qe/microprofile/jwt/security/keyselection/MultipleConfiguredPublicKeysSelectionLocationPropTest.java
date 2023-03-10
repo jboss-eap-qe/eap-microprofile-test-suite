@@ -3,6 +3,9 @@ package org.jboss.eap.qe.microprofile.jwt.security.keyselection;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -21,9 +24,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 
 /**
  * Set of tests verifying key selection functionality. See chapter 9.2.3. JSON Web Key Set (JWKS) of MP-JWT 1.1
@@ -59,20 +59,20 @@ public class MultipleConfiguredPublicKeysSelectionLocationPropTest {
     public static WebArchive createDeploymentWithBase64JwksLocation() {
         return new DeploymentBuilder(DEPLOYMENT_WITH_BASE64_JWKS_LOCATION_PROPERTY
                 + MultipleConfiguredPublicKeysSelectionLocationPropTest.class.getSimpleName() + ".war")
-                        .jwksObject(JWKS_DOCUMENT)
-                        .passAsInlineValue(false)
-                        .base64encodedJwks(true)
-                        .build();
+                .jwksObject(JWKS_DOCUMENT)
+                .passAsInlineValue(false)
+                .base64encodedJwks(true)
+                .build();
     }
 
     @Deployment(name = DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY)
     public static WebArchive createDeploymentWithJsonJwksLocation() {
         return new DeploymentBuilder(DEPLOYMENT_WITH_JSON_JWKS_LOCATION_PROPERTY
                 + MultipleConfiguredPublicKeysSelectionLocationPropTest.class.getSimpleName() + ".war")
-                        .jwksObject(JWKS_DOCUMENT)
-                        .passAsInlineValue(false)
-                        .base64encodedJwks(false)
-                        .build();
+                .jwksObject(JWKS_DOCUMENT)
+                .passAsInlineValue(false)
+                .base64encodedJwks(false)
+                .build();
     }
 
     /**

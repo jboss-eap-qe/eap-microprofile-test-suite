@@ -52,13 +52,13 @@ public class KeycloakIntegrationHighLevelScenarioTest {
 
     public static Docker keycloakContainer = new Docker.Builder(KEYCLOAK_CONTAINER_NAME,
             "quay.io/keycloak/keycloak:latest")
-                    .setContainerReadyTimeout(2, TimeUnit.MINUTES)
-                    .setContainerReadyCondition(() -> isContainerReady(KEYCLOAK_EXPOSED_HTTP_PORT))
-                    .withPortMapping(KEYCLOAK_EXPOSED_HTTP_PORT + ":8080")
-                    .withEnvVar("KEYCLOAK_ADMIN", KEYCLOAK_ADMIN_USERNAME)
-                    .withEnvVar("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
-                    .withCmdArg("start-dev")
-                    .build();
+            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
+            .setContainerReadyCondition(() -> isContainerReady(KEYCLOAK_EXPOSED_HTTP_PORT))
+            .withPortMapping(KEYCLOAK_EXPOSED_HTTP_PORT + ":8080")
+            .withEnvVar("KEYCLOAK_ADMIN", KEYCLOAK_ADMIN_USERNAME)
+            .withEnvVar("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
+            .withCmdArg("start-dev")
+            .build();
 
     public static KeycloakConfigurator keycloakConfigurator = new KeycloakConfigurator.Builder(KEYCLOAK_REALM_NAME)
             .adminPassword(KEYCLOAK_ADMIN_PASSWORD)

@@ -21,14 +21,14 @@
  */
 package org.jboss.eap.qe.microprofile.jwt.testapp.servlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Used to compare behaviour between {@code MP-JWT} and {@code BASIC} authentication

@@ -1,10 +1,11 @@
 package org.jboss.eap.qe.microprofile.opentracing.v13;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import org.eclipse.microprofile.opentracing.Traced;
 
 import io.opentracing.Tracer;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 /**
  * A service with different combinations of traced/logged methods.

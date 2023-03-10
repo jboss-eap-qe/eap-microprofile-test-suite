@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.comparesEqualTo;
 
+import jakarta.ws.rs.core.MediaType;
+
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -34,8 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.yaml.snakeyaml.Yaml;
-
-import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for MP OpenAPI v. 1.1 annotations on JAX-RS components (migrated from TT QE TS)

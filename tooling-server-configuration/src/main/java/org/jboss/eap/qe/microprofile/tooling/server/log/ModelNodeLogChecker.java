@@ -29,7 +29,7 @@ public final class ModelNodeLogChecker implements LogChecker {
 
     /**
      * Create an instance of log checker. File will be read from the end (tail).
-     * 
+     *
      * @param client client which will be used to invoke log file reading operation on server
      * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
      *        files can get pretty big and reading whole file may lead to serious memory issues.
@@ -40,7 +40,7 @@ public final class ModelNodeLogChecker implements LogChecker {
 
     /**
      * Create an instance of log checker
-     * 
+     *
      * @param client client which will be used to invoke log file reading operation on server
      * @param countOfLines number of lines which will be read. -1 means all lines will be read. Be careful, that log
      *        files can get pretty big and reading whole file may lead to serious memory issues.

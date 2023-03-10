@@ -194,7 +194,7 @@ public class DatabaseCrashTest {
                     .body(containsString("New record inserted."));
         }
 
-        // one more call to check circuit is closed 
+        // one more call to check circuit is closed
         get(baseUrl + "?op=insertRecord").then().assertThat()
                 .body(containsString("New record inserted."));
     }

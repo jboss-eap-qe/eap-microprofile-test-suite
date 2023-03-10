@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
+import jakarta.ws.rs.core.MediaType;
+
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -33,8 +35,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
-
-import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for MP OpenAPI programming model (migrated from TT QE TS)

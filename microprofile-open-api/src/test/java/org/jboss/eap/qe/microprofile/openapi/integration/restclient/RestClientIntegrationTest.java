@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
+import jakarta.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -42,8 +44,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
-
-import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for MP OpenAPI and MP Rest Client integration

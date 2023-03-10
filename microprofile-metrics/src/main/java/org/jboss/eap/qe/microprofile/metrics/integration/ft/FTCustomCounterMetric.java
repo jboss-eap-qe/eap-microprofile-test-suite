@@ -1,12 +1,12 @@
 package org.jboss.eap.qe.microprofile.metrics.integration.ft;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import java.io.IOException;
 
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Metric;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class FTCustomCounterMetric implements Metric, Counter {

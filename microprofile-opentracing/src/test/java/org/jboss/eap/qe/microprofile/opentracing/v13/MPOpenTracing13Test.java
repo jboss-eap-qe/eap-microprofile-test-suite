@@ -263,7 +263,7 @@ public class MPOpenTracing13Test {
 
     /**
      * Checks whether recorded span log key and value match the expected ones. Expected log can be empty.
-     * 
+     *
      * @param expectedLog - expected log <key,value> pair.
      * @param span - recorded span in JSON format.
      * @return true in case when span log key and value match the expected ones, otherwise false.
@@ -291,7 +291,7 @@ public class MPOpenTracing13Test {
 
     /**
      * Checks whether recorded span tag key and value match the expected ones. Expected tag can be empty.
-     * 
+     *
      * @param expectedTag - expected tag <key,value> pair.
      * @param span - recorded span in JSON format.
      * @return true in case when span tag key and value match the expected ones, otherwise false.

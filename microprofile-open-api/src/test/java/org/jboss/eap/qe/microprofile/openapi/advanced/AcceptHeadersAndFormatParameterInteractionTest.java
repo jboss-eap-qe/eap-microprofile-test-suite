@@ -3,6 +3,9 @@ package org.jboss.eap.qe.microprofile.openapi.advanced;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -29,9 +32,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
-
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 /**
  * Test cases to verify negative scenario in which "Accept" HTTP header and {@code format} query parameter are

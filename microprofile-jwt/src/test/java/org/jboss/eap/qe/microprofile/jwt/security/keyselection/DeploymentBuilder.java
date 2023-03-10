@@ -1,5 +1,7 @@
 package org.jboss.eap.qe.microprofile.jwt.security.keyselection;
 
+import jakarta.json.JsonObject;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -9,8 +11,6 @@ import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.Con
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import jakarta.json.JsonObject;
 
 /**
  * Deployment builder for org.jboss.eap.qe.microprofile.jwt.security.keyselection package tests. It can handle JWKS key

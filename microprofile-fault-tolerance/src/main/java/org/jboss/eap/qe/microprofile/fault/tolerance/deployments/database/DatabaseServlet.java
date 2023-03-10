@@ -1,15 +1,15 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.database;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
  * Servlet is used to work with MP FT service working with database.
