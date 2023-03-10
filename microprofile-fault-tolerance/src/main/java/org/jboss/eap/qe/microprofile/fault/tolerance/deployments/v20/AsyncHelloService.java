@@ -1,5 +1,7 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v20;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.CompletableFuture;
@@ -12,8 +14,6 @@ import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * Class providing service with MP FT 2.x @Asynchronous calls with returning {@link java.util.concurrent.CompletionStage}

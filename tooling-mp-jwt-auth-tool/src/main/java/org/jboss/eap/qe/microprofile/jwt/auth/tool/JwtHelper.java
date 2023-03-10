@@ -97,7 +97,7 @@ public final class JwtHelper {
 
     /**
      * Generate JWT which claims are missing closing "}"
-     * 
+     *
      * @param subject string to use for "sub" and "preferred_username".
      * @return a base64-encoded signed corrupted JWT token.
      */

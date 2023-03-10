@@ -72,13 +72,13 @@ public class IntegrationWithCDITest {
         String id = "1";
         String response = get(
                 baseURL.toExternalForm() + String.format("contact/%s/details", id))
-                        .then()
-                        .statusCode(200)
-                        //  RestEasy >3.9.3 adds charset info unless resteasy.add.charset is set to false,
-                        //  thus expecting for it to be there, see
-                        //  https://docs.jboss.org/resteasy/docs/3.9.3.Final/userguide/html/Installation_Configuration.html#configuration_switches
-                        .contentType(equalToIgnoringCase("text/plain;charset=UTF-8"))
-                        .extract().asString();
+                .then()
+                .statusCode(200)
+                //  RestEasy >3.9.3 adds charset info unless resteasy.add.charset is set to false,
+                //  thus expecting for it to be there, see
+                //  https://docs.jboss.org/resteasy/docs/3.9.3.Final/userguide/html/Installation_Configuration.html#configuration_switches
+                .contentType(equalToIgnoringCase("text/plain;charset=UTF-8"))
+                .extract().asString();
         Assert.assertEquals(response, String.format("ID: %s", id));
     }
 

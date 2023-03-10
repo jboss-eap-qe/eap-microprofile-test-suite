@@ -1,9 +1,5 @@
 package org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs;
 
-import org.eclipse.microprofile.jwt.Claim;
-import org.eclipse.microprofile.jwt.ClaimValue;
-import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
-
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
@@ -11,6 +7,10 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 
 /**
  * MP-JWT implementations are required to generate a {@code jakarta.enterprise.inject.spi.DeploymentException} for a claim value

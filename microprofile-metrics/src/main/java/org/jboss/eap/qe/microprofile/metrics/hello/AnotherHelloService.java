@@ -1,10 +1,10 @@
 package org.jboss.eap.qe.microprofile.metrics.hello;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Random;
 
 import org.eclipse.microprofile.metrics.annotation.Counted;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AnotherHelloService {

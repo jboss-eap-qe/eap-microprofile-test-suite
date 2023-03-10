@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import jakarta.inject.Inject;
+
 import java.net.URL;
 
 import org.eclipse.microprofile.faulttolerance.exceptions.FaultToleranceException;
@@ -30,7 +32,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.restassured.RestAssured;
-import jakarta.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class PriorityOrderTest {

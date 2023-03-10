@@ -47,7 +47,7 @@ public class JsonWebToken {
 
     /**
      * Return raw token value (header.payload.signature)
-     * 
+     *
      * @return Raw token value
      */
     public String getRawValue() {
@@ -67,7 +67,7 @@ public class JsonWebToken {
 
         /**
          * Token header
-         * 
+         *
          * @param joseHeader token header specifying information about key and algorithm used to sign this token
          * @return instance of this builder
          */
@@ -78,7 +78,7 @@ public class JsonWebToken {
 
         /**
          * Set claims values
-         * 
+         *
          * @param jwtClaims claim values
          * @return instance of this builder
          */
@@ -90,7 +90,7 @@ public class JsonWebToken {
         /**
          * Set claim values as a JSON string. This method can be used in cases where it is desired to supply corrupted
          * data
-         * 
+         *
          * @param jwtClaimsJsonString JSON containing claim values
          * @return instance of this builder
          */
@@ -101,7 +101,7 @@ public class JsonWebToken {
 
         /**
          * Set signature algorithm implementation which will be used to sign the token
-         * 
+         *
          * @param signature an algorithm implementation - fresh instance with no initialized key or set payload
          * @return instance of this builder
          */
@@ -112,7 +112,7 @@ public class JsonWebToken {
 
         /**
          * Set private key which will be used for signing the JWT
-         * 
+         *
          * @param privateKey private key instance used for signing
          * @return instance of this builder
          */
@@ -138,7 +138,7 @@ public class JsonWebToken {
 
         /**
          * Build a Java object representing a JWT using values set in this builder
-         * 
+         *
          * @return new instance of {@link JsonWebToken}
          */
         public JsonWebToken build() {

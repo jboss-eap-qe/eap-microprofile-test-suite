@@ -115,7 +115,7 @@ public class MicroProfileOpenTracing10Test {
 
     /**
      * Check whether recorded spans contain MyService traces.
-     * 
+     *
      * @param element - span recorded by Jaeger.
      * @return true in case MyService traces are registered by Jaeger, otherwise false.
      */
@@ -139,7 +139,7 @@ public class MicroProfileOpenTracing10Test {
 
     /**
      * Check whether recorded spans contain RestSimpleResource traces.
-     * 
+     *
      * @param element - span recorded by Jaeger.
      * @return true in case RestSimpleResource traces are registered by Jaeger, otherwise false.
      */

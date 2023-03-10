@@ -52,7 +52,7 @@ public class PublicKeyPropertyTestCase {
 
     /**
      * A deployment with valid key. This means, that it is correct key which can be used to verify the JWT signature.
-     * 
+     *
      * @return a deployment
      */
     @Deployment(name = DEPLOYMENT_WITH_VALID_KEY)
@@ -68,7 +68,7 @@ public class PublicKeyPropertyTestCase {
 
     /**
      * A deployment with invalid key. The verification fails when this key is used.
-     * 
+     *
      * @return a deployment
      */
     @Deployment(name = DEPLOYMENT_WITH_INVALID_KEY)

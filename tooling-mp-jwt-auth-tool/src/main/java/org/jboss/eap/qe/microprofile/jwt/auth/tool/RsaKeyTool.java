@@ -2,6 +2,9 @@ package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,9 +22,6 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-
 /**
  * Utility class for this test suite to return a RSA key in various formats (such as JWK, PEM, etc).
  * <p>
@@ -31,7 +31,7 @@ import jakarta.json.JsonObject;
  * <p>
  *
  * @author Daniel Pfeifer
- * 
+ *
  * @deprecated This class is expected to be replaced by {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.AbstractKeyLoader};
  *             Please consider switching to {@link org.jboss.eap.qe.microprofile.jwt.auth.tool.AbstractKeyLoader} when modifying
  *             users

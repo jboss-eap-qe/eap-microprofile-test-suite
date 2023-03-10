@@ -1,12 +1,12 @@
 package org.jboss.eap.qe.microprofile.jwt.auth.tool;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * JWT claims as described in specification. See https://github.com/eclipse/microprofile-jwt-auth/releases

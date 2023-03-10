@@ -116,9 +116,9 @@ public class MultipleFaultToleranceModuleEarTest {
                 ArquillianDescriptorWrapper.getArquillianDescriptor());
         get("http://" + arqProperties.getDefaultManagementAddress() + ":" + arqProperties.getDefaultManagementPort()
                 + "/metrics").then()
-                        .assertThat()
-                        .body(containsString(
-                                "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 2.0"));
+                .assertThat()
+                .body(containsString(
+                        "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 2.0"));
     }
 
     @AfterClass

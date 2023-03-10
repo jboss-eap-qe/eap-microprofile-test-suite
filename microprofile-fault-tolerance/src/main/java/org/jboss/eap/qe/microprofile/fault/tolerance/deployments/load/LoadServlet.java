@@ -1,13 +1,13 @@
 package org.jboss.eap.qe.microprofile.fault.tolerance.deployments.load;
 
-import java.io.IOException;
-
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 /**
  * Servlet calling {@link LoadService} with MP FT annotation to verify their correct work under high CPU load

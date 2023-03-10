@@ -1,5 +1,7 @@
 package org.jboss.eap.qe.microprofile.metrics.hello;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.Random;
 
 import org.eclipse.microprofile.metrics.MetricUnits;
@@ -7,8 +9,6 @@ import org.eclipse.microprofile.metrics.annotation.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Timed;
-
-import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class HelloService {

@@ -1,8 +1,5 @@
 package org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs;
 
-import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
-import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
-
 import jakarta.annotation.security.DeclareRoles;
 import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -10,6 +7,9 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
+import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 
 /**
  * A servlet which uses RBAC to control who can execute its methods

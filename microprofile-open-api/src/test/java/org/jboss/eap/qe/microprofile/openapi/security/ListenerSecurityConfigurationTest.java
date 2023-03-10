@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.not;
 
+import jakarta.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -50,8 +52,6 @@ import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.Batch;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
-
-import jakarta.ws.rs.core.MediaType;
 
 /**
  * Test cases for security scenarios involving HTTP/HTTPS listeners

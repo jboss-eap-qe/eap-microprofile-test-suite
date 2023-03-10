@@ -15,7 +15,7 @@ import org.jose4j.jwt.consumer.JwtContext;
 
 /**
  * Utility wrapper for the jose4j library for creating and reading JWS (JWT Signed Tokens)
- * 
+ *
  * @author tborgato
  */
 public class JwsHelper {
