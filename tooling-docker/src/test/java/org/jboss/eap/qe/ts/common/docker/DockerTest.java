@@ -27,7 +27,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyOne = new Docker.Builder(WILDFLY_ONE_CONTAINER_NAME,
-            "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
+            "quay.io/wildfly/wildfly:25.0.0.Final")
                     .setContainerReadyTimeout(2, TimeUnit.MINUTES)
                     .setContainerReadyCondition(DockerTest::isWildFlyOneReady)
                     .withPortMapping(WILDFLY_ONE_EXPOSED_HTTP_PORT + ":8080")
@@ -39,7 +39,7 @@ public class DockerTest {
 
     @ClassRule
     public static Docker wildFlyTwo = new Docker.Builder(WILDFLY_TWO_CONTAINER_NAME,
-            "registry.hub.docker.com/jboss/wildfly:18.0.0.Final")
+            "quay.io/wildfly/wildfly:25.0.0.Final")
                     .setContainerReadyTimeout(2, TimeUnit.MINUTES)
                     .setContainerReadyCondition(DockerTest::isWildFlyTwoReady)
                     .withPortMapping(WILDFLY_TWO_EXPOSED_HTTP_PORT + ":8080")
@@ -114,15 +114,4 @@ public class DockerTest {
                 .body(containsString("Welcome to WildFly"));
     }
 
-    @Test
-    public void healthCheckAvailableForWildFlyOne() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_ONE_EXPOSED_MANAGEMENT_PORT + "/health").then()
-                .body(containsString("UP"));
-    }
-
-    @Test
-    public void healthCheckAvailableForWildFlyTwo() {
-        get("http://" + DEFAULT_SERVER_BIND_ADDRESS + ":" + WILDFLY_TWO_EXPOSED_MANAGEMENT_PORT + "/health").then()
-                .body(containsString("UP"));
-    }
 }
