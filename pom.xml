@@ -22,11 +22,9 @@
         <module>tooling-server-configuration</module>
         <module>microprofile-config</module>
         <module>microprofile-health</module>
-        <module>microprofile-metrics</module>
         <module>microprofile-fault-tolerance</module>
         <module>microprofile-jwt</module>
         <module>microprofile-open-api</module>
-        <module>microprofile-opentracing</module>
     </modules>
 
     <properties>
@@ -68,7 +66,6 @@
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.4</version.org.jboss.shrinkwrap.resolver>
         <version.org.postgresql>42.2.8</version.org.postgresql>
-        <version.io.opentracing.api>0.31.0</version.io.opentracing.api>
         <version.io.jaegertracing.jaeger-client>1.0.0</version.io.jaegertracing.jaeger-client>
         <container.qualifier.manual.mode>jboss-manual</container.qualifier.manual.mode>
         <container.base.dir.manual.mode>${project.build.directory}${file.separator}${container.qualifier.manual.mode}</container.base.dir.manual.mode>
@@ -99,11 +96,6 @@
                 <groupId>io.jaegertracing</groupId>
                 <artifactId>jaeger-client</artifactId>
                 <version>${version.io.jaegertracing.jaeger-client}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.opentracing</groupId>
-                <artifactId>opentracing-api</artifactId>
-                <version>${version.io.opentracing.api}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

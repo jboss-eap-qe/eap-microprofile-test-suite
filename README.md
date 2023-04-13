@@ -15,9 +15,7 @@ Currently, the following MicroProfile specs are supported:
 * [MicroProfile JWT RBAC](https://github.com/eclipse/microprofile-jwt-auth)
 * [MicroProfile Health](https://github.com/eclipse/microprofile-health)
 * [MicroProfile Fault Tolerance](https://github.com/eclipse/microprofile-fault-tolerance)
-* [MicroProfile Metrics](https://github.com/eclipse/microprofile-metrics)
 * [MicroProfile OpenAPI](https://github.com/eclipse/microprofile-open-api)
-* [MicroProfile OpenTracing](https://github.com/eclipse/microprofile-opentracing)
 
 ## Requirements for the testsuite
 - JDK 11
