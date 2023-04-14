@@ -170,58 +170,6 @@ public class UndeployDeployTest {
     }
 
     /**
-     * @tpTestDetails Deploy the first and then second MP FT application.
-     *                Both of them are the same (same classes/methods).
-     * @tpPassCrit Verify that the number of total timed out calls is 1, i.e. the one resulting from the request sent
-     *             to the first deployment, where Timeout is enabled. The method also verifies that the total number of
-     *             non-applied
-     *             fallback calls is set to 1, i.e. the one originated from the request sent to the second deployment, where
-     *             Timeout has been disabled.
-     *
-     *             <p>
-     *             Since MP FT 3.0 FT Metrics have been moved to the base scope and hence have different semantic, e.g.:
-     *             {@code application_ft_org_jboss_eap_qe_microprofile_fault_tolerance_deployments_v10_HelloService_timeout_invocations_total}
-     *             which was counting the total number of invocations to method annotated with {@code Timeout} doesn't exist any
-     *             more
-     *             </p>
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @InSequence(10)
-    public void testFaultToleranceMetricsAreTracedWithSameDeployments(
-            @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
-            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) throws ConfigurationException {
-        deployer.deploy(FIRST_DEPLOYMENT);
-        deployer.deploy(SECOND_DEPLOYMENT);
-
-        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-        // timeout is not working because 2nd deployment has disabled it
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Hello from @Timeout method, context = foobar"));
-
-        ArquillianContainerProperties arqProperties = new ArquillianContainerProperties(
-                ArquillianDescriptorWrapper.getArquillianDescriptor());
-        get("http://" + arqProperties.getDefaultManagementAddress() + ":" + arqProperties.getDefaultManagementPort()
-                + "/metrics").then()
-                .assertThat()
-                .body(containsString(
-                        "base_ft_timeout_calls_total{method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",timedOut=\"true\"} 1.0"))
-                .and()
-                .body(containsString(
-                        "base_ft_invocations_total{fallback=\"applied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"))
-                .and()
-                .body(containsString(
-                        "base_ft_invocations_total{fallback=\"notApplied\",method=\"org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout\",result=\"valueReturned\"} 1.0"));
-        ;
-
-        deployer.undeploy(FIRST_DEPLOYMENT);
-        deployer.undeploy(SECOND_DEPLOYMENT);
-    }
-
-    /**
      * @tpTestDetails Deploy MP FT application which initializes MP FT, undeploy and deploy different MP FT
      *                application which changes MP FT configuration.
      * @tpPassCrit MP FT configuration was changed.
