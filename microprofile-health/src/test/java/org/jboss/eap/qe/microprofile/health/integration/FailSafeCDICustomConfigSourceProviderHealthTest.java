@@ -25,8 +25,7 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class, MicroProfileFTSetupTask.class,
-        FailSafeCDICustomConfigSourceProviderHealthTest.SetupTask.class })
+@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class, FailSafeCDICustomConfigSourceProviderHealthTest.SetupTask.class })
 public class FailSafeCDICustomConfigSourceProviderHealthTest extends FailSafeCDIHealthDynamicBaseTest {
     private static final String PROPERTY_FILENAME = "health.properties";
     Path propertyFile = Paths.get(

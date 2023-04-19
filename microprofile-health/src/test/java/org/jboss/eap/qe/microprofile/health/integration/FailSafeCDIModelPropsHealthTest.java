@@ -17,8 +17,7 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class, MicroProfileFTSetupTask.class,
-        FailSafeCDIModelPropsHealthTest.SetupTask.class })
+@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class, FailSafeCDIModelPropsHealthTest.SetupTask.class })
 public class FailSafeCDIModelPropsHealthTest extends FailSafeCDIHealthBaseTest {
 
     @Override
