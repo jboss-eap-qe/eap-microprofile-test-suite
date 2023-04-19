@@ -123,20 +123,22 @@ public class FailSafeCDIConfigFileHealthTest {
                         "checks", hasSize(2),
                         "checks", containsInAnyOrder(liveCheck, readyCheck));
 
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1, true)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
-                .validateRetryCallsTotalMaxRetriesReached(1);
-
-        // same request have been validated above, now we need to increase metrics
-        get(HealthUrlProvider.healthEndpoint()).then().statusCode(503);
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2, true)
-                .validateRetryCallsTotalMaxRetriesReached(2)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
+        //  TODO - Resume for XP 5/Micrometer?
+        //
+        //        MetricsChecker.get(metricsRequest)
+        //                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
+        //                .validateInvocationsTotal(1, true)
+        //                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES) // N retries
+        //                .validateRetryCallsTotalMaxRetriesReached(1);
+        //
+        //        // same request have been validated above, now we need to increase metrics
+        //        get(HealthUrlProvider.healthEndpoint()).then().statusCode(503);
+        //
+        //        MetricsChecker.get(metricsRequest)
+        //                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
+        //                .validateInvocationsTotal(2, true)
+        //                .validateRetryCallsTotalMaxRetriesReached(2)
+        //                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 
     /**
@@ -173,17 +175,19 @@ public class FailSafeCDIConfigFileHealthTest {
                         "checks.status", hasItems("DOWN"),
                         "checks.name", containsInAnyOrder("dummyReadiness"));
 
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
-                .validateInvocationsTotal(1, true)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
-
-        // same request have been validated above, now we need to increase metrics
-        get(HealthUrlProvider.readyEndpoint()).then().statusCode(503);
-
-        MetricsChecker.get(metricsRequest)
-                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
-                .validateInvocationsTotal(2, true)
-                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
+        //  TODO - Resume for XP 5/Micrometer?
+        //
+        //        MetricsChecker.get(metricsRequest)
+        //                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES + 1) // 1 call + N retries
+        //                .validateInvocationsTotal(1, true)
+        //                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES); // N retries
+        //
+        //        // same request have been validated above, now we need to increase metrics
+        //        get(HealthUrlProvider.readyEndpoint()).then().statusCode(503);
+        //
+        //        MetricsChecker.get(metricsRequest)
+        //                .validateSimulationCounter(FailSafeDummyService.MAX_RETRIES * 2 + 2) // 2 calls + 2N retries
+        //                .validateInvocationsTotal(2, true)
+        //                .validateRetryRetriesTotal(FailSafeDummyService.MAX_RETRIES * 2); // 2N retries
     }
 }
