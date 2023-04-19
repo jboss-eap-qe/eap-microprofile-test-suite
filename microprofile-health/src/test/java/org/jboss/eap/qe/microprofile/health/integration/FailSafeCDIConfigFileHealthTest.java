@@ -57,7 +57,7 @@ import io.restassured.specification.RequestSpecification;
  */
 @RunWith(Arquillian.class)
 @RunAsClient
-@ServerSetup({ MicroProfileFTSetupTask.class, DisableDefaultHealthProceduresSetupTask.class })
+@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class })
 public class FailSafeCDIConfigFileHealthTest {
 
     private static final String MPConfigContent = String.format("%s=%s\n%s=%s\n%s=%s\n%s=%s",
