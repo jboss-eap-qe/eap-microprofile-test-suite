@@ -24,6 +24,7 @@
         <module>microprofile-health</module>
         <module>microprofile-fault-tolerance</module>
         <module>microprofile-jwt</module>
+        <module>microprofile-lra</module>
         <module>microprofile-open-api</module>
     </modules>
 
@@ -48,8 +49,9 @@
         <version.jakarta.servlet.jakarta.servlet-api>5.0.0</version.jakarta.servlet.jakarta.servlet-api>
         <version.junit>4.13.1</version.junit>
         <version.org.eclipse.microprofile>5.0</version.org.eclipse.microprofile>
+        <version.org.eclipse.microprofile.lra>2.0</version.org.eclipse.microprofile.lra>
         <version.org.jboss.arquillian>1.7.0.Alpha12</version.org.jboss.arquillian>
-        <version.org.jboss.wildfly.dist>27.0.0.Alpha4</version.org.jboss.wildfly.dist>
+        <version.org.jboss.wildfly.dist>30.0.1.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
@@ -90,6 +92,12 @@
                 <artifactId>microprofile</artifactId>
                 <version>${version.org.eclipse.microprofile}</version>
                 <type>pom</type>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.microprofile.lra</groupId>
+                <artifactId>microprofile-lra-api</artifactId>
+                <version>${version.org.eclipse.microprofile.lra}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
