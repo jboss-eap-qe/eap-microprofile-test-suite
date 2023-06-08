@@ -15,7 +15,8 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.opentracing.MicroProfileOpenTracingServerHelper;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.opentracing.DefaultJaegerTracerServerSetup;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 import org.jboss.eap.qe.ts.common.docker.DockerContainers;
 import org.jboss.shrinkwrap.api.Archive;
@@ -23,7 +24,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +37,7 @@ import io.opentracing.Tracer;
 import io.restassured.RestAssured;
 
 @RunWith(Arquillian.class)
+@ServerSetup(DefaultJaegerTracerServerSetup.class)
 public class MicroProfileOpenTracing10Test {
 
     private static final String APPLICATION_NAME = MicroProfileOpenTracing10Test.class.getSimpleName();
@@ -46,11 +47,6 @@ public class MicroProfileOpenTracing10Test {
 
     @ArquillianResource
     private URL baseApplicationUrl;
-
-    @BeforeClass
-    public static void reloadServer() throws Exception {
-        MicroProfileOpenTracingServerHelper.reload();
-    }
 
     @Deployment
     public static Archive<?> deployment() {
