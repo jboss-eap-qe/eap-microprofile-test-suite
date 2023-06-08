@@ -6,7 +6,7 @@
         <container qualifier="jboss" default="true" >
             <configuration>
                 <property name="jbossHome">${basedir}/target/jboss-as</property>
-                <property name="javaVmArguments">-server -Xms64m -Xmx512m</property>
+                <property name="javaVmArguments">-server -Xms64m -Xmx512m ${server.jvm.args}</property>
                 <property name="serverConfig">${jboss.configuration.file:standalone-microprofile.xml}</property>
                 <property name="managementAddress">127.0.0.1</property>
                 <property name="managementPort">9990</property>
@@ -19,7 +19,7 @@
         <container qualifier="jboss-manual" mode="manual">
             <configuration>
                 <property name="jbossHome">${basedir}/target/jboss-as</property>
-                <property name="javaVmArguments">-server -Xms64m -Xmx256m -Djboss.socket.binding.port-offset=10000 -Djboss.server.base.dir=${container.base.dir.manual.mode}</property>
+                <property name="javaVmArguments">-server -Xms64m -Xmx256m -Djboss.socket.binding.port-offset=10000 -Djboss.server.base.dir=${container.base.dir.manual.mode} ${server.jvm.args}</property>
                 <property name="serverConfig">${jboss.configuration.file:standalone-microprofile.xml}</property>
                 <property name="managementAddress">127.0.0.1</property>
                 <property name="managementPort">19990</property>
