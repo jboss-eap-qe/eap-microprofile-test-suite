@@ -3,6 +3,7 @@ package org.jboss.eap.qe.microprofile.opentracing;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
+import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 /**
  * Configures a default jaeger tracer.
@@ -13,9 +14,11 @@ public class DefaultJaegerTracerServerSetup implements MicroProfileServerSetupTa
     @Override
     public void setup() throws Exception {
         try (final OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
-            client.execute("/subsystem=microprofile-opentracing-smallrye/jaeger-tracer=default:add(sender-endpoint=http://localhost:14268/api/traces)");
+            client.execute(
+                    "/subsystem=microprofile-opentracing-smallrye/jaeger-tracer=default:add(sender-endpoint=http://localhost:14268/api/traces)");
             client.execute("/subsystem=microprofile-opentracing-smallrye:write-attribute(name=default-tracer,value=default)");
-            client.execute(":reload");
+            Administration admin = new Administration(client);
+            admin.reload();
         }
     }
 
