@@ -48,19 +48,19 @@
         <version.io.rest-assured>5.0.1</version.io.rest-assured>
         <version.jakarta.servlet.jakarta.servlet-api>5.0.0</version.jakarta.servlet.jakarta.servlet-api>
         <version.junit>4.13.1</version.junit>
-        <version.org.eclipse.microprofile>5.0</version.org.eclipse.microprofile>
+        <version.org.eclipse.microprofile>6.1</version.org.eclipse.microprofile>
         <version.org.eclipse.microprofile.lra>2.0</version.org.eclipse.microprofile.lra>
         <version.org.jboss.arquillian>1.7.0.Alpha12</version.org.jboss.arquillian>
-        <version.org.jboss.wildfly.dist>30.0.1.Final</version.org.jboss.wildfly.dist>
+        <version.org.jboss.wildfly.dist>31.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
         <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
-        <version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>2.0</version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>
+        <version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>2.1</version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
-        <version.org.wildfly.core>19.0.0.Beta15</version.org.wildfly.core>
-        <version.org.wildfly.extras.creaper>1.6.1</version.org.wildfly.extras.creaper>
+        <version.org.wildfly.core>23.0.1.Final</version.org.wildfly.core>
+        <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.33</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
@@ -76,9 +76,9 @@
         <galleon.log.time>true</galleon.log.time>
         <testsuite.galleon.pack.groupId>org.wildfly</testsuite.galleon.pack.groupId>
         <testsuite.galleon.pack.artifactId>wildfly-galleon-pack</testsuite.galleon.pack.artifactId>
-        <testsuite.galleon.pack.version>24.0.0.Final</testsuite.galleon.pack.version>
+        <testsuite.galleon.pack.version>31.0.0.Final</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
-        <version.org.wildfly.jar.plugin>9.0.0.Final</version.org.wildfly.jar.plugin>
+        <version.org.wildfly.jar.plugin>11.0.0.Beta1</version.org.wildfly.jar.plugin>
         <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
         <!-- Modular JDK JPMS options -->
         <server.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</server.jvm.jpms.args>

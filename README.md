@@ -5,7 +5,7 @@ A small standalone test suite for MicroProfile on WildFly/EAP.
 ## Supported MicroProfile version
 
 Tests have been executed against WildFly and EAP XP versions supporting 
-[MicroProfile 5.0 specs](https://projects.eclipse.org/projects/technology.microprofile/releases/5.0) 
+[MicroProfile 6.1 specs](https://microprofile.io/compatible/6-1/#overview) 
 
 ## Supported MicroProfile specs
 
