@@ -9,7 +9,6 @@ import java.io.IOException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
-import org.eclipse.microprofile.metrics.annotation.Counted;
 
 @ApplicationScoped
 public class FailSafeDummyService {
@@ -55,7 +54,6 @@ public class FailSafeDummyService {
         return readyInMaintenance.get();
     }
 
-    @Counted(name = "simulation-count", absolute = true, displayName = "Simulation Count", description = "Number of simulateOpeningResources invocations")
     public void simulateOpeningResources() throws IOException {
         if (inMaintenance.get()) {
             throw new IOException("In Maintenance");
