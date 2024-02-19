@@ -80,6 +80,13 @@
         <!-- Bootable JAR -->
         <version.org.wildfly.jar.plugin>11.0.0.Beta1</version.org.wildfly.jar.plugin>
         <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
+
+        <!-- XP Channel manifest GAV -->
+        <channel-manifest.groupId>org.jboss.eap.channels</channel-manifest.groupId>
+        <channel-manifest.artifactId>eap-xp-5.0</channel-manifest.artifactId>
+        <!-- Leave this property empty since it activates the use of the XP channel in bootable jar builds -->
+        <channel-manifest.version></channel-manifest.version>
+
         <!-- Modular JDK JPMS options -->
         <server.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</server.jvm.jpms.args>
         <client.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</client.jvm.jpms.args>
