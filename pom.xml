@@ -640,5 +640,38 @@
                 </dependency>
             </dependencies>            
         </profile>
+        <!-- -->
+
+        <!-- Test against Bootable JAR using Channels -->
+        <profile>
+            <id>bootablejar.profile.channels</id>
+            <activation>
+                <property>
+                    <name>channel-manifest.version</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Bootable JAR Maven plugin -->
+                        <plugin>
+                            <groupId>org.wildfly.plugins</groupId>
+                            <artifactId>wildfly-jar-maven-plugin</artifactId>
+                            <configuration>
+                                <channels>
+                                    <channel>
+                                        <manifest>
+                                            <groupId>${channel-manifest.groupId}</groupId>
+                                            <artifactId>${channel-manifest.artifactId}</artifactId>
+                                            <version>${channel-manifest.version}</version>
+                                        </manifest>
+                                    </channel>
+                                </channels>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
 </project>
