@@ -52,6 +52,16 @@ or
 ./mvnw clean verify
 ```
 
+### Bootable Jar
+You might want to use profile `bootablejar.profile` (activation property `ts.bootable`) to test with bootable jar.
+In case you need to provide a channel manifest for testing with bootable jar, use properties `channel-manifest.*`, e.g.:
+```asciidoc
+-Dchannel-manifest.groupId=org.jboss.eap.channels 
+-Dchannel-manifest.artifactId=eap-8.0-plus-eap-xp-5.0 
+-Dchannel-manifest.version=1.0.1.GA-redhat-20240304
+```
+which implicitly activate profile `bootablejar.profile.channels`;
+
 ## Export testing deployments
 Test deployments can be 
 [exported by Arquillian](https://arquillian.org/guides/getting_started_rinse_and_repeat/#export_the_deployment):  
