@@ -80,6 +80,7 @@
         <!-- Bootable JAR -->
         <version.org.wildfly.jar.plugin>11.0.0.Beta1</version.org.wildfly.jar.plugin>
         <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
+        <version.org.eclipse.parsson>1.1.5</version.org.eclipse.parsson>
 
         <!-- XP Channel manifest GAV -->
         <channel-manifest.groupId>org.jboss.eap.channels</channel-manifest.groupId>
@@ -211,6 +212,12 @@
                 <groupId>org.glassfish</groupId>
                 <artifactId>jakarta.json</artifactId>
                 <version>${version.org.glassfish.jakarta.json}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.parsson</groupId>
+                <artifactId>parsson</artifactId>
+                <version>${version.org.eclipse.parsson}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
