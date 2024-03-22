@@ -68,6 +68,18 @@ public class KeycloakConfigurator extends ExternalResource {
                 .post(this.baseApiUrl + "/admin/realms")
                 .then()
                 .statusCode(201);
+
+        // From Keycloak 24 on, VerifyProfile action is enabled by default for new users in the realm, and it may require users
+        // to update profile on the first login, which we don't need for tests.
+        // https://www.keycloak.org/docs/latest/upgrading/index.html#verify-profile-required-action-enabled-by-default
+        // Let's disable (by simply deleting it) it as upstream is disabling it in tests too
+        // https://github.com/keycloak/keycloak/pull/26561/files#diff-dbb790e97fd89883d9bb2731bfeadf8276d937fda21a474d2df08bddfd39c654R518-R529
+        given().header("Authorization", "Bearer " + this.rawAdminToken)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .delete(this.baseApiUrl + "/admin/realms/" + realmName + "/authentication/required-actions/VERIFY_PROFILE")
+                .then()
+                .statusCode(204);
     }
 
     private void createClientOnKeycloak(final String realmName, final String clientId) {
