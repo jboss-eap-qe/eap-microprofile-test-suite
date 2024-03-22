@@ -98,7 +98,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
         final String username = "qux";
         final String password = "foo";
         keycloakConfigurator.addUser(username, password);
-        final String rawToken = keycloakConfigurator.getRawJwtFromKeyCloak(username, password);
+        final String rawToken = keycloakConfigurator.getRawJwtFromKeyCloakForTestUser(username, password);
 
         given().header("Authorization", "Bearer " + rawToken)
                 .when().get(url.toExternalForm() + Endpoints.SECURED_ENDPOINT)

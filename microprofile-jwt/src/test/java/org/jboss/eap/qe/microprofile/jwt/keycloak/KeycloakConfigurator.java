@@ -13,6 +13,8 @@ import java.net.URL;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Roles;
 import org.junit.rules.ExternalResource;
 
+import io.restassured.response.Response;
+
 /**
  * Keycloak configurator specifically for JWT purposes. It configures a realm, a client and then allows adding users and
  * generating JWTs for them.
@@ -46,14 +48,7 @@ public class KeycloakConfigurator extends ExternalResource {
     }
 
     private String authorizeAndObtainRawJwtForAdminInterface(final String username, final String password) {
-        final String jsonResponse = given().header("Content-Type", "application/x-www-form-urlencoded")
-                .param("username", username)
-                .param("password", password)
-                .param("grant_type", "password")
-                .param("client_id", "admin-cli")
-                .post(this.baseApiUrl.toExternalForm() + "/realms/master/protocol/openid-connect/token")
-                .body().asString();
-        return extractRawTokenFromJson(jsonResponse);
+        return getRawJwtFromKeyCloak(username, password, "master", "admin-cli");
     }
 
     private void createRealmOnKeycloak(final String realmName) {
@@ -153,22 +148,30 @@ public class KeycloakConfigurator extends ExternalResource {
      * @param password a matching password
      * @return a raw JWT
      */
-    public String getRawJwtFromKeyCloak(final String username, final String password) {
-        return extractRawTokenFromJson(given().header("Content-Type", "application/x-www-form-urlencoded")
+    public String getRawJwtFromKeyCloakForTestUser(final String username, final String password) {
+        return getRawJwtFromKeyCloak(username, password, this.realmName, this.clientId);
+    }
+
+    private String getRawJwtFromKeyCloak(final String username, final String password, final String realmName,
+            final String clientId) {
+        Response post = given()
+                .header("Content-Type", "application/x-www-form-urlencoded")
                 .param("grant_type", "password")
                 .param("username", username)
                 .param("password", password)
-                .param("client_id", this.clientId)
-                .post(this.baseApiUrl.toExternalForm() + "/realms/" + this.realmName + "/protocol/openid-connect/token")
-                .body()
-                .asString());
+                .param("client_id", clientId)
+                .post(this.baseApiUrl.toExternalForm() + "/realms/" + realmName + "/protocol/openid-connect/token");
+
+        post.then().statusCode(200);
+
+        return extractRawTokenFromJson(post.body().asString());
     }
 
     private String extractRawTokenFromJson(String jsonResponse) {
-        final JsonReader reader = Json.createReader(new StringReader(jsonResponse));
-        final JsonObject jsonTokenObject = reader.readObject();
-        reader.close();
-        return jsonTokenObject.getString("access_token");
+        try (JsonReader reader = Json.createReader(new StringReader(jsonResponse))) {
+            JsonObject jsonTokenObject = reader.readObject();
+            return jsonTokenObject.getString("access_token");
+        }
     }
 
     public KeycloakConfigurator(Builder builder) {
