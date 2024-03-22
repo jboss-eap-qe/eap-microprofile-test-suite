@@ -57,6 +57,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
             .withPortMapping(KEYCLOAK_EXPOSED_HTTP_PORT + ":8080")
             .withEnvVar("KEYCLOAK_ADMIN", KEYCLOAK_ADMIN_USERNAME)
             .withEnvVar("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
+            .withEnvVar("KC_HEALTH_ENABLED", "true")
             .withCmdArg("start-dev")
             .withCmdArg("--log-level=DEBUG")
             .build();
@@ -110,7 +111,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
 
     private static boolean isContainerReady(int port) {
         try {
-            URL url = new URL("http://" + KEYCLOAK_INSTANCE_HOSTNAME + ":" + port + "/admin");
+            URL url = new URL("http://" + KEYCLOAK_INSTANCE_HOSTNAME + ":" + port + "/health/ready");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
