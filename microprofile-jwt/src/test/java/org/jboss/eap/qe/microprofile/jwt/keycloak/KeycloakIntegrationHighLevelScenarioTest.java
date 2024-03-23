@@ -115,7 +115,12 @@ public class KeycloakIntegrationHighLevelScenarioTest {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
-            return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
+            boolean ready = connection.getResponseCode() == HttpURLConnection.HTTP_OK;
+            if (ready) {
+                System.out.println("Let's wait addional 10 seconds before the post-start tasks (like creation of admin user) on container are done.");
+                Thread.sleep(10000L);
+            }
+            return ready;
         } catch (Exception ex) {
             return false;
         }

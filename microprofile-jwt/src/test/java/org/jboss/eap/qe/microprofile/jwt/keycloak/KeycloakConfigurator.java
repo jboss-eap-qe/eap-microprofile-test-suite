@@ -34,7 +34,7 @@ public class KeycloakConfigurator extends ExternalResource {
     private String rawAdminToken;
 
     @Override
-    public void before() {
+    public void before() throws InterruptedException {
         rawAdminToken = authorizeAndObtainRawJwtForAdminInterface(adminUsername, adminPassword);
         createRealmOnKeycloak(this.realmName);
         createClientOnKeycloak(this.realmName, this.clientId);
