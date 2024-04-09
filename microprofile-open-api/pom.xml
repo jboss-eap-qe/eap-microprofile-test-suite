@@ -109,6 +109,13 @@
                                         <layer>cloud-server</layer>
                                         <layer>undertow-https</layer>
                                         <layer>microprofile-openapi</layer>
+                                        <!--
+                                            We're testing integration with MP REST Client too, and the layer must be
+                                            added explicitly, see https://issues.redhat.com/browse/JBEAP-26776
+                                            ... at least for XP 5, we'll see whether this will be applied to WildFly as
+                                            well
+                                        -->
+                                        <layer>microprofile-rest-client</layer>
                                     </layers>
                                 </configuration>
                             </execution>
