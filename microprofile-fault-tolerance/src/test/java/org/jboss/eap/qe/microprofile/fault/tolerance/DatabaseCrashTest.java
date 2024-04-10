@@ -92,7 +92,7 @@ public class DatabaseCrashTest {
         // create data dir for postgres database
         postgresDataDir = Files.createTempDir();
         // https://github.com/sclorg/postgresql-container/tree/generated/13
-        postgresDB = new Docker.Builder("postgres", "quay.io/centos7/postgresql-13-centos7")
+        postgresDB = new Docker.Builder("postgres", "quay.io/centos7/postgresql-13-centos7:centos7")
                 .setContainerReadyCondition(() -> {
                     // checking port 5432 is not an option as PostgreSQL opens it before it's ready when started for the 1st time
                     // thus try to create JDBC connection directly
