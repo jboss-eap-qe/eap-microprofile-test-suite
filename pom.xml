@@ -26,6 +26,7 @@
         <module>microprofile-jwt</module>
         <module>microprofile-lra</module>
         <module>microprofile-open-api</module>
+        <module>micrometer</module>
     </modules>
 
     <properties>
@@ -50,6 +51,7 @@
         <version.junit>4.13.1</version.junit>
         <version.org.eclipse.microprofile>6.1</version.org.eclipse.microprofile>
         <version.org.eclipse.microprofile.lra>2.0</version.org.eclipse.microprofile.lra>
+        <version.io.micrometer>1.12.4</version.io.micrometer>
         <version.org.jboss.arquillian>1.7.0.Alpha12</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>31.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.0.Alpha5</version.org.wildfly.arquillian>
@@ -107,6 +109,11 @@
                 <artifactId>microprofile-lra-api</artifactId>
                 <version>${version.org.eclipse.microprofile.lra}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-core</artifactId>
+                <version>${version.io.micrometer}</version>
             </dependency>
             <dependency>
                 <groupId>io.jaegertracing</groupId>
