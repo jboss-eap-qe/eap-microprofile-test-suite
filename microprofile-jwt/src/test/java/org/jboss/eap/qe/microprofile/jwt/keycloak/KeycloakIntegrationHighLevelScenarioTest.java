@@ -117,7 +117,8 @@ public class KeycloakIntegrationHighLevelScenarioTest {
 
             boolean ready = connection.getResponseCode() == HttpURLConnection.HTTP_OK;
             if (ready) {
-                System.out.println("Let's wait addional 10 seconds before the post-start tasks (like creation of admin user) on container are done.");
+                System.out.println(
+                        "Let's wait addional 10 seconds before the post-start tasks (like creation of admin user) on container are done.");
                 Thread.sleep(10000L);
             }
             return ready;
