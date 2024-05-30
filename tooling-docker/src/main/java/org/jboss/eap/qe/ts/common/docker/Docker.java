@@ -28,6 +28,7 @@ public class Docker extends ExternalResource {
     private String uuid;
     private String name;
     private String image;
+    private List<String> volumeMounts = new ArrayList<>();
     private List<String> ports = new ArrayList<>();
     private Map<String, String> environmentVariables = new HashMap<>();
     private List<String> options = new ArrayList<>();
@@ -52,6 +53,11 @@ public class Docker extends ExternalResource {
         cmd.add("run");
         cmd.add("--name");
         cmd.add(uuid);
+
+        for (String volumeMount : volumeMounts) {
+            cmd.add("-v");
+            cmd.add(volumeMount);
+        }
 
         for (String port : ports) {
             cmd.add("-p");
@@ -120,7 +126,7 @@ public class Docker extends ExternalResource {
         }
     }
 
-    private void checkDockerPresent() throws Exception {
+    public static void checkDockerPresent() throws Exception {
         Process dockerInfoProcess = new ProcessBuilder()
                 .redirectErrorStream(true)
                 .command(new String[] { DOCKER_CMD, "info" })
@@ -129,6 +135,15 @@ public class Docker extends ExternalResource {
         if (dockerInfoProcess.exitValue() != 0) {
             throw new DockerException("Docker is either not present or not installed on this machine. It must be installed " +
                     "and started up for executing tests with docker container.");
+        }
+    }
+
+    public static boolean isDockerAvailable() {
+        try {
+            Docker.checkDockerPresent();
+            return true;
+        } catch (Exception ex) {
+            return false;
         }
     }
 
@@ -221,6 +236,7 @@ public class Docker extends ExternalResource {
         private String uuid;
         private String name;
         private String image;
+        private List<String> volumeMounts = new ArrayList<>();
         private List<String> ports = new ArrayList<>();
         private Map<String, String> environmentVariables = new HashMap<>();
         private List<String> options = new ArrayList<>();
@@ -244,6 +260,17 @@ public class Docker extends ExternalResource {
          */
         public Builder setContainerReadyTimeout(long timeout, TimeUnit unit) {
             this.containerReadyTimeoutInMillis = unit.toMillis(timeout);
+            return this;
+        }
+
+        /**
+         * Adds volume mount mapping exposed by docker container. for example "/home/user/dir:/etc/dir" maps
+         * /home/user/dir in the container to /etc/dir on the Docker host.
+         *
+         * @param volumeMount volume mount mapping as defined by docker command, for example "/home/user/dir:/etc/dir"
+         */
+        public Builder withVolumeMount(String volumeMount) {
+            this.volumeMounts.add(volumeMount);
             return this;
         }
 
@@ -311,6 +338,7 @@ public class Docker extends ExternalResource {
             docker.uuid = this.uuid;
             docker.name = this.name;
             docker.image = this.image;
+            docker.volumeMounts = this.volumeMounts;
             docker.ports = this.ports;
             docker.options = this.options;
             docker.environmentVariables = this.environmentVariables;
