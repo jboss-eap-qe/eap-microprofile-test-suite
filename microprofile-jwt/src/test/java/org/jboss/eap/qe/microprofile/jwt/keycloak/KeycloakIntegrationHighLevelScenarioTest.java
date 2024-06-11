@@ -51,7 +51,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
     private static final String KEYCLOAK_ADMIN_PASSWORD = "password";
 
     public static Docker keycloakContainer = new Docker.Builder(KEYCLOAK_CONTAINER_NAME,
-            "quay.io/keycloak/keycloak:latest")
+            "quay.io/keycloak/keycloak:24.0")
             .setContainerReadyTimeout(2, TimeUnit.MINUTES)
             .setContainerReadyCondition(() -> isContainerReady(KEYCLOAK_EXPOSED_HTTP_PORT))
             .withPortMapping(KEYCLOAK_EXPOSED_HTTP_PORT + ":8080")
