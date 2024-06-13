@@ -13,7 +13,7 @@ public class DockerContainers {
     } // avoid instantiation
 
     public static Docker jaeger() {
-        return new Docker.Builder("jaeger", "quay.io/jaegertracing/all-in-one:1.23")
+        return new Docker.Builder("jaeger", "quay.io/jaegertracing/all-in-one:latest")
                 .setContainerReadyCondition(() -> {
                     try {
                         new Socket("127.0.0.1", 16686).close();
@@ -28,11 +28,10 @@ public class DockerContainers {
                 .withPortMapping("6832:6832/udp")
                 .withPortMapping("5778:5778")
                 .withPortMapping("16686:16686")
-                .withPortMapping("14250:14250")
-                .withPortMapping("14267:14267")
                 .withPortMapping("14268:14268")
+                .withPortMapping("14250:14250")
                 .withPortMapping("9411:9411")
-                .withEnvVar("COLLECTOR_ZIPKIN_HTTP_PORT", "9411")
+                .withEnvVar("COLLECTOR_ZIPKIN_HTTP_PORT", ":9411")
                 .withCmdArg("--reporter.grpc.host-port=localhost:14250")
                 .build();
     }
