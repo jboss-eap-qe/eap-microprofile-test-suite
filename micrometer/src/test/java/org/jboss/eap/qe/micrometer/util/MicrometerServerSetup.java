@@ -8,15 +8,18 @@ import org.jboss.eap.qe.ts.common.docker.Docker;
  * Enables/Disables Micrometer extension/subsystem for Arquillian in-container tests
  */
 public class MicrometerServerSetup implements MicroProfileServerSetupTask {
-    private static boolean dockerAvailable = Docker.isDockerAvailable();
     private OpenTelemetryCollectorContainer otelCollector;
 
     @Override
     public void setup() throws Exception {
-        // if a docker service is available, start the OTel collector container
-        if (dockerAvailable) {
-            otelCollector = OpenTelemetryCollectorContainer.getInstance();
+        // if a docker service is not available, throw an exception
+        try {
+            Docker.checkDockerPresent();
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot verify Docker availability: " + e.getMessage());
         }
+        // start the OTel collector container
+        otelCollector = OpenTelemetryCollectorContainer.getInstance();
         // and pass Micrometer the OTel collector endopint URL
         MicrometerServerConfiguration.enableMicrometer(otelCollector.getOtlpHttpEndpoint());
     }
@@ -24,9 +27,7 @@ public class MicrometerServerSetup implements MicroProfileServerSetupTask {
     @Override
     public void tearDown() throws Exception {
         MicrometerServerConfiguration.disableMicrometer();
-        // if a docker service is available, stop the OTel collector container
-        if (dockerAvailable) {
-            otelCollector.stop();
-        }
+        // stop the OTel collector container
+        otelCollector.stop();
     }
 }

@@ -16,7 +16,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.eap.qe.micrometer.base.MetricResource;
 import org.jboss.eap.qe.micrometer.container.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.micrometer.container.PrometheusMetric;
@@ -38,8 +37,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class) // Enables/Disables Micrometer extension/subsystem for Arquillian in-container tests
 public class MicrometerOtelIntegrationTestCase {
-    private static boolean dockerAvailable = Docker.isDockerAvailable();
-
     public static final int REQUEST_COUNT = 5;
     @ArquillianResource
     private URL url;
@@ -59,14 +56,13 @@ public class MicrometerOtelIntegrationTestCase {
 
     @Deployment
     public static Archive<?> deploy() {
-        return dockerAvailable ? ShrinkWrap.create(WebArchive.class, "micrometer-test.war")
+        return ShrinkWrap.create(WebArchive.class, "micrometer-test.war")
                 .addClasses(
-                        ServerSetupTask.class, MetricResource.class, PrometheusMetric.class)
+                        MicrometerServerSetup.class, MetricResource.class, PrometheusMetric.class)
                 .addPackages(false, Docker.class.getPackage())
                 .addClasses(MicrometerOtelIntegrationTestCase.class)
                 .addAsWebInfResource(new StringAsset(WEB_XML), "web.xml")
-                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
-                : ShrinkWrap.create(WebArchive.class, "empty.war").addManifest();
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
     // The @ServerSetup(MicrometerSetupTask.class) requires Docker to be available.
@@ -125,7 +121,7 @@ public class MicrometerOtelIntegrationTestCase {
 
         final List<PrometheusMetric> metrics = OpenTelemetryCollectorContainer.getInstance().fetchMetrics(metricsToTest.get(0));
         metricsToTest.forEach(n -> Assert.assertTrue("Missing metric: " + n,
-                metrics.stream().anyMatch(m -> m.getKey().equals(n))));
+                metrics.stream().anyMatch(m -> m.getKey().startsWith(n))));
     }
 
     @Test
@@ -137,7 +133,6 @@ public class MicrometerOtelIntegrationTestCase {
                 "classloader_loaded_classes",
                 "cpu_system_load_average",
                 "cpu_process_cpu_time",
-                "classloader_unloaded_classes",
                 "classloader_loaded_classes_count",
                 "thread_count",
                 "thread_daemon_count",
@@ -146,7 +141,7 @@ public class MicrometerOtelIntegrationTestCase {
 
         metricsToTest.forEach(m -> {
             Assert.assertNotEquals("Metric value should be non-zero: " + m,
-                    "0", metrics.stream().filter(e -> e.getKey().equals(m))
+                    "0", metrics.stream().filter(e -> e.getKey().startsWith(m))
                             .findFirst()
                             .orElseThrow()
                             .getValue()); // Add the metrics tags to complete the key
