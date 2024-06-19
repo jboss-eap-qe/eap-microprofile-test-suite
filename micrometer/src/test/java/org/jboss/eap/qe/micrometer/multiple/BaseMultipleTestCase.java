@@ -1,3 +1,7 @@
+/*
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.jboss.eap.qe.micrometer.multiple;
 
 import jakarta.ws.rs.client.Client;
@@ -19,7 +23,7 @@ public abstract class BaseMultipleTestCase {
     protected static final String SERVICE_TWO = "service-two";
     protected static final int REQUEST_COUNT = 5;
 
-    // The @ServerSetup(MicrometerSetupTask.class) requires Docker to be available.
+    // The @ServerSetup(MicrometerServerSetup.class) requires Docker to be available.
     // Otherwise the org.wildfly.extension.micrometer.registry.NoOpRegistry is installed which will result in 0 counters,
     // and cause the test fail seemingly intermittently on machines with broken Docker setup.
     @BeforeClass
