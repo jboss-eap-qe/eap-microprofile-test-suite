@@ -34,6 +34,10 @@ import org.junit.runner.RunWith;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
+
+/**
+ * Tests that metrics can be pushed to the OpenTelemetry collector by Micrometer, and then exported to Jaeger.
+ */
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class) // Enables/Disables Micrometer extension/subsystem for Arquillian in-container tests
 public class MicrometerOtelIntegrationTestCase {
@@ -65,7 +69,7 @@ public class MicrometerOtelIntegrationTestCase {
                 .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
     }
 
-    // The @ServerSetup(MicrometerSetupTask.class) requires Docker to be available.
+    // The @ServerSetup(MicrometerServerSetup.class) requires Docker to be available.
     // Otherwise the org.wildfly.extension.micrometer.registry.NoOpRegistry is installed which will result in 0 counters,
     // and cause the test fail seemingly intermittently on machines with broken Docker setup.
     @BeforeClass
