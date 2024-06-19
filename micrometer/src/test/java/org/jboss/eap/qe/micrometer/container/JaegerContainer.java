@@ -31,7 +31,7 @@ public class JaegerContainer {
     private final Docker jaeger;
 
     private JaegerContainer() {
-        jaeger = new Docker.Builder("jaeger", "quay.io/jaegertracing/all-in-one:latest")
+        jaeger = new Docker.Builder("jaeger", "quay.io/jaegertracing/all-in-one:1.58")
                 .setContainerReadyCondition(() -> {
                     try {
                         new Socket("127.0.0.1", 16686).close();
