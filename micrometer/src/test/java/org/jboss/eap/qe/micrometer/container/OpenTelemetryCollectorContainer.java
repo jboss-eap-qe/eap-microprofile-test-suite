@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
 import org.jboss.eap.qe.micrometer.model.jaeger.JaegerTrace;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
+/**
+ * Inspired by the similar class in Wildfly, this is an implementation of an OTel collector which uses the TS Docker
+ * APIs, instead ogf the Testcontainers based tooling which is available in WildFly
+ */
 public class OpenTelemetryCollectorContainer {
     private static OpenTelemetryCollectorContainer INSTANCE = null;
     private static JaegerContainer jaegerContainer;

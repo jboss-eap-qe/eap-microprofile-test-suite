@@ -1,3 +1,7 @@
+/*
+ * Copyright The WildFly Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package org.jboss.eap.qe.micrometer.container;
 
 import jakarta.ws.rs.client.Client;
@@ -13,6 +17,9 @@ import org.jboss.eap.qe.micrometer.model.jaeger.JaegerResponse;
 import org.jboss.eap.qe.micrometer.model.jaeger.JaegerTrace;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
+/**
+ * Copied from org.wildfly.test.integration.observability.container
+ */
 public class JaegerContainer {
     private static JaegerContainer INSTANCE = null;
     public static final int DOCKER_CONTAINER_PORT_JAEGER_QUERY = 16686;
