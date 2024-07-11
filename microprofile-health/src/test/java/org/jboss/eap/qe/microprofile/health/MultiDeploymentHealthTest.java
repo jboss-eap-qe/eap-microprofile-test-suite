@@ -10,7 +10,6 @@ import static org.hamcrest.Matchers.not;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
@@ -27,7 +26,6 @@ import io.restassured.http.ContentType;
  * Multiple deployment scenario.
  */
 @RunWith(Arquillian.class)
-@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class })
 public class MultiDeploymentHealthTest {
 
     @Deployment(name = "deployment1", order = 1, testable = false)
