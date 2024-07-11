@@ -27,7 +27,6 @@ import io.restassured.http.ContentType;
  * Multiple deployment scenario.
  */
 @RunWith(Arquillian.class)
-@ServerSetup({ DisableDefaultHealthProceduresSetupTask.class })
 public class MultiDeploymentHealthTest {
 
     @Deployment(name = "deployment1", order = 1, testable = false)
