@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.containsString;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -36,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.common.io.Files;
-import com.sun.security.auth.module.UnixSystem;
 
 /**
  * Test MP Fault tolerance service with crashing database.
@@ -91,6 +92,13 @@ public class DatabaseCrashTest {
     public static void startDatabase() throws Exception {
         // create data dir for postgres database
         postgresDataDir = Files.createTempDir();
+        // This is needed to run on SELinux enabled RHEL 9 Docker hosts, which is where internal runs are executed,
+        // otherwise the following error will prevent the container from starting successfully:
+        //   mkdir: cannot create directory '/var/lib/pgsql/data/userdata': Permission denied
+        // Will keep working on RHEL 8 Docker hosts as well.
+        java.nio.file.Files.setPosixFilePermissions(Path.of(postgresDataDir.toURI()),
+                PosixFilePermissions.fromString("rwxrwxr-x"));
+
         // https://github.com/sclorg/postgresql-container/tree/generated/13
         postgresDB = new Docker.Builder("postgres", "quay.io/centos7/postgresql-13-centos7:centos7")
                 .setContainerReadyCondition(() -> {
@@ -113,8 +121,6 @@ public class DatabaseCrashTest {
                 .withEnvVar("POSTGRESQL_PASSWORD", POSTGRESQL_PASSWORD)
                 .withCmdOption("-v")
                 .withCmdOption(postgresDataDir.getAbsolutePath() + ":/var/lib/pgsql/data:Z")
-                .withCmdOption("-u")
-                .withCmdOption(String.valueOf(new UnixSystem().getUid()))
                 .build();
         postgresDB.start();
     }
