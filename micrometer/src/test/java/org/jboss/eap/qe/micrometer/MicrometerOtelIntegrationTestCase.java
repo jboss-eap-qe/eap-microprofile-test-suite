@@ -34,11 +34,10 @@ import org.junit.runner.RunWith;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
-
 /**
  * Tests that metrics can be pushed to the OpenTelemetry collector by Micrometer, and then exported to Jaeger.
  * This class is based on the similar one in WildFly, although it uses a different {@code @ServerSetup} task class,
- * i.e. {@link  MicrometerServerSetup}, which provides the logic for executing the required configuration
+ * i.e. {@link MicrometerServerSetup}, which provides the logic for executing the required configuration
  * (see {@link org.jboss.eap.qe.micrometer.util.MicrometerServerConfiguration}) within the Arquillian container.
  */
 @RunWith(Arquillian.class)
@@ -132,7 +131,6 @@ public class MicrometerOtelIntegrationTestCase {
         metricsToTest.forEach(n -> Assert.assertTrue("Missing metric: " + n,
                 metrics.stream().anyMatch(m -> m.getKey().startsWith(n))));
     }
-
 
     /**
      * Request the published metrics from the OpenTelemetry Collector via the configured Prometheus exporter and check
