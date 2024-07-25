@@ -1,6 +1,7 @@
 package org.jboss.eap.qe.microprofile.health.integration;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,19 +37,22 @@ public class FailSafeCDIModelFilePropsHealthTest extends FailSafeCDIHealthBaseTe
 
     Path liveFile = Paths.get(
             FailSafeCDIModelFilePropsHealthTest.class.getResource("file-props/" + FailSafeDummyService.LIVE_CONFIG_PROPERTY)
-                    .getPath());
+                    .toURI());
 
     Path readyFile = Paths.get(
             FailSafeCDIModelFilePropsHealthTest.class.getResource("file-props/" + FailSafeDummyService.READY_CONFIG_PROPERTY)
-                    .getFile());
+                    .toURI());
 
     Path inMaintenanceFile = Paths.get(
             FailSafeCDIModelFilePropsHealthTest.class
-                    .getResource("file-props/" + FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY).getPath());
+                    .getResource("file-props/" + FailSafeDummyService.IN_MAINTENANCE_CONFIG_PROPERTY).toURI());
 
     Path readyInMaintenanceFile = Paths.get(
             FailSafeCDIModelFilePropsHealthTest.class
-                    .getResource("file-props/" + FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY).getPath());
+                    .getResource("file-props/" + FailSafeDummyService.READY_IN_MAINTENANCE_CONFIG_PROPERTY).toURI());
+
+    public FailSafeCDIModelFilePropsHealthTest() throws URISyntaxException {
+    }
 
     @Before
     public void backup() throws IOException {

@@ -52,7 +52,7 @@ public class AddRemoveModuleTest {
         // verify that module was added
         File modulesRoot = new File(System.getProperty("module.path"));
 
-        File module = new File(modulesRoot, TEST_MODULE_NAME.replaceAll("\\.", File.separator));
+        File module = new File(modulesRoot, TEST_MODULE_NAME.replace(".", File.separator));
         assertTrue("Module " + module.getAbsolutePath() + " should exist on path", module.exists());
 
         File moduleTestJar1 = new File(module, "main" + File.separator + "testJar1.jar");
