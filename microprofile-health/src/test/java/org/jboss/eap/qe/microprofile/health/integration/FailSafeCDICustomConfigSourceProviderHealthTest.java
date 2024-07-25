@@ -1,6 +1,7 @@
 package org.jboss.eap.qe.microprofile.health.integration;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,8 +30,11 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 public class FailSafeCDICustomConfigSourceProviderHealthTest extends FailSafeCDIHealthDynamicBaseTest {
     private static final String PROPERTY_FILENAME = "health.properties";
     Path propertyFile = Paths.get(
-            FailSafeCDICustomConfigSourceProviderHealthTest.class.getResource(PROPERTY_FILENAME).getPath());
+            FailSafeCDICustomConfigSourceProviderHealthTest.class.getResource(PROPERTY_FILENAME).toURI());
     private byte[] bytes;
+
+    public FailSafeCDICustomConfigSourceProviderHealthTest() throws URISyntaxException {
+    }
 
     @Before
     public void backup() throws IOException {
@@ -68,7 +72,7 @@ public class FailSafeCDICustomConfigSourceProviderHealthTest extends FailSafeCDI
                         CustomConfigSource.PROPERTIES_FILE_PATH, SetupTask.class.getResource(PROPERTY_FILENAME).getFile()))
                         .assertSuccess();
                 ModuleUtil.add(TEST_MODULE_NAME)
-                        .setModuleXMLPath(SetupTask.class.getResource("configSourceProviderModule.xml").getPath())
+                        .setModuleXMLPath(SetupTask.class.getResource("configSourceProviderModule.xml").toURI().getPath())
                         .addResource("config-source-provider", CustomConfigSource.class, CustomConfigSourceProvider.class)
                         .executeOn(client);
                 client.execute(String.format(
