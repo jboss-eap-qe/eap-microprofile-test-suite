@@ -11,10 +11,12 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.health.DisableDefaultHealthProceduresSetupTask;
+import org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
@@ -28,6 +30,7 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 @RunWith(Arquillian.class)
 @RunAsClient
 @ServerSetup({ DisableDefaultHealthProceduresSetupTask.class, FailSafeCDIModelFilePropsHealthTest.SetupTask.class })
+@Category(HealthWithFaultToleranceTests.class)
 public class FailSafeCDIModelFilePropsHealthTest extends FailSafeCDIHealthBaseTest {
 
     private byte[] liveFileBytes;

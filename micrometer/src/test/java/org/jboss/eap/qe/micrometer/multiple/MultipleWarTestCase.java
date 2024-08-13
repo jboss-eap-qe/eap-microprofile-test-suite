@@ -20,14 +20,17 @@ import org.jboss.eap.qe.micrometer.container.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.micrometer.container.PrometheusMetric;
 import org.jboss.eap.qe.micrometer.util.MicrometerServerSetup;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class)
+@Category(DockerRequiredTests.class)
 public class MultipleWarTestCase extends BaseMultipleTestCase {
     @Deployment(name = SERVICE_ONE, order = 1)
     public static WebArchive createDeployment1() {

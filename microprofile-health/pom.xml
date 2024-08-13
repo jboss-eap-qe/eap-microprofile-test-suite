@@ -88,12 +88,6 @@
                                             org.wildfly.arquillian:wildfly-arquillian-container-managed
                                         </classpathDependencyExclude>
                                     </classpathDependencyExcludes>
-                                    <excludes>
-                                        <!-- Need MP FaultTolerance -->
-                                        <exclude>org/jboss/eap/qe/microprofile/health/integration/FailSafe*Test.java</exclude>
-                                        <!-- Needs manual container -->
-                                        <exclude>org/jboss/eap/qe/microprofile/health/delay/*Test.java</exclude>
-                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>

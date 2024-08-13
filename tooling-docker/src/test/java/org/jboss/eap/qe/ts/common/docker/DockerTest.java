@@ -9,9 +9,12 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpStatus;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(DockerRequiredTests.class)
 public class DockerTest {
 
     private static final String DEFAULT_SERVER_BIND_ADDRESS = "127.0.0.1";
