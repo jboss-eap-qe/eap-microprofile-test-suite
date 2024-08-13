@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 public class EarDeploymentTestCase extends BaseMultipleTestCase {
     protected static final String ENTERPRISE_APP = "enterprise-app";
 
-    @Deployment(name = ENTERPRISE_APP)
+    @Deployment(name = ENTERPRISE_APP, testable = false)
     public static EnterpriseArchive createDeployment() {
         return ShrinkWrap.create(EnterpriseArchive.class, ENTERPRISE_APP + ".ear")
                 .addAsModules(MultipleWarTestCase.createDeployment1(),
