@@ -93,6 +93,9 @@
         <!-- Modular JDK JPMS options -->
         <server.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</server.jvm.jpms.args>
         <client.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</client.jvm.jpms.args>
+
+        <!-- Using JUnit @Category to dynamically select executed test groups, based on multiple factors (e.g.: regular vs. bootable and Linux vs. Windows executions -->
+        <current-execution.excluded-groups></current-execution.excluded-groups>
     </properties>
 
     <dependencyManagement>
@@ -432,6 +435,7 @@
                         <module.path>${jboss.modules.path}</module.path>
                         <arquillian.xml>${maven.multiModuleProjectDirectory}/arquillian.xml</arquillian.xml>
                     </systemPropertyVariables>
+                    <excludedGroups>${current-execution.excluded-groups}</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>
@@ -643,15 +647,6 @@
                                 <phase>none</phase>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/micrometer/**</exclude>
-                            </excludes>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

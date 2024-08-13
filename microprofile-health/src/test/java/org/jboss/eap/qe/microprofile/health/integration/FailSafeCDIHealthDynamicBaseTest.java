@@ -13,8 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests;
 import org.jboss.eap.qe.microprofile.health.tools.HealthUrlProvider;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import io.restassured.http.ContentType;
 
@@ -25,6 +27,7 @@ import io.restassured.http.ContentType;
  * Test class extends {@link FailSafeCDIHealthBaseTest} for those scenarios that expect dynamic MP Config.
  */
 @RunAsClient
+@Category(HealthWithFaultToleranceTests.class)
 public abstract class FailSafeCDIHealthDynamicBaseTest extends FailSafeCDIHealthBaseTest {
 
     /**

@@ -19,15 +19,18 @@ import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.micrometer.container.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.micrometer.container.PrometheusMetric;
 import org.jboss.eap.qe.micrometer.util.MicrometerServerSetup;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class)
+@Category(DockerRequiredTests.class)
 public class EarDeploymentTestCase extends BaseMultipleTestCase {
     protected static final String ENTERPRISE_APP = "enterprise-app";
 

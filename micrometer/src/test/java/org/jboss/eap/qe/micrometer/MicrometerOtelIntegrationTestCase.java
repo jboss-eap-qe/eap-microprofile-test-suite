@@ -22,6 +22,7 @@ import org.jboss.eap.qe.micrometer.container.PrometheusMetric;
 import org.jboss.eap.qe.micrometer.util.MicrometerServerSetup;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.ts.common.docker.Docker;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -29,6 +30,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import io.micrometer.core.instrument.Counter;
@@ -42,6 +44,7 @@ import io.micrometer.core.instrument.MeterRegistry;
  */
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class) // Enables/Disables Micrometer extension/subsystem for Arquillian in-container tests
+@Category(DockerRequiredTests.class)
 public class MicrometerOtelIntegrationTestCase {
     public static final int REQUEST_COUNT = 5;
     @ArquillianResource

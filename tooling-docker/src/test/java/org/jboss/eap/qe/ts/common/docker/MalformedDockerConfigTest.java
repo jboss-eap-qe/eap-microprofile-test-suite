@@ -8,10 +8,13 @@ import static org.jboss.eap.qe.ts.common.docker.Docker.DOCKER_CMD;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
+@Category(DockerRequiredTests.class)
 public class MalformedDockerConfigTest {
 
     @Rule

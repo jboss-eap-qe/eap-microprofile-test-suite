@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.not;
 
 import jakarta.ws.rs.core.MediaType;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;

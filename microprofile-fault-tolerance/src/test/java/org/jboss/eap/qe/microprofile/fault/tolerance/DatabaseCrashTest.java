@@ -25,6 +25,7 @@ import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.database.Databa
 import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToleranceServerConfiguration;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.ts.common.docker.Docker;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -35,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
 import com.google.common.io.Files;
@@ -44,6 +46,7 @@ import com.google.common.io.Files;
  */
 @RunAsClient
 @RunWith(Arquillian.class)
+@Category(DockerRequiredTests.class)
 public class DatabaseCrashTest {
 
     private static final String APPLICATION_NAME = "DatabaseServlet";
