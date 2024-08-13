@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 @ServerSetup(MicrometerServerSetup.class)
 @Category(DockerRequiredTests.class)
 public class MultipleWarTestCase extends BaseMultipleTestCase {
-    @Deployment(name = SERVICE_ONE, order = 1)
+    @Deployment(name = SERVICE_ONE, order = 1, testable = false)
     public static WebArchive createDeployment1() {
         return ShrinkWrap.create(WebArchive.class, SERVICE_ONE + ".war")
                 .addClasses(TestApplication.class, DuplicateMetricResource1.class, BaseMultipleTestCase.class)
@@ -40,7 +40,7 @@ public class MultipleWarTestCase extends BaseMultipleTestCase {
 
     }
 
-    @Deployment(name = SERVICE_TWO, order = 2)
+    @Deployment(name = SERVICE_TWO, order = 2, testable = false)
     public static WebArchive createDeployment2() {
         return ShrinkWrap.create(WebArchive.class, SERVICE_TWO + ".war")
                 .addClasses(TestApplication.class, DuplicateMetricResource2.class, BaseMultipleTestCase.class)

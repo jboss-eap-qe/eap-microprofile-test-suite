@@ -63,7 +63,7 @@ public class MicrometerOtelIntegrationTestCase {
             + "    </servlet-mapping>"
             + "</web-app>\n";
 
-    @Deployment
+    @Deployment(testable = false)
     public static Archive<?> deploy() {
         return ShrinkWrap.create(WebArchive.class, "micrometer-test.war")
                 .addClasses(
