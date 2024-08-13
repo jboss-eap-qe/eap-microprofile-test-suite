@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.not;
 
 import jakarta.ws.rs.core.MediaType;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -103,9 +104,9 @@ public class ListenerSecurityConfigurationTest {
         @Override
         public void setup() throws Exception {
             if (Boolean.getBoolean("ts.bootable")) {
-                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "installDir");
+                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "installDir").replace("\\", "/");
             } else {
-                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome");
+                jbossHome = arquillianContainerProperties.getContainerProperty("jboss", "jbossHome").replace("\\", "/");
             }
             try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
                 //  configured server ports for HTTP and HTTPS bindings, offset is taken into account
