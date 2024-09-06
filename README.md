@@ -1,6 +1,6 @@
 # EAP MicroProfile test suite
  
-A small standalone test suite for MicroProfile on WildFly/EAP.
+A small standalone test suite for MicroProfile on WildFly/EAP. Test.
 
 ## Supported MicroProfile version
 
