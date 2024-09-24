@@ -75,13 +75,13 @@ public class DefaultReadinessProcedureHealthTest {
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(ContentType.JSON)
                 .body("status", is("UP"),
-                        "checks", hasSize(6),
+                        "checks", hasSize(7),
                         "checks.status", hasItems("UP", "UP"),
                         "checks.name",
-                        containsInAnyOrder("deployments-status", "boot-errors", "server-state",
+                        containsInAnyOrder("deployments-status", "boot-errors", "server-state", "suspend-state",
                                 String.format("ready-deployment.%s", ARCHIVE_NAME),
                                 String.format("started-deployment.%s", ARCHIVE_NAME), "live"),
-                        "checks.data", hasSize(6),
+                        "checks.data", hasSize(7),
                         "checks.find{it.name == 'live'}.data.key", is("value"));
     }
 
@@ -119,15 +119,16 @@ public class DefaultReadinessProcedureHealthTest {
         RestAssured.get(HealthUrlProvider.readyEndpoint()).then()
                 .contentType(ContentType.JSON)
                 .body("status", is("UP"),
-                        "checks", hasSize(4),
+                        "checks", hasSize(5),
                         "checks.status", hasItems("UP"),
                         "checks.name",
-                        containsInAnyOrder("boot-errors", "server-state", "deployments-status",
+                        containsInAnyOrder("boot-errors", "server-state", "deployments-status", "suspend-state",
                                 readyDeploymentCheckName),
                         "checks.find{it.name == '" + readyDeploymentCheckName + "'}.data", is(nullValue()),
                         "checks.find{it.name == 'boot-errors'}.data", is(nullValue()),
                         "checks.find{it.name == 'deployments-status'}.data", is(notNullValue()),
-                        "checks.find{it.name == 'server-state'}.data.value", is("running"));
+                        "checks.find{it.name == 'server-state'}.data.value", is("running"),
+                        "checks.find{it.name == 'suspend-state'}.data.value", is("RUNNING"));
     }
 
     /**

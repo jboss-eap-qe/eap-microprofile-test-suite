@@ -51,20 +51,20 @@ public class ReadinessChecker implements Callable<Boolean> {
                         if (response.getStatusCode() == 503) {
                             if (checks == null) {
                                 addState(DOWN_NO_CONTENT());
-                            } else if ((checks.size() == 4) && contains(checks, "empty-readiness-checks")) {
+                            } else if ((checks.size() == 5) && contains(checks, "empty-readiness-checks")) {
                                 addState(DOWN_NO_CHECK());
-                            } else if ((checks.size() == 4) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
+                            } else if ((checks.size() == 5) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
                                 addState(ReadinessState.DOWN_WITH_CHECK());
                             }
                         } else if (response.getStatusCode() == 200) {
                             if (checks == null) {
                                 throw new RuntimeException("Readiness probe is UP (200) however missing JSON content");
                             }
-                            if ((checks.size() == 4) && contains(checks, "empty-readiness-checks")) {
+                            if ((checks.size() == 5) && contains(checks, "empty-readiness-checks")) {
                                 addState(UP_NO_CHECK());
-                            } else if ((checks.size() == 4) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
+                            } else if ((checks.size() == 5) && contains(checks, DelayedReadinessHealthCheck.NAME)) {
                                 addState(UP_WITH_CHECK());
-                            } else if ((checks.size() == 4) && contains(checks, DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
+                            } else if ((checks.size() == 5) && contains(checks, DEFAULT_READINESS_CHECK_NAME_PREFIX)) {
                                 addState(UP_WITH_DEFAULT_CHECK());
                             }
                         }
