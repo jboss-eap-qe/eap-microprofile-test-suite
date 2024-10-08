@@ -46,7 +46,7 @@ public abstract class AbstractKeyLoader<PRIVATE_KEY, PUBLIC_KEY> {
             String privateKeyPEM = key.toString()
                     .replace("-----BEGIN PRIVATE KEY-----", "")
                     .replaceAll(System.lineSeparator(), "")
-                    .replace("-----BEGIN PRIVATE KEY-----", "");
+                    .replace("-----END PRIVATE KEY-----", "");
 
             byte[] encoded = Base64.decodeBase64(privateKeyPEM);
 
