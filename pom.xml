@@ -62,7 +62,7 @@
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
         <version.org.wildfly.core>26.0.1.Final</version.org.wildfly.core>
-        <version.org.wildfly.extras.creaper>2.0.2</version.org.wildfly.extras.creaper>
+        <version.org.wildfly.extras.creaper>2.0.3</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.33</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
@@ -83,6 +83,7 @@
         <version.org.wildfly.jar.plugin>11.0.2.Final</version.org.wildfly.jar.plugin>
         <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
         <version.org.eclipse.parsson>1.1.5</version.org.eclipse.parsson>
+        <version.org.jboss.logging.jboss-logging>3.6.1.Final</version.org.jboss.logging.jboss-logging>
 
         <!-- XP Channel manifest GAV -->
         <channel-manifest.groupId>org.jboss.eap.channels</channel-manifest.groupId>
@@ -100,6 +101,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${version.org.jboss.logging.jboss-logging}</version>
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.microprofile</groupId>
                 <artifactId>microprofile</artifactId>
