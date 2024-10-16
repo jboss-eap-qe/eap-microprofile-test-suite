@@ -1,0 +1,36 @@
+name: WildFly/EAP MicroProfile Test Suite Integration Tests
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  wildfly-it-tests:
+    if: '! github.event.pull_request.draft'
+    runs-on: [ubuntu-latest, windows-latest]
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        java-version: ['11', '17']
+        java-distribution: ['adopt', 'oracle']
+    steps:
+      - name: Checkout eap-microprofile-test-suite
+        uses: actions/checkout@v4
+      - name: Set up JDK ${{ matrix.java-distribution }} ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: ${{ matrix.java-distribution }}
+          cache: 'maven'
+      - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java }}) against latest WildFly
+        run: |
+          ./mvnw clean verify
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: surefire-reports-jdk-${{ matrix.java }}
+          path: |
+            '${{ github.workspace }}/**/surefire-reports/*.*'
+            '${{ github.workspace }}/**/*.log'
