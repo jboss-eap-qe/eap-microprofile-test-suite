@@ -1,0 +1,41 @@
+name: WildFly Bootable JAR Integration Tests
+
+on:
+  push:
+    branches: [ 'master' ]
+  pull_request:
+    branches: [ 'master' ]
+
+jobs:
+  wildfly-it-tests:
+    if: '! github.event.pull_request.draft'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
+        java-version: ['17', '21']
+        java-distribution: ['adopt']
+    steps:
+      - name: Checkout eap-microprofile-test-suite
+        uses: actions/checkout@v4
+      - name: Set up JDK ${{ matrix.java-distribution }} ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.java-distribution }}
+          cache: 'maven'
+      - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java-version }}) against latest WildFly, on ${{ matrix.os }}
+        if: ${{ matrix.os  == 'ubuntu-latest' }}
+        run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests"
+      - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java-version }}) against latest WildFly, on ${{ matrix.os }} (excluding Docker)
+        if: ${{ matrix.os  == 'windows-latest' }}
+        run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests,org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: surefire-reports-server-logs-jdk-${{ matrix.java-distribution }}-${{ matrix.java-version }}
+          path: |
+            **/target/surefire-reports/*
+            **/standalone/log/*
