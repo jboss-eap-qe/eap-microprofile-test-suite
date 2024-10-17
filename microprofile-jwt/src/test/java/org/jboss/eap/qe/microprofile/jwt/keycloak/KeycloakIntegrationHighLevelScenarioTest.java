@@ -62,7 +62,6 @@ public class KeycloakIntegrationHighLevelScenarioTest {
             .withEnvVar("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
             .withEnvVar("KC_HEALTH_ENABLED", "true")
             .withCmdArg("start-dev")
-            .withCmdArg("--log-level=DEBUG")
             .build();
 
     public static KeycloakConfigurator keycloakConfigurator = new KeycloakConfigurator.Builder(KEYCLOAK_REALM_NAME)
