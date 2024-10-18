@@ -56,7 +56,7 @@
         <version.org.jboss.wildfly.dist>34.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
-        <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
+        <version.io.undertow.undertow-core>2.3.17.Final</version.io.undertow.undertow-core>
         <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
         <version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>2.1</version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
