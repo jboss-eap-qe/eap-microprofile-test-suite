@@ -81,7 +81,7 @@
         <testsuite.galleon.pack.version>${version.org.jboss.wildfly.dist}</testsuite.galleon.pack.version>
         <!-- Bootable JAR -->
         <version.org.wildfly.jar.plugin>11.0.2.Final</version.org.wildfly.jar.plugin>
-        <version.org.bitbucket.b_c.jose4j>0.7.4</version.org.bitbucket.b_c.jose4j>
+        <version.org.bitbucket.b_c.jose4j>0.9.4</version.org.bitbucket.b_c.jose4j>
         <version.org.eclipse.parsson>1.1.5</version.org.eclipse.parsson>
         <version.org.jboss.logging.jboss-logging>3.6.1.Final</version.org.jboss.logging.jboss-logging>
 
