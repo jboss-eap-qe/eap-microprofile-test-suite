@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.micrometer.container;
+package org.jboss.eap.qe.observability.containers;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -21,7 +21,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.jboss.eap.qe.micrometer.model.jaeger.JaegerTrace;
+import org.jboss.eap.qe.observability.jaeger.model.JaegerTrace;
+import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
 /**

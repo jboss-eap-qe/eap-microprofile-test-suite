@@ -2,7 +2,7 @@
  * Copyright The WildFly Authors
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.jboss.eap.qe.micrometer.container;
+package org.jboss.eap.qe.observability.containers;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -13,8 +13,8 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.eap.qe.micrometer.model.jaeger.JaegerResponse;
-import org.jboss.eap.qe.micrometer.model.jaeger.JaegerTrace;
+import org.jboss.eap.qe.observability.jaeger.model.JaegerResponse;
+import org.jboss.eap.qe.observability.jaeger.model.JaegerTrace;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
 /**

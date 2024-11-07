@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jboss.eap.qe.micrometer.container.PrometheusMetric;
+import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 import org.junit.Assert;
 import org.junit.BeforeClass;

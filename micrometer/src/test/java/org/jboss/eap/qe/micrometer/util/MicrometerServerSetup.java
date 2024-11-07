@@ -1,7 +1,7 @@
 package org.jboss.eap.qe.micrometer.util;
 
-import org.jboss.eap.qe.micrometer.container.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
+import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
 /**

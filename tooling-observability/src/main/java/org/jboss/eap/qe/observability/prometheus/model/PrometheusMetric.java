@@ -2,7 +2,7 @@
  * Copyright The WildFly Authors
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.jboss.eap.qe.micrometer.container;
+package org.jboss.eap.qe.observability.prometheus.model;
 
 import java.util.Collections;
 import java.util.Map;
