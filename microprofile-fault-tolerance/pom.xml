@@ -63,6 +63,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.eap.qe</groupId>
+            <artifactId>tooling-observability</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-depchain</artifactId>
             <scope>test</scope>

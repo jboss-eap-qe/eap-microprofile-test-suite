@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.containsString;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import org.jboss.arquillian.container.test.api.Deployer;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -14,10 +16,15 @@ import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService;
 import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileFaultToleranceServerConfiguration;
+import org.jboss.eap.qe.microprofile.fault.tolerance.util.MicroProfileTelemetryServerSetup;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.microprofile.tooling.server.log.LogChecker;
 import org.jboss.eap.qe.microprofile.tooling.server.log.ModelNodeLogChecker;
+import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
+import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
+import org.jboss.eap.qe.ts.common.docker.Docker;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -27,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
@@ -36,6 +44,7 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
  */
 @RunAsClient
 @RunWith(Arquillian.class)
+@Category(DockerRequiredTests.class)
 public class UndeployDeployTest {
 
     private static final String FIRST_DEPLOYMENT = "UndeployDeployTest-first-deployment";
@@ -45,9 +54,11 @@ public class UndeployDeployTest {
     @ArquillianResource
     private Deployer deployer;
 
+    private OpenTelemetryCollectorContainer otelCollector;
+
     @Deployment(name = FIRST_DEPLOYMENT, managed = false)
     public static Archive<?> createFirstDeployment() {
-        String mpConfig = "Timeout/enabled=true";
+        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\nTimeout/enabled=true";
 
         return ShrinkWrap.create(WebArchive.class, FIRST_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -57,7 +68,7 @@ public class UndeployDeployTest {
 
     @Deployment(name = SECOND_DEPLOYMENT, managed = false)
     public static Archive<?> createSecondDeployment() {
-        String mpConfig = "Timeout/enabled=false";
+        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\nTimeout/enabled=false";
 
         return ShrinkWrap.create(WebArchive.class, SECOND_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -75,6 +86,7 @@ public class UndeployDeployTest {
 
     @BeforeClass
     public static void setup() throws Exception {
+        // Enable FT
         MicroProfileFaultToleranceServerConfiguration.enableFaultTolerance();
     }
 
@@ -90,6 +102,105 @@ public class UndeployDeployTest {
         deployer.deploy(FIRST_DEPLOYMENT);
         deployer.deploy(SECOND_DEPLOYMENT);
         deployer.deploy(NO_MP_FT_DEPLOYMENT);
+    }
+
+    /**
+     * @tpTestDetails Deploy the first and then second MP FT application.
+     *                Both of them are the same (same classes/methods).
+     * @tpPassCrit Verify that the number of total timed out calls is 1, i.e. the one resulting from the request sent
+     *             to the first deployment, where Timeout is enabled. The method also verifies that the total number of
+     *             non-applied
+     *             fallback calls is set to 1, i.e. the one originated from the request sent to the second deployment, where
+     *             Timeout has been disabled.
+     *
+     *             <p>
+     *             Since MP FT 3.0 FT Metrics have been moved to the base scope and hence have different semantic, e.g.:
+     *             {@code application_ft_org_jboss_eap_qe_microprofile_fault_tolerance_deployments_v10_HelloService_timeout_invocations_total}
+     *             which was counting the total number of invocations to method annotated with {@code Timeout} doesn't exist any
+     *             more
+     *             </p>
+     * @tpSince EAP 7.4.0.CD19
+     */
+    @Test
+    @InSequence(10)
+    public void testFaultToleranceMetricsAreTracedWithSameDeployments(
+            @ArquillianResource @OperateOnDeployment(FIRST_DEPLOYMENT) URL firstDeploymentUlr,
+            @ArquillianResource @OperateOnDeployment(SECOND_DEPLOYMENT) URL secondDeploymentUlr) throws Exception {
+        // we need a Docker container for The OTel collector here, so throw an exception if a docker service is not available
+        try {
+            Docker.checkDockerPresent();
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot verify Docker availability: " + e.getMessage());
+        }
+        // start the OTel collector container
+        otelCollector = OpenTelemetryCollectorContainer.getInstance();
+        // Enable MP Telemetry based metrics, which rely on OpenTelemetry subsystem
+        MicroProfileTelemetryServerSetup.enableOpenTelemetry();
+        MicroProfileTelemetryServerSetup.addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
+        MicroProfileTelemetryServerSetup.enableMicroProfileTelemetry();
+        // manually deploy our deployments
+        deployer.deploy(FIRST_DEPLOYMENT);
+        deployer.deploy(SECOND_DEPLOYMENT);
+        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                .assertThat()
+                .body(containsString("Fallback Hello, context = foobar"));
+        // timeout is not working because 2nd deployment has disabled it
+        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                .assertThat()
+                .body(containsString("Hello from @Timeout method, context = foobar"));
+        // fetch the collected metrics in prometheus format
+        List<String> metricsToTest = Arrays.asList(
+                "ft_timeout_calls_total",
+                "ft_invocations_total");
+        // give it some time to actually be able and report some metrics via the Pmetheus URL
+        Thread.sleep(5_000);
+        List<PrometheusMetric> metrics = OpenTelemetryCollectorContainer.getInstance().fetchMetrics("");
+        // assert
+        metricsToTest.forEach(n -> Assert.assertTrue("Missing metric: " + n,
+                metrics.stream().anyMatch(m -> m.getKey().startsWith(n))));
+
+        Assert.assertTrue("\"ft_timeout_calls_total\" not found or not expected",
+                metrics.stream()
+                        .filter(m -> "ft_timeout_calls_total".equals(m.getKey()))
+                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                t -> "method".equals(t.getKey())
+                                        && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                .equals(t.getValue()))
+                                && m.getTags().entrySet().stream().anyMatch(
+                                        t -> "timedOut".equals(t.getKey()) && "true".equals(t.getValue())))
+                        .anyMatch(m -> "1".equals(m.getValue())));
+        Assert.assertTrue("\"ft_invocations_total\" (fallback applied) not found or not expected",
+                metrics.stream()
+                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
+                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                t -> "fallback".equals(t.getKey()) && "applied".equals(t.getValue()))
+                                && m.getTags().entrySet().stream().anyMatch(
+                                        t -> "method".equals(t.getKey())
+                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                        .equals(t.getValue()))
+                                && m.getTags().entrySet().stream().anyMatch(
+                                        t -> "result".equals(t.getKey()) && "valueReturned".equals(t.getValue())))
+                        .anyMatch(m -> "1".equals(m.getValue())));
+        Assert.assertTrue("\"ft_invocations_total\" (fallback not applied) not found or not expected",
+                metrics.stream()
+                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
+                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                t -> "fallback".equals(t.getKey()) && "notApplied".equals(t.getValue()))
+                                && m.getTags().entrySet().stream().anyMatch(
+                                        t -> "method".equals(t.getKey())
+                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                        .equals(t.getValue()))
+                                && m.getTags().entrySet().stream().anyMatch(
+                                        t -> "result".equals(t.getKey()) && "valueReturned".equals(t.getValue())))
+                        .anyMatch(m -> "1".equals(m.getValue())));
+        // disable MP Telemetry based metrics
+        MicroProfileTelemetryServerSetup.disableMicroProfileTelemetry();
+        MicroProfileTelemetryServerSetup.disableOpenTelemetry();
+        // stop the OTel collector container
+        otelCollector.stop();
+        // undeploy
+        deployer.undeploy(FIRST_DEPLOYMENT);
+        deployer.undeploy(SECOND_DEPLOYMENT);
     }
 
     /**
@@ -207,6 +318,7 @@ public class UndeployDeployTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
+        // disable FT
         MicroProfileFaultToleranceServerConfiguration.disableFaultTolerance();
     }
 }
