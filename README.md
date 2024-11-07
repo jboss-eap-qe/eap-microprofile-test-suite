@@ -17,6 +17,13 @@ Currently, the following MicroProfile specs are supported:
 * [MicroProfile Fault Tolerance](https://github.com/eclipse/microprofile-fault-tolerance)
 * [MicroProfile OpenAPI](https://github.com/eclipse/microprofile-open-api)
 
+## Observability
+
+Although mostly related to MicroProfile platform integration, the test suite contains observability related tests, 
+too, which verify the `Micrometer` integration into WildFly/EAP.
+
+* [Micrometer](./micrometer) 
+
 ## Requirements for the testsuite
 - JDK 11
 - Docker
@@ -39,8 +46,9 @@ There's one module per each supported MicroProfile specs, see [Supported MicroPr
   [microprofile-fault-tolerance `DatabaseCrashTest`](./microprofile-fault-tolerance/src/test/java/org/jboss/eap/qe/microprofile/fault/tolerance/DatabaseCrashTest.java)
 - [tooling-mp-jwt-auth-tool](./tooling-mp-jwt-auth-tool) - utilities required by security operations, e.g.: keys' 
   generation utilities, which are used by the [microprofile-jwt](./microprofile-jwt) module
-- [tooling-server-configuration](./tooling-server-configuration) - server configuration utilities, see the module 
-[README](./tooling-server-configuration/README.md)
+- [tooling-server-configuration](./tooling-server-configuration) - server configuration utilities, see the module [README](./tooling-server-configuration/README.md)
+- [tooling-observability](./tooling-observability) - tooling which is used for Observability related tasks, e.g.: 
+  Jaeger or OTel Docker containers
 
 ## Run the testsuite
 Just execute:
