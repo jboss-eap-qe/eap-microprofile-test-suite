@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "${version.openapi}",
   "info": {
     "title": "LSR App",
     "version": "1.0"
