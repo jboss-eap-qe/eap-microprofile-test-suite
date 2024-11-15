@@ -53,8 +53,6 @@
         <dependency>
             <groupId>org.eclipse.microprofile.openapi</groupId>
             <artifactId>microprofile-openapi-api</artifactId>
-            <!-- TODO Use managed version after entire testsuite updates to MP7 -->
-            <version>4.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
