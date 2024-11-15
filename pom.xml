@@ -47,19 +47,20 @@
 
         <jboss.home>IF-NOT-DEFINED-WILDFLY-WILL-BE-DOWNLOADED-UNZIPPED-AND-USED-AUTOMATICALLY</jboss.home>
         <maven.test.redirectTestOutputToFile>false</maven.test.redirectTestOutputToFile>
-        <version.io.rest-assured>5.0.1</version.io.rest-assured>
-        <version.jakarta.servlet.jakarta.servlet-api>5.0.0</version.jakarta.servlet.jakarta.servlet-api>
-        <version.junit>4.13.1</version.junit>
+
+        <version.jakarta.platform>10.0.0</version.jakarta.platform>
         <version.org.eclipse.microprofile>7.0</version.org.eclipse.microprofile>
         <version.org.eclipse.microprofile.lra>2.0</version.org.eclipse.microprofile.lra>
         <version.io.micrometer>1.12.4</version.io.micrometer>
+
+        <version.io.rest-assured>5.0.1</version.io.rest-assured>
+        <version.junit>4.13.1</version.junit>
         <version.org.jboss.arquillian>1.7.2.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>34.0.0.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
         <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
-        <version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>2.1</version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
         <version.org.wildfly.core>26.0.1.Final</version.org.wildfly.core>
@@ -67,7 +68,6 @@
         <version.org.yaml.snakeyaml>1.33</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
-        <version.org.glassfish.jakarta.json>2.0.1</version.org.glassfish.jakarta.json>
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.4</version.org.jboss.shrinkwrap.resolver>
         <version.org.postgresql>42.2.8</version.org.postgresql>
@@ -103,16 +103,18 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.logging</groupId>
-                <artifactId>jboss-logging</artifactId>
-                <version>${version.org.jboss.logging.jboss-logging}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.microprofile</groupId>
                 <artifactId>microprofile</artifactId>
                 <version>${version.org.eclipse.microprofile}</version>
                 <type>pom</type>
-                <scope>provided</scope>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-bom</artifactId>
+                <version>${version.jakarta.platform}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.microprofile.lra</groupId>
@@ -129,6 +131,11 @@
                 <groupId>io.jaegertracing</groupId>
                 <artifactId>jaeger-client</artifactId>
                 <version>${version.io.jaegertracing.jaeger-client}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${version.org.jboss.logging.jboss-logging}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -169,11 +176,6 @@
                 <groupId>org.fusesource.jansi</groupId>
                 <artifactId>jansi</artifactId>
                 <version>${version.org.fusesource.jansi}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${version.jakarta.servlet.jakarta.servlet-api}</version>
             </dependency>
             <!-- Arquillian container test SPI for extension -->
             <dependency>
@@ -224,12 +226,6 @@
                 <groupId>org.jboss.eap.qe</groupId>
                 <artifactId>tooling-mp-jwt-auth-tool</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>jakarta.json</artifactId>
-                <version>${version.org.glassfish.jakarta.json}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.parsson</groupId>
@@ -318,11 +314,6 @@
                 <artifactId>jboss-threads</artifactId>
                 <version>${version.org.jboss.threads.jboss-threads}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.microprofile.jwt</groupId>
-                <artifactId>microprofile-jwt-auth-api</artifactId>
-                <version>${version.org.eclipse.microprofile.jwt.microprofile-jwt-auth-api}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
