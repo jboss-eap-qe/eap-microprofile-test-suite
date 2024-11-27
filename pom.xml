@@ -25,6 +25,7 @@
         <module>microprofile-fault-tolerance</module>
         <module>microprofile-jwt</module>
         <module>microprofile-lra</module>
+        <module>microprofile-telemetry-metrics</module>
         <module>microprofile-open-api</module>
         <module>micrometer</module>
         <module>tooling-observability</module>
