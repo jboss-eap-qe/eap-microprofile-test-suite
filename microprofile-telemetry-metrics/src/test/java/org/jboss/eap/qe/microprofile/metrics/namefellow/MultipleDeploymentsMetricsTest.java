@@ -1,152 +1,110 @@
 package org.jboss.eap.qe.microprofile.metrics.namefellow;
 
 import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.hasSize;
 
 import java.net.URL;
+import java.util.List;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
-import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianDescriptorWrapper;
+import org.jboss.as.arquillian.api.ServerSetup;
+import org.jboss.eap.qe.microprofile.metrics.MPTelemetryServerSetupTask;
+import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
+import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
+import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
+import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.BeforeClass;
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-
-import io.restassured.http.ContentType;
-import io.restassured.specification.RequestSpecification;
 
 /**
  * Multiple deployment scenario.
  */
 @RunWith(Arquillian.class)
+@Category(DockerRequiredTests.class)
+@ServerSetup(MPTelemetryServerSetupTask.class)
 public class MultipleDeploymentsMetricsTest {
 
     public static final String PING_ONE_SERVICE = "ping-one-service";
     public static final String PING_TWO_SERVICE = "ping-two-service";
+    private static final String DEFAULT_MP_CONFIG = "otel.sdk.disabled=false\n" +
+            "otel.metric.export.interval=100";
 
     @Deployment(name = PING_ONE_SERVICE, order = 1)
     public static WebArchive createDeployment1() {
+        String mpConfig = "otel.service.name=MultipleDeploymentsMetricsTest-first-deployment\n" + DEFAULT_MP_CONFIG;
         return ShrinkWrap.create(WebArchive.class, PING_ONE_SERVICE + ".war")
-                .addClasses(PingApplication.class, PingOneService.class, PingOneResource.class);
+                .addClasses(PingApplication.class, PingOneService.class, PingOneResource.class)
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
+                .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
 
     }
 
     @Deployment(name = PING_TWO_SERVICE, order = 2)
     public static WebArchive createDeployment2() {
+        String mpConfig = "otel.service.name=MultipleDeploymentsMetricsTest-second-deployment\n" + DEFAULT_MP_CONFIG;
         return ShrinkWrap.create(WebArchive.class, PING_TWO_SERVICE + ".war")
-                .addClasses(PingApplication.class, PingTwoService.class, PingTwoResource.class);
-    }
-
-    private static RequestSpecification jsonMetricsRequest;
-    private static RequestSpecification textMetricsRequest;
-
-    @BeforeClass
-    public static void prepare() throws ConfigurationException {
-        ArquillianContainerProperties arqProps = new ArquillianContainerProperties(
-                ArquillianDescriptorWrapper.getArquillianDescriptor());
-        String url = "http://" + arqProps.getDefaultManagementAddress() + ":" + arqProps.getDefaultManagementPort()
-                + "/metrics";
-        jsonMetricsRequest = given()
-                .baseUri(url)
-                .accept(ContentType.JSON);
-        textMetricsRequest = given()
-                .baseUri(url)
-                .accept(ContentType.TEXT);
-    }
-
-    /**
-     * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are registered
-     *                and tagged properly. The information is available under {@code /metrics} endpoint via HTTP OPTIONS.
-     *                Metrics are in separate archives - multiple-deployment.
-     * @tpPassCrit Metrics are tagged properly
-     * @tpSince EAP 7.4.0.CD19
-     */
-    @Test
-    @RunAsClient
-    public void applicationMetricsAreRegisteredAtDeploymentTime() {
-        jsonMetricsRequest.options().then()
-                .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
-                .body("$", hasKey("application"),
-                        "application", hasKey("ping-count"),
-                        "application.ping-count", hasKey("tags"), // 11 at `/` + 1 at `/another-hello`
-                        "application.ping-count.tags", hasSize(2),
-                        "application.ping-count.tags[0]", hasSize(1),
-                        "application.ping-count.tags[1]", hasSize(1),
-                        "application.ping-count.tags.flatten()",
-                        contains("_app=" + PingOneService.PING_ONE_SERVICE_TAG, "_app=" + PingTwoService.PING_TWO_SERVICE_TAG));
+                .addClasses(PingApplication.class, PingTwoService.class, PingTwoResource.class)
+                .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
+                .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
     /**
      * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are incremented
      *                properly according to the number of a CDI beans invocation.
      *                Metrics are in separate archives - multiple-deployment.
-     * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in JSON and prometheus format.
+     * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in Jprometheus format.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
     @RunAsClient
     public void dataTest(@ArquillianResource @OperateOnDeployment(PING_ONE_SERVICE) URL pingOneUrl,
-            @ArquillianResource @OperateOnDeployment(PING_TWO_SERVICE) URL pingTwoUrl) {
-
+            @ArquillianResource @OperateOnDeployment(PING_TWO_SERVICE) URL pingTwoUrl) throws Exception {
+        // increase metrics counters
         get(pingOneUrl.toString() + PingOneResource.RESOURCE)
                 .then()
                 .statusCode(200)
                 .body(equalTo(PingOneService.MESSAGE));
-
         get(pingTwoUrl.toString() + PingTwoResource.RESOURCE)
                 .then()
                 .statusCode(200)
                 .body(equalTo(PingTwoService.MESSAGE));
+        get(pingTwoUrl + PingTwoResource.RESOURCE).then().statusCode(200);
+        get(pingTwoUrl + PingTwoResource.RESOURCE).then().statusCode(200);
+        get(pingTwoUrl + PingTwoResource.RESOURCE).then().statusCode(200);
+        get(pingOneUrl + PingOneResource.RESOURCE).then().statusCode(200);
 
-        get(pingTwoUrl.toString() + PingTwoResource.RESOURCE).then().statusCode(200);
-        get(pingTwoUrl.toString() + PingTwoResource.RESOURCE).then().statusCode(200);
-        get(pingTwoUrl.toString() + PingTwoResource.RESOURCE).then().statusCode(200);
+        // give it some time to actually be able and report some metrics via the Pmetheus URL
+        Thread.sleep(1_000);
 
-        get(pingOneUrl.toString() + PingOneResource.RESOURCE).then().statusCode(200);
+        // get metrics
+        List<PrometheusMetric> metrics = OpenTelemetryCollectorContainer.getInstance().fetchMetrics("");
 
-        jsonDataTest();
-        prometheusDataTest();
-    }
+        // verify metrics
+        Assert.assertTrue("\"ping_count\" metric for deployment one not found or not expected",
+                metrics.stream()
+                        .filter(m -> "ping_count_total".equals(m.getKey()))
+                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                t -> "key_app".equals(t.getKey())
+                                        && "ping-one-service-tag"
+                                                .equals(t.getValue())))
+                        .anyMatch(m -> "2".equals(m.getValue())));
 
-    /**
-     * Verify correct data of counters in JSON format. ping one: 2, ping-two: 4
-     */
-    private void jsonDataTest() {
-        jsonMetricsRequest.get().then()
-                .contentType(ContentType.JSON)
-                .header("Content-Type", containsString("application/json"))
-                .body("$", hasKey("application"),
-                        "application", hasKey("ping-count;_app=" + PingOneService.PING_ONE_SERVICE_TAG),
-                        "application.ping-count;_app=" + PingOneService.PING_ONE_SERVICE_TAG, equalTo(2),
-
-                        "application", hasKey("ping-count;_app=" + PingTwoService.PING_TWO_SERVICE_TAG),
-                        "application.ping-count;_app=" + PingTwoService.PING_TWO_SERVICE_TAG, equalTo(4));
-    }
-
-    /**
-     * Verify correct data of counters in prometheus format. ping one: 2, ping-two: 4
-     */
-    private void prometheusDataTest() {
-        textMetricsRequest.get().then()
-                .contentType(ContentType.TEXT)
-                .header("Content-Type", containsString("text/plain"))
-                .body(
-                        containsString(
-                                "application_ping_count_total{_app=\"" + PingTwoService.PING_TWO_SERVICE_TAG + "\"} 4.0"),
-                        containsString(
-                                "application_ping_count_total{_app=\"" + PingOneService.PING_ONE_SERVICE_TAG + "\"} 2.0"));
+        Assert.assertTrue("\"ping_count\" metric for deployment two not found or not expected",
+                metrics.stream()
+                        .filter(m -> "ping_count_total".equals(m.getKey()))
+                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                t -> "key_app".equals(t.getKey())
+                                        && "ping-two-service-tag"
+                                                .equals(t.getValue())))
+                        .anyMatch(m -> "4".equals(m.getValue())));
     }
 }
