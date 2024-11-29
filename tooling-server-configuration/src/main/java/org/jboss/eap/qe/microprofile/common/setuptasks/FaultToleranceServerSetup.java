@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.fault.tolerance.util;
+package org.jboss.eap.qe.microprofile.common.setuptasks;
 
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 
@@ -13,6 +13,6 @@ public class FaultToleranceServerSetup implements MicroProfileServerSetupTask {
 
     @Override
     public void tearDown() throws Exception {
-        MicroProfileFaultToleranceServerConfiguration.enableFaultTolerance();
+        MicroProfileFaultToleranceServerConfiguration.disableFaultTolerance();
     }
 }

@@ -13,8 +13,11 @@ import org.eclipse.microprofile.lra.annotation.Compensate;
 import org.eclipse.microprofile.lra.annotation.Complete;
 import org.eclipse.microprofile.lra.annotation.ws.rs.LRA;
 import org.jboss.eap.qe.microprofile.lra.model.LRAResult;
+import org.jboss.logging.Logger;
 
 public class LRAParticipant {
+
+    private static final Logger LOGGER = Logger.getLogger(LRAParticipant.class);
 
     public static final String RESULT_PATH = "/result";
     public static final String RESET_PATH = "/reset";
@@ -26,6 +29,7 @@ public class LRAParticipant {
     @Path("/compensate")
     public Response compensate(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId) {
+        LOGGER.infof("Compensating action for participant (%s) in LRA %s.", recoveryId, lraId);
         lraResult.setCompleted(false);
         lraResult.setFinishLraId(lraId);
         lraResult.setFinishRecoveryId(recoveryId);
@@ -37,6 +41,7 @@ public class LRAParticipant {
     @Path("/complete")
     public Response complete(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId) {
+        LOGGER.infof("Complete action for participant (%s) in LRA %s.", recoveryId, lraId);
         lraResult.setCompleted(true);
         lraResult.setFinishLraId(lraId);
         lraResult.setFinishRecoveryId(recoveryId);
