@@ -1,17 +1,34 @@
 package org.jboss.eap.qe.microprofile.metrics.namefellow;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
-import org.eclipse.microprofile.metrics.annotation.Counted;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
 
 @ApplicationScoped
 public class PingTwoService {
     public static final String MESSAGE = "pong two";
     public static final String PING_TWO_SERVICE_TAG = "ping-two-service-tag";
 
-    @Counted(name = "ping-count", absolute = true, displayName = "Pong Count", description = "Number of ping invocations", tags = "_app="
-            + PING_TWO_SERVICE_TAG)
+    @Inject
+    private Meter meter;
+    private LongCounter longCounter;
+
+    @PostConstruct
+    public void init() {
+        longCounter = meter
+                .counterBuilder("ping_count")
+                .setDescription("Number of ping invocations")
+                .build();
+    }
+
     public String ping() {
+        longCounter.add(1, Attributes.of(
+                AttributeKey.stringKey("_app"), PING_TWO_SERVICE_TAG));
         return MESSAGE;
     }
 }
