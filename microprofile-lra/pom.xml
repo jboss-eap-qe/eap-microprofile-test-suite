@@ -71,6 +71,10 @@
             <groupId>org.wildfly.core</groupId>
             <artifactId>wildfly-controller</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+            <artifactId>microprofile-fault-tolerance-api</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -141,6 +145,7 @@
                                         <layer>cloud-server</layer>
                                         <layer>microprofile-lra-coordinator</layer>
                                         <layer>microprofile-lra-participant</layer>
+                                        <layer>microprofile-fault-tolerance</layer>
                                     </layers>
                                 </configuration>
                             </execution>
