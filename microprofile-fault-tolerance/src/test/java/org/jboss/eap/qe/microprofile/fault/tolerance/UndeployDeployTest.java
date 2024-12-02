@@ -15,7 +15,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileFaultToleranceServerConfiguration;
-import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileTelemetryServerSetup;
+import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileTelemetryServerConfiguration;
+import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
@@ -88,6 +89,9 @@ public class UndeployDeployTest {
     public static void setup() throws Exception {
         // Enable FT
         MicroProfileFaultToleranceServerConfiguration.enableFaultTolerance();
+        // And disable Micrometer for good measure since were going to test MicroProfile Fault Tolerance integration
+        // with MP Telemetry 2.0 metrics too.
+        MicrometerServerConfiguration.disableMicrometer();
     }
 
     /**
@@ -134,73 +138,90 @@ public class UndeployDeployTest {
         }
         // start the OTel collector container
         otelCollector = OpenTelemetryCollectorContainer.getInstance();
-        // Enable MP Telemetry based metrics, which rely on OpenTelemetry subsystem
-        MicroProfileTelemetryServerSetup.enableOpenTelemetry();
-        MicroProfileTelemetryServerSetup.addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
-        MicroProfileTelemetryServerSetup.enableMicroProfileTelemetry();
-        // manually deploy our deployments
-        deployer.deploy(FIRST_DEPLOYMENT);
-        deployer.deploy(SECOND_DEPLOYMENT);
-        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Fallback Hello, context = foobar"));
-        // timeout is not working because 2nd deployment has disabled it
-        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
-                .assertThat()
-                .body(containsString("Hello from @Timeout method, context = foobar"));
-        // fetch the collected metrics in prometheus format
-        List<String> metricsToTest = Arrays.asList(
-                "ft_timeout_calls_total",
-                "ft_invocations_total");
-        // give it some time to actually be able and report some metrics via the Pmetheus URL
-        Thread.sleep(5_000);
-        List<PrometheusMetric> metrics = OpenTelemetryCollectorContainer.getInstance().fetchMetrics("");
-        // assert
-        metricsToTest.forEach(n -> Assert.assertTrue("Missing metric: " + n,
-                metrics.stream().anyMatch(m -> m.getKey().startsWith(n))));
+        try {
+            otelCollector.start();
+            try {
+                // Enable MP Telemetry based metrics, which rely on OpenTelemetry subsystem
+                MicroProfileTelemetryServerConfiguration.enableOpenTelemetry();
+                MicroProfileTelemetryServerConfiguration
+                        .addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
+                MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+                try {
+                    // manually deploy our deployments
+                    deployer.deploy(FIRST_DEPLOYMENT);
+                    deployer.deploy(SECOND_DEPLOYMENT);
+                    try {
+                        get(firstDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                                .assertThat()
+                                .body(containsString("Fallback Hello, context = foobar"));
+                        // timeout is not working because 2nd deployment has disabled it
+                        get(secondDeploymentUlr + "?operation=timeout&context=foobar&fail=true").then()
+                                .assertThat()
+                                .body(containsString("Hello from @Timeout method, context = foobar"));
+                        // fetch the collected metrics in prometheus format
+                        List<String> metricsToTest = Arrays.asList(
+                                "ft_timeout_calls_total",
+                                "ft_invocations_total");
+                        // give it some time to actually be able and report some metrics via the Pmetheus URL
+                        Thread.sleep(5_000);
+                        List<PrometheusMetric> metrics = OpenTelemetryCollectorContainer.getInstance().fetchMetrics("");
+                        // assert
+                        metricsToTest.forEach(n -> Assert.assertTrue("Missing metric: " + n,
+                                metrics.stream().anyMatch(m -> m.getKey().startsWith(n))));
 
-        Assert.assertTrue("\"ft_timeout_calls_total\" not found or not expected",
-                metrics.stream()
-                        .filter(m -> "ft_timeout_calls_total".equals(m.getKey()))
-                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
-                                t -> "method".equals(t.getKey())
-                                        && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
-                                                .equals(t.getValue()))
-                                && m.getTags().entrySet().stream().anyMatch(
-                                        t -> "timedOut".equals(t.getKey()) && "true".equals(t.getValue())))
-                        .anyMatch(m -> "1".equals(m.getValue())));
-        Assert.assertTrue("\"ft_invocations_total\" (fallback applied) not found or not expected",
-                metrics.stream()
-                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
-                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
-                                t -> "fallback".equals(t.getKey()) && "applied".equals(t.getValue()))
-                                && m.getTags().entrySet().stream().anyMatch(
-                                        t -> "method".equals(t.getKey())
-                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
-                                                        .equals(t.getValue()))
-                                && m.getTags().entrySet().stream().anyMatch(
-                                        t -> "result".equals(t.getKey()) && "valueReturned".equals(t.getValue())))
-                        .anyMatch(m -> "1".equals(m.getValue())));
-        Assert.assertTrue("\"ft_invocations_total\" (fallback not applied) not found or not expected",
-                metrics.stream()
-                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
-                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
-                                t -> "fallback".equals(t.getKey()) && "notApplied".equals(t.getValue()))
-                                && m.getTags().entrySet().stream().anyMatch(
-                                        t -> "method".equals(t.getKey())
-                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
-                                                        .equals(t.getValue()))
-                                && m.getTags().entrySet().stream().anyMatch(
-                                        t -> "result".equals(t.getKey()) && "valueReturned".equals(t.getValue())))
-                        .anyMatch(m -> "1".equals(m.getValue())));
-        // disable MP Telemetry based metrics
-        MicroProfileTelemetryServerSetup.disableMicroProfileTelemetry();
-        MicroProfileTelemetryServerSetup.disableOpenTelemetry();
-        // stop the OTel collector container
-        otelCollector.stop();
-        // undeploy
-        deployer.undeploy(FIRST_DEPLOYMENT);
-        deployer.undeploy(SECOND_DEPLOYMENT);
+                        Assert.assertTrue("\"ft_timeout_calls_total\" not found or not expected",
+                                metrics.stream()
+                                        .filter(m -> "ft_timeout_calls_total".equals(m.getKey()))
+                                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                                t -> "method".equals(t.getKey())
+                                                        && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                                .equals(t.getValue()))
+                                                && m.getTags().entrySet().stream().anyMatch(
+                                                        t -> "timedOut".equals(t.getKey()) && "true".equals(t.getValue())))
+                                        .anyMatch(m -> "1".equals(m.getValue())));
+                        Assert.assertTrue("\"ft_invocations_total\" (fallback applied) not found or not expected",
+                                metrics.stream()
+                                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
+                                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                                t -> "fallback".equals(t.getKey()) && "applied".equals(t.getValue()))
+                                                && m.getTags().entrySet().stream().anyMatch(
+                                                        t -> "method".equals(t.getKey())
+                                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                                        .equals(t.getValue()))
+                                                && m.getTags().entrySet().stream().anyMatch(
+                                                        t -> "result".equals(t.getKey())
+                                                                && "valueReturned".equals(t.getValue())))
+                                        .anyMatch(m -> "1".equals(m.getValue())));
+                        Assert.assertTrue("\"ft_invocations_total\" (fallback not applied) not found or not expected",
+                                metrics.stream()
+                                        .filter(m -> "ft_invocations_total".equals(m.getKey()))
+                                        .filter(m -> m.getTags().entrySet().stream().anyMatch(
+                                                t -> "fallback".equals(t.getKey()) && "notApplied".equals(t.getValue()))
+                                                && m.getTags().entrySet().stream().anyMatch(
+                                                        t -> "method".equals(t.getKey())
+                                                                && "org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService.timeout"
+                                                                        .equals(t.getValue()))
+                                                && m.getTags().entrySet().stream().anyMatch(
+                                                        t -> "result".equals(t.getKey())
+                                                                && "valueReturned".equals(t.getValue())))
+                                        .anyMatch(m -> "1".equals(m.getValue())));
+                    } finally {
+                        // undeploy
+                        deployer.undeploy(FIRST_DEPLOYMENT);
+                        deployer.undeploy(SECOND_DEPLOYMENT);
+                    }
+                } finally {
+                    // disable MP Telemetry based metrics
+                    MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
+                    MicroProfileTelemetryServerConfiguration.disableOpenTelemetry();
+                }
+            } finally {
+                // stop the OTel collector container
+                otelCollector.stop();
+            }
+        } finally {
+            OpenTelemetryCollectorContainer.dispose();
+        }
     }
 
     /**

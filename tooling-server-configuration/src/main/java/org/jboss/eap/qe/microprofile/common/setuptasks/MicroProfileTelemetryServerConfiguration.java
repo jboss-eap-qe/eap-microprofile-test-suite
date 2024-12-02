@@ -9,7 +9,7 @@ import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 /**
  * Operations required to set up the server for MicroProfile Telemetry
  */
-public class MicroProfileTelemetryServerSetup {
+public class MicroProfileTelemetryServerConfiguration {
     private static final Address OPENTELEMETRY_EXTENSION_ADDRESS = Address
             .extension("org.wildfly.extension.opentelemetry");
     private static final Address OPENTELEMETRY_SUBSYSTEM_ADDRESS = Address
@@ -163,10 +163,10 @@ public class MicroProfileTelemetryServerSetup {
      */
     public static void enableMicroProfileTelemetry(OnlineManagementClient client) throws Exception {
         Operations operations = new Operations(client);
-        if (!openTelemetryExtensionExists(operations)) {
+        if (!microProfileTelemetryExtensionExists(operations)) {
             operations.add(MICROPROFILE_TELEMETRY_EXTENSION_ADDRESS);
         }
-        if (!openTelemetrySubsystemExists(operations)) {
+        if (!microProfileTelemetrySubsystemExists(operations)) {
             operations.add(MICROPROFILE_TELEMETRY_SUBSYSTEM_ADDRESS);
         }
         new Administration(client).reloadIfRequired();

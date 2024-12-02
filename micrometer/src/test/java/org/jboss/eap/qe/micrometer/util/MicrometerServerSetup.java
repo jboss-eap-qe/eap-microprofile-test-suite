@@ -1,5 +1,6 @@
 package org.jboss.eap.qe.micrometer.util;
 
+import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.MicroProfileServerSetupTask;
 import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.ts.common.docker.Docker;
@@ -20,6 +21,7 @@ public class MicrometerServerSetup implements MicroProfileServerSetupTask {
         }
         // start the OTel collector container
         otelCollector = OpenTelemetryCollectorContainer.getInstance();
+        otelCollector.start();
         // and pass Micrometer the OTel collector endopint URL
         MicrometerServerConfiguration.enableMicrometer(otelCollector.getOtlpHttpEndpoint());
     }
@@ -29,5 +31,6 @@ public class MicrometerServerSetup implements MicroProfileServerSetupTask {
         MicrometerServerConfiguration.disableMicrometer();
         // stop the OTel collector container
         otelCollector.stop();
+        OpenTelemetryCollectorContainer.dispose();
     }
 }

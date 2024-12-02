@@ -27,7 +27,14 @@ import org.jboss.eap.qe.ts.common.docker.Docker;
 
 /**
  * Inspired by the similar class in Wildfly, this is an implementation of an OTel collector which uses the TS Docker
- * APIs, instead ogf the Testcontainers based tooling which is available in WildFly
+ * APIs, instead of the Testcontainers based tooling which is available in WildFly.
+ *
+ * Both a singleton or a managed instance can be obtained by {@link OpenTelemetryCollectorContainer#getInstance()} or
+ * {@link OpenTelemetryCollectorContainer#getNewInstance()} methods respectively, and lifecycle methods (e.g.:
+ * {@link OpenTelemetryCollectorContainer#start()}, {@link OpenTelemetryCollectorContainer#stop()},
+ * {@link OpenTelemetryCollectorContainer#dispose()} etc. must be used accordingly.
+ *
+ * Instances cannot be used simultaneously, since ports and general config are unique.
  */
 public class OpenTelemetryCollectorContainer {
     private static OpenTelemetryCollectorContainer INSTANCE = null;
@@ -53,7 +60,7 @@ public class OpenTelemetryCollectorContainer {
     private String otlpGrpcEndpoint;
     private String otlpHttpEndpoint;
     private String prometheusUrl;
-    private final Docker otelCollector;
+    private final Docker otelCollectorContainer;
 
     private String getLocalOtelCollectorConfigYamlAbsolutePath() {
         File tempFile = null;
@@ -79,7 +86,7 @@ public class OpenTelemetryCollectorContainer {
     }
 
     private OpenTelemetryCollectorContainer() {
-        otelCollector = new Docker.Builder("otel-collector",
+        otelCollectorContainer = new Docker.Builder("otel-collector",
                 "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.103.1")
                 .setContainerReadyCondition(() -> {
                     try {
@@ -101,18 +108,69 @@ public class OpenTelemetryCollectorContainer {
                 .build();
     }
 
+    /**
+     * Static method to get a unique instance of {@link OpenTelemetryCollectorContainer}.
+     *
+     * @return A unique instance of {@link OpenTelemetryCollectorContainer}
+     */
     public static synchronized OpenTelemetryCollectorContainer getInstance() {
         if (INSTANCE == null) {
-            jaegerContainer = JaegerContainer.getInstance();
             INSTANCE = new OpenTelemetryCollectorContainer();
-            INSTANCE.start();
         }
         return INSTANCE;
     }
 
+    /**
+     * Static method to get a unique instance of {@link OpenTelemetryCollectorContainer}.
+     *
+     * @param jaegerBackendContainer A {@link JaegerContainer} instance that will be used as the Jaeger backend, e.g.:
+     *                               for storing and retrieving traces.
+     * @return A unique instance of {@link OpenTelemetryCollectorContainer}
+     */
+    public static synchronized OpenTelemetryCollectorContainer getInstance(JaegerContainer jaegerBackendContainer) {
+        if (INSTANCE == null) {
+            jaegerContainer = jaegerBackendContainer;
+            INSTANCE = new OpenTelemetryCollectorContainer();
+        }
+        return INSTANCE;
+    }
+
+    /**
+     * Static method to get a new instance of {@link OpenTelemetryCollectorContainer}, which should be managed by
+     * external code.
+     *
+     * @return An instance of {@link OpenTelemetryCollectorContainer}
+     */
+    public static synchronized OpenTelemetryCollectorContainer getNewInstance() {
+        return new OpenTelemetryCollectorContainer();
+    }
+
+    /**
+     * Static method to get a new instance of {@link OpenTelemetryCollectorContainer}, which should be managed by
+     * external code.
+     *
+     * @param jaegerBackendContainer A {@link JaegerContainer} instance that will be used as the Jaeger backend, e.g.:
+     *                               for storing and retrieving traces.
+     * @return An instance of {@link OpenTelemetryCollectorContainer}
+     */
+    public static synchronized OpenTelemetryCollectorContainer getNewInstance(JaegerContainer jaegerBackendContainer) {
+        OpenTelemetryCollectorContainer newInstance = new OpenTelemetryCollectorContainer();
+        jaegerContainer = jaegerBackendContainer;
+        return newInstance;
+    }
+
+    /**
+     * Set the unique instance reference to null.
+     */
+    public static synchronized void dispose() {
+        if (INSTANCE != null) {
+            INSTANCE = null;
+        }
+    }
+
     public void start() {
         try {
-            otelCollector.start();
+            otelCollectorContainer.start();
         } catch (Exception e) {
             throw new IllegalStateException("Starting the OTel container failed: " + e);
         }
@@ -122,13 +180,8 @@ public class OpenTelemetryCollectorContainer {
     }
 
     public synchronized void stop() {
-        if (jaegerContainer != null) {
-            jaegerContainer.stop();
-            jaegerContainer = null;
-        }
-        INSTANCE = null;
         try {
-            otelCollector.stop();
+            otelCollectorContainer.stop();
         } catch (Exception e) {
             throw new IllegalStateException("Stopping the OTel container failed: " + e);
         }
@@ -149,23 +202,23 @@ public class OpenTelemetryCollectorContainer {
     public List<PrometheusMetric> fetchMetrics(String nameToMonitor) throws InterruptedException {
         String body = "";
         try (Client client = ClientBuilder.newClient()) {
-            WebTarget target = client.target(OpenTelemetryCollectorContainer.getInstance().getPrometheusUrl());
+            WebTarget target = client.target(this.getPrometheusUrl());
 
             int attemptCount = 0;
             boolean found = false;
 
             // Request counts can vary. Setting high to help ensure test stability
             while (!found && attemptCount < 30) {
-                // Wait to give Micrometer time to export
+                // Wait to give metrics systems time to export
                 Thread.sleep(1000);
 
                 body = target.request().get().readEntity(String.class);
-                found = body.contains(nameToMonitor);
+                found = body.contains("\n" + nameToMonitor);
                 attemptCount++;
             }
         }
 
-        return buildPrometheusMetrics(body);
+        return body.isEmpty() ? List.of() : buildPrometheusMetrics(body);
     }
 
     public List<JaegerTrace> getTraces(String serviceName) throws InterruptedException {
