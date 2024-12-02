@@ -21,6 +21,14 @@
             <groupId>org.jboss.eap.qe</groupId>
             <artifactId>tooling-docker</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wildfly.extras.creaper</groupId>
+            <artifactId>creaper-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.eap.qe</groupId>
+            <artifactId>tooling-server-configuration</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

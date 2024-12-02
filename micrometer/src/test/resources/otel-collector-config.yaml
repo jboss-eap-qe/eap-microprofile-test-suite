@@ -18,7 +18,7 @@ processors:
 
 exporters:
   logging:
-    verbosity: detailed
+    verbosity: normal
   prometheus:
     endpoint: "0.0.0.0:49152"
   otlp:

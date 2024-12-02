@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.micrometer.util;
+package org.jboss.eap.qe.microprofile.common.setuptasks;
 
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;

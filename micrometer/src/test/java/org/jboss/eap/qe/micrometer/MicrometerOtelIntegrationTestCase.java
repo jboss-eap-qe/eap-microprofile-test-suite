@@ -18,6 +18,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.micrometer.base.MetricResource;
 import org.jboss.eap.qe.micrometer.util.MicrometerServerSetup;
+import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
@@ -40,7 +41,7 @@ import io.micrometer.core.instrument.MeterRegistry;
  * Tests that metrics can be pushed to the OpenTelemetry collector by Micrometer, and then exported to Jaeger.
  * This class is based on the similar one in WildFly, although it uses a different {@code @ServerSetup} task class,
  * i.e. {@link MicrometerServerSetup}, which provides the logic for executing the required configuration
- * (see {@link org.jboss.eap.qe.micrometer.util.MicrometerServerConfiguration}) within the Arquillian container.
+ * (see {@link MicrometerServerConfiguration}) within the Arquillian container.
  */
 @RunWith(Arquillian.class)
 @ServerSetup(MicrometerServerSetup.class) // Enables/Disables Micrometer extension/subsystem for Arquillian in-container tests
