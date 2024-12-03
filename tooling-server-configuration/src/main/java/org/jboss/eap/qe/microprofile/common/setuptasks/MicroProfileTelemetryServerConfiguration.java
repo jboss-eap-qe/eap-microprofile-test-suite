@@ -94,6 +94,7 @@ public class MicroProfileTelemetryServerConfiguration {
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "exporter-type", "otlp");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "sampler-type", "on");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "max-export-batch-size", "512");
+        operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "batch-delay", "1");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "max-queue-size", "1");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "endpoint", otlpCollectorEndpointUrl);
         new Administration(client).reloadIfRequired();
