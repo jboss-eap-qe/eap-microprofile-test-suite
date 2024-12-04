@@ -172,7 +172,7 @@ public class OpenTelemetryCollectorContainer {
         try {
             otelCollectorContainer.start();
         } catch (Exception e) {
-            throw new IllegalStateException("Starting the OTel container failed: " + e);
+            throw new IllegalStateException("Starting the OTel container failed: " + e, e);
         }
         otlpGrpcEndpoint = "http://localhost:" + DOCKER_HOST_OTLP_GRPC_PORT;
         otlpHttpEndpoint = "http://localhost:" + DOCKER_HOST_OTLP_HTTP_PORT;
