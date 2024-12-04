@@ -61,7 +61,7 @@ public class MultipleDeploymentsMetricsTest {
      * @tpTestDetails High level scenario to verify two none-reusable counter metrics of the same name are incremented
      *                properly according to the number of a CDI beans invocation.
      *                Metrics are in separate archives - multiple-deployment.
-     * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in Jprometheus format.
+     * @tpPassCrit Counters have correct values (according to number of the CDI bean invocations) in Prometheus format.
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
