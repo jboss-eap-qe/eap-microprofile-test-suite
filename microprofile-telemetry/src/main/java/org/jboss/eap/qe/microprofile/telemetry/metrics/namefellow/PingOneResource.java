@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.metrics.namefellow;
+package org.jboss.eap.qe.microprofile.telemetry.metrics.namefellow;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -6,12 +6,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/" + PingTwoResource.RESOURCE)
-public class PingTwoResource {
+@Path("/" + PingOneResource.RESOURCE)
+public class PingOneResource {
     public static final String RESOURCE = "ping-one";
 
     @Inject
-    private PingTwoService ping;
+    private PingOneService ping;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
