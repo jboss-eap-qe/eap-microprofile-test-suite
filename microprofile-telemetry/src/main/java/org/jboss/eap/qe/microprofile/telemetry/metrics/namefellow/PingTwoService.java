@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.metrics.namefellow;
+package org.jboss.eap.qe.microprofile.telemetry.metrics.namefellow;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;

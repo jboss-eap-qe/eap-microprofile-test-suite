@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.metrics;
+package org.jboss.eap.qe.microprofile.telemetry.metrics;
 
 import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;

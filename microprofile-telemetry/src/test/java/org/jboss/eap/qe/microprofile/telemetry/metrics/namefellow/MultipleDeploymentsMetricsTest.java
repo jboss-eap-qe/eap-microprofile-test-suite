@@ -1,4 +1,4 @@
-package org.jboss.eap.qe.microprofile.metrics.namefellow;
+package org.jboss.eap.qe.microprofile.telemetry.metrics.namefellow;
 
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.equalTo;
@@ -12,7 +12,7 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.as.arquillian.api.ServerSetup;
-import org.jboss.eap.qe.microprofile.metrics.MPTelemetryServerSetupTask;
+import org.jboss.eap.qe.microprofile.telemetry.metrics.MPTelemetryServerSetupTask;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
 import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
