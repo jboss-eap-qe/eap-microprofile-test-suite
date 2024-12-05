@@ -108,7 +108,8 @@ public class MultipleMetricsExtensionTest {
      */
     @Deployment(name = FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER, managed = false)
     public static Archive<?> deploymentWithMPTelemetryEnabledDisablingMicrometer() {
-        String mpConfig = "otel.metric.export.interval=100\notel.service.name=" + FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER
+        String mpConfig = "otel.metric.export.interval=100\notel.service.name="
+                + FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER
                 + "\notel.sdk.disabled=false\nTimeout/enabled=true\nsmallrye.faulttolerance.micrometer.disabled=true";
         return ShrinkWrap.create(WebArchive.class, FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -124,7 +125,9 @@ public class MultipleMetricsExtensionTest {
      */
     @Test
     @InSequence(0)
-    public void deployAll() {
+    public void deployAll() throws Exception {
+        MicroProfileTelemetryServerConfiguration.disableOpenTelemetry();
+        MicrometerServerConfiguration.disableMicrometer();
         deployer.deploy(FAULT_TOLERANCE_DEPLOYMENT);
         deployer.deploy(FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY);
         deployer.deploy(FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER);
@@ -243,12 +246,14 @@ public class MultipleMetricsExtensionTest {
             @ArquillianResource @OperateOnDeployment(FAULT_TOLERANCE_DEPLOYMENT) URL deploymentUrl) throws Exception {
         // Remove the Micrometer extension...
         MicrometerServerConfiguration.disableMicrometer();
-        // ... but make the MicroProfile Telemetry extension available
-        MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+        // ... start the OTel collector container...
+        OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
+        otelCollector.start();
         try {
-            // start the OTel collector container
-            OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
-            otelCollector.start();
+            // ... and make the MicroProfile Telemetry extension available
+            MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+            MicroProfileTelemetryServerConfiguration
+                    .addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
             try {
                 // deploy an app that DOES NOT enable MP Telemetry
                 deployer.deploy(FAULT_TOLERANCE_DEPLOYMENT);
@@ -273,10 +278,10 @@ public class MultipleMetricsExtensionTest {
                     deployer.undeploy(FAULT_TOLERANCE_DEPLOYMENT);
                 }
             } finally {
-                otelCollector.stop();
+                MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
             }
         } finally {
-            MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
+            otelCollector.stop();
         }
     }
 
@@ -294,12 +299,14 @@ public class MultipleMetricsExtensionTest {
             throws Exception {
         // Remove the Micrometer extension
         MicrometerServerConfiguration.disableMicrometer();
-        // Make the MP Telemetry extension available
-        MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+        // start the OTel collector container
+        OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
+        otelCollector.start();
         try {
-            // start the OTel collector container
-            OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
-            otelCollector.start();
+            // Make the MP Telemetry extension available
+            MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+            MicroProfileTelemetryServerConfiguration
+                    .addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
             try {
                 // deploy an app that enables MP Telemetry
                 deployer.deploy(FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY);
@@ -325,10 +332,10 @@ public class MultipleMetricsExtensionTest {
                     deployer.undeploy(FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY);
                 }
             } finally {
-                otelCollector.stop();
+                MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
             }
         } finally {
-            MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
+            otelCollector.stop();
         }
     }
 
@@ -346,13 +353,15 @@ public class MultipleMetricsExtensionTest {
     public void metricsAreCollectedWhenBothExtensionsAreAvailableAndOnlyMPTelIsEnabled(
             @ArquillianResource @OperateOnDeployment(FAULT_TOLERANCE_DEPOYMENT_WITH_MP_TELEMETRY_DISABLING_MICROMETER) URL deploymentUrl)
             throws Exception {
-        // Make the MP Telemetry extension available
-        MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
+        // start the OTel collector container
+        OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
+        otelCollector.start();
         try {
-            // start the OTel collector container
-            OpenTelemetryCollectorContainer otelCollector = OpenTelemetryCollectorContainer.getNewInstance();
-            otelCollector.start();
+            // Make the MP Telemetry extension available
+            MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
             try {
+                MicroProfileTelemetryServerConfiguration
+                        .addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
                 // And be sure Micrometer is available too
                 MicrometerServerConfiguration.enableMicrometer(otelCollector.getOtlpHttpEndpoint());
                 try {
@@ -387,10 +396,10 @@ public class MultipleMetricsExtensionTest {
                     MicrometerServerConfiguration.disableMicrometer();
                 }
             } finally {
-                otelCollector.stop();
+                MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
             }
         } finally {
-            MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
+            otelCollector.stop();
         }
     }
 
