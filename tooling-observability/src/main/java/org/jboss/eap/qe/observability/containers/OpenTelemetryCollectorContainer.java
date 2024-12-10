@@ -124,7 +124,7 @@ public class OpenTelemetryCollectorContainer {
      * Static method to get a unique instance of {@link OpenTelemetryCollectorContainer}.
      *
      * @param jaegerBackendContainer A {@link JaegerContainer} instance that will be used as the Jaeger backend, e.g.:
-     *                               for storing and retrieving traces.
+     *        for storing and retrieving traces.
      * @return A unique instance of {@link OpenTelemetryCollectorContainer}
      */
     public static synchronized OpenTelemetryCollectorContainer getInstance(JaegerContainer jaegerBackendContainer) {
@@ -150,7 +150,7 @@ public class OpenTelemetryCollectorContainer {
      * external code.
      *
      * @param jaegerBackendContainer A {@link JaegerContainer} instance that will be used as the Jaeger backend, e.g.:
-     *                               for storing and retrieving traces.
+     *        for storing and retrieving traces.
      * @return An instance of {@link OpenTelemetryCollectorContainer}
      */
     public static synchronized OpenTelemetryCollectorContainer getNewInstance(JaegerContainer jaegerBackendContainer) {

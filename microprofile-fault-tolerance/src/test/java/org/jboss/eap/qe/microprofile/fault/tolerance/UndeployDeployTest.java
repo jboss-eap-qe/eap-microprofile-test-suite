@@ -17,6 +17,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileFaultToleranceServerConfiguration;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileTelemetryServerConfiguration;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
+import org.jboss.eap.qe.microprofile.common.setuptasks.OpenTelemetryServerConfiguration;
 import org.jboss.eap.qe.microprofile.fault.tolerance.deployments.v10.HelloService;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.creaper.ManagementClientProvider;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.deployment.ConfigurationUtil;
@@ -142,8 +143,8 @@ public class UndeployDeployTest {
             otelCollector.start();
             try {
                 // Enable MP Telemetry based metrics, which rely on OpenTelemetry subsystem
-                MicroProfileTelemetryServerConfiguration.enableOpenTelemetry();
-                MicroProfileTelemetryServerConfiguration
+                OpenTelemetryServerConfiguration.enableOpenTelemetry();
+                OpenTelemetryServerConfiguration
                         .addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
                 MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
                 try {
@@ -213,7 +214,7 @@ public class UndeployDeployTest {
                 } finally {
                     // disable MP Telemetry based metrics
                     MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
-                    MicroProfileTelemetryServerConfiguration.disableOpenTelemetry();
+                    OpenTelemetryServerConfiguration.disableOpenTelemetry();
                 }
             } finally {
                 // stop the OTel collector container

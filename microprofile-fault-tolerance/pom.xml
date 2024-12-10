@@ -146,6 +146,7 @@
                                     <layers>
                                         <layer>cloud-server</layer>
                                         <layer>microprofile-fault-tolerance</layer>
+                                        <layer>micrometer</layer>
                                     </layers>
                                 </configuration>
                             </execution>

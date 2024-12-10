@@ -4,6 +4,7 @@ import org.jboss.as.arquillian.api.ServerSetupTask;
 import org.jboss.as.arquillian.container.ManagementClient;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicroProfileTelemetryServerConfiguration;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
+import org.jboss.eap.qe.microprofile.common.setuptasks.OpenTelemetryServerConfiguration;
 import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer;
 import org.jboss.eap.qe.ts.common.docker.Docker;
 
@@ -31,8 +32,8 @@ public class MPTelemetryServerSetupTask implements ServerSetupTask {
         otelCollector = OpenTelemetryCollectorContainer.getInstance();
         otelCollector.start();
         // Enable MP Telemetry based metrics, which rely on OpenTelemetry subsystem
-        MicroProfileTelemetryServerConfiguration.enableOpenTelemetry();
-        MicroProfileTelemetryServerConfiguration.addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
+        OpenTelemetryServerConfiguration.enableOpenTelemetry();
+        OpenTelemetryServerConfiguration.addOpenTelemetryCollectorConfiguration(otelCollector.getOtlpGrpcEndpoint());
         MicroProfileTelemetryServerConfiguration.enableMicroProfileTelemetry();
     }
 
@@ -43,7 +44,7 @@ public class MPTelemetryServerSetupTask implements ServerSetupTask {
     public void tearDown(ManagementClient managementClient, String containerId) throws Exception {
         // disable MP Telemetry based metrics
         MicroProfileTelemetryServerConfiguration.disableMicroProfileTelemetry();
-        MicroProfileTelemetryServerConfiguration.disableOpenTelemetry();
+        OpenTelemetryServerConfiguration.disableOpenTelemetry();
         // stop the OTel collector container
         otelCollector.stop();
     }
