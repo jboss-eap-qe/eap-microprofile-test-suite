@@ -87,7 +87,7 @@ public class OpenTelemetryCollectorContainer {
 
     private OpenTelemetryCollectorContainer() {
         otelCollectorContainer = new Docker.Builder("otel-collector",
-                "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.103.1")
+                "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.115.1")
                 .setContainerReadyCondition(() -> {
                     try {
                         new Socket("127.0.0.1", HEALTH_CHECK_PORT).close();
