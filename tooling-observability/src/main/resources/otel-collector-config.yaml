@@ -21,10 +21,11 @@ exporters:
     verbosity: detailed
   prometheus:
     endpoint: "0.0.0.0:49152"
-  otlp:
-    endpoint: 0.0.0.0:4217
-    tls:
-      insecure: true
+# We don't test traces here
+#  otlp:
+#    endpoint: 0.0.0.0:4217
+#    tls:
+#      insecure: true
 
 service:
   pipelines:
@@ -32,10 +33,11 @@ service:
       receivers: [ otlp ]
       processors: [ batch ]
       exporters: [ prometheus, debug ]
-    traces:
-      receivers: [ otlp ]
-      processors: [ batch ]
-      exporters: [ otlp, debug ]
+# We don't test traces here
+#    traces:
+#      receivers: [ otlp ]
+#      processors: [ batch ]
+#      exporters: [ otlp, debug ]
     logs:
       receivers: [ otlp ]
       processors: [ batch ]
