@@ -60,7 +60,7 @@ public class UndeployDeployTest {
 
     @Deployment(name = FIRST_DEPLOYMENT, managed = false)
     public static Archive<?> createFirstDeployment() {
-        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\nTimeout/enabled=true";
+        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\notel.metric.export.interval=100\nTimeout/enabled=true";
 
         return ShrinkWrap.create(WebArchive.class, FIRST_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
@@ -70,7 +70,7 @@ public class UndeployDeployTest {
 
     @Deployment(name = SECOND_DEPLOYMENT, managed = false)
     public static Archive<?> createSecondDeployment() {
-        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\nTimeout/enabled=false";
+        String mpConfig = "otel.service.name=UndeployDeployTest-first-deployment\notel.sdk.disabled=false\notel.metric.export.interval=100\nTimeout/enabled=false";
 
         return ShrinkWrap.create(WebArchive.class, SECOND_DEPLOYMENT + ".war")
                 .addPackages(true, HelloService.class.getPackage())
