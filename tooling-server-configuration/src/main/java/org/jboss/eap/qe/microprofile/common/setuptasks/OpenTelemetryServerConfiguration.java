@@ -66,6 +66,7 @@ public class OpenTelemetryServerConfiguration {
         if (!openTelemetrySubsystemExists(operations)) {
             throw new IllegalStateException("OpenTelemetry subsystem not found");
         }
+        operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "batch-delay", "1");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "exporter-type", "otlp");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "sampler-type", "on");
         operations.writeAttribute(OPENTELEMETRY_SUBSYSTEM_ADDRESS, "max-export-batch-size", "512");
