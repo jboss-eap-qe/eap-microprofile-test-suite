@@ -48,7 +48,7 @@ public class OpenTelemetryCollectorContainer {
     public static final int DOCKER_HOST_OTLP_HTTP_PORT = DEFAULT_OTLP_HTTP_PORT + 100;
     public static final int PROMETHEUS_PORT = 49152;
     public static final int HEALTH_CHECK_PORT = 13133;
-    private static final String OTEL_CONFIG_DIR_NAME = "otel-collector";
+    private static final String OTEL_CONFIG_DIR_NAME = "otelcol-contrib";
     private static final String OTEL_CONFIG_FILE_NAME = "config.yaml";
     public static final String OTEL_COLLECTOR_CONFIG_LOCAL_PATH = Paths.get(System.getProperty("user.home"),
             OTEL_CONFIG_DIR_NAME, OTEL_CONFIG_FILE_NAME).toAbsolutePath().toString();
@@ -104,7 +104,6 @@ public class OpenTelemetryCollectorContainer {
                 .withPortMapping(String.format("%s:%s", DOCKER_HOST_OTLP_HTTP_PORT, DOCKER_CONTAINER_OTLP_HTTP_PORT))
                 .withPortMapping(String.format("%1$s:%1$s", HEALTH_CHECK_PORT))
                 .withPortMapping(String.format("%1$s:%1$s", PROMETHEUS_PORT))
-                .withCmdArg("--config=" + OTEL_COLLECTOR_CONFIG_CONTAINER_FILE_PATH)
                 .build();
     }
 
