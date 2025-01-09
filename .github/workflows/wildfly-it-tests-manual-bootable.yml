@@ -71,7 +71,7 @@ jobs:
         if: ${{ ! inputs.wildfly-jar-maven-plugin-version == '' }}
       - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java-version }}) against latest WildFly, on ${{ matrix.os }}
         if: ${{ matrix.os  == 'ubuntu-latest' }}
-        run: mvn clean verify --batch-mode -fae ${{ env.MAVEN_ARGS_WILDFLY_DIST_LOCATION }} ${{ env.MAVEN_ARGS_WILDFLY_DIST_VERSION }} ${{ env.MAVEN_ARGS_WILDFLY_JAR_MAVEN_PLUGIN_VERSION }}
+        run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests" ${{ env.MAVEN_ARGS_WILDFLY_DIST_LOCATION }} ${{ env.MAVEN_ARGS_WILDFLY_DIST_VERSION }} ${{ env.MAVEN_ARGS_WILDFLY_JAR_MAVEN_PLUGIN_VERSION }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
