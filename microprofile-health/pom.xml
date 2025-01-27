@@ -75,6 +75,19 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- TODO: remove once https://issues.redhat.com/browse/WFLY-20325 is solved -->
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <!-- Test against Bootable JAR -->
         <profile>
@@ -108,6 +121,8 @@
                                             org.wildfly.arquillian:wildfly-arquillian-container-managed
                                         </classpathDependencyExclude>
                                     </classpathDependencyExcludes>
+                                    <!-- TODO: remove once https://issues.redhat.com/browse/WFLY-20325 is solved -->
+                                    <runOrder>alphabetical</runOrder>
                                 </configuration>
                             </execution>
                         </executions>
