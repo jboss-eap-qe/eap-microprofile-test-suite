@@ -57,14 +57,15 @@
         <version.io.rest-assured>5.0.1</version.io.rest-assured>
         <version.junit>4.13.1</version.junit>
         <version.org.jboss.arquillian>1.7.2.Final</version.org.jboss.arquillian>
-        <version.org.jboss.wildfly.dist>34.0.0.Final</version.org.jboss.wildfly.dist>
+        <version.org.jboss.wildfly.dist>35.0.1.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
         <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
-        <version.org.wildfly.core>26.0.1.Final</version.org.wildfly.core>
+        <version.org.wildfly.core>27.0.1.Final</version.org.wildfly.core>
+        <version.org.wildfly.launcher>1.0.0.Final</version.org.wildfly.launcher>
         <version.org.wildfly.extras.creaper>2.0.3</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.33</version.org.yaml.snakeyaml>
         <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
@@ -162,13 +163,6 @@
                 <artifactId>wildfly-arquillian-container-managed</artifactId>
                 <version>${version.org.wildfly.arquillian}</version>
                 <scope>test</scope>
-                <exclusions>
-                    <!-- We need to avoid using the transitive WildFly Core dependency since it might not work on JDK 17 -->
-                    <exclusion>
-                        <groupId>org.wildfly.core</groupId>
-                        <artifactId>wildfly-launcher</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.wildfly</groupId>
@@ -297,9 +291,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.wildfly.core</groupId>
+                <groupId>org.wildfly.launcher</groupId>
                 <artifactId>wildfly-launcher</artifactId>
-                <version>${version.org.wildfly.core}</version>
+                <version>${version.org.wildfly.launcher}</version>
             </dependency>
             <dependency>
                 <groupId>org.bitbucket.b_c</groupId>
@@ -337,7 +331,7 @@
     -->
     <dependencies>
         <dependency>
-            <groupId>org.wildfly.core</groupId>
+            <groupId>org.wildfly.launcher</groupId>
             <artifactId>wildfly-launcher</artifactId>
         </dependency>
     </dependencies>
