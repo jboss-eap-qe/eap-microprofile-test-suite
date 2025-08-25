@@ -33,6 +33,9 @@ public class KeycloakConfigurator extends ExternalResource {
 
     private String rawAdminToken;
 
+    public static final String KEYCLOAK_INSTANCE_HOSTNAME = "localhost";
+    public static final int KEYCLOAK_EXPOSED_HTTP_PORT = 8179;
+
     @Override
     public void before() throws InterruptedException {
         rawAdminToken = authorizeAndObtainRawJwtForAdminInterface(adminUsername, adminPassword);
