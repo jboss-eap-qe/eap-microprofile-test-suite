@@ -34,14 +34,14 @@ public class HighCPUUtilsTest {
         Assume.assumeNotNull("This test cannot be executed on this platform as ProcessUtils class was not " +
                 "implemented for it.", processUtils);
 
-        int loadDurationInSeconds = 10;
+        int loadDurationInSeconds = 30;
         Process cpuLoadProcess = new HighCPUUtils(processUtils).causeMaximumCPULoadOnContainer(
                 ProcessUtils.CPUCoreMask.ALL_CORES, Duration.ofSeconds(loadDurationInSeconds));
 
         ArquillianContainerProperties props = new ArquillianContainerProperties(
                 ArquillianDescriptorWrapper.getArquillianDescriptor());
         Awaitility.await("CPU load generator does not work and is not causing any CPU load.")
-                .atMost(org.awaitility.Duration.TEN_SECONDS)
+                .atMost(30, TimeUnit.SECONDS)
                 // max CPU load is 1.0, if for example 9 from 10 CPU cores are under 100% load than expected load is 0.9
                 // substract 0.02 is defining test load tolerance for the test as load might be slighly smaller like 0.98
                 .until(() -> getCpuLoad(getConnection(props.getDefaultManagementAddress(),
