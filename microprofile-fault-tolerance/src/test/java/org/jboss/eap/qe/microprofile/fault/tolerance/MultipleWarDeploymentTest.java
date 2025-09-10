@@ -19,42 +19,43 @@ import org.jboss.eap.qe.microprofile.tooling.server.log.LogChecker;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests multiple deploy/undeploy of MP FT deployments (just JAR archives). This in in-container test which injects
- * MP FT service and invokes operations on it.
- * Note that this is test for multiple deployments which is currently unsupported feature in Wildfly/EAP.
+ * Tests multiple deploy/undeploy of MP FT deployments.
+ * <p>
+ * This in in-container test which injects a MicroProfile FT service and invokes operations on it.
+ * </p>
  */
 @RunWith(Arquillian.class)
 @ServerSetup(FaultToleranceServerSetup.class) // Enables/Disables fault tolerance extension/subsystem for Arquillian in-container tests
-public class MultipleJarDeploymentTest {
+public class MultipleWarDeploymentTest {
 
     @Inject
     private HelloService helloService;
 
-    private static final String FIRST_DEPLOYMENT_JAR = "first-deployment-jar";
-    private static final String SECOND_DEPLOYMENT_JAR = "second-deployment-jar";
+    private static final String FIRST_DEPLOYMENT = "first-deployment";
+    private static final String SECOND_DEPLOYMENT = "second-deployment";
 
-    @Deployment(name = FIRST_DEPLOYMENT_JAR, order = 1, testable = false)
-    public static Archive<?> createFirstJarDeployment() {
+    @Deployment(name = FIRST_DEPLOYMENT, order = 1, testable = false)
+    public static Archive<?> createFirstDeployment() {
         String mpConfig = "Timeout/enabled=false";
 
-        return ShrinkWrap.create(JavaArchive.class, FIRST_DEPLOYMENT_JAR + ".jar")
+        return ShrinkWrap.create(WebArchive.class, FIRST_DEPLOYMENT + ".war")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
                 .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
 
-    @Deployment(name = SECOND_DEPLOYMENT_JAR, order = 2)
-    public static Archive<?> createSecondJarDeployment() {
+    @Deployment(name = SECOND_DEPLOYMENT, order = 2)
+    public static Archive<?> createSecondDeployment() {
         String mpConfig = "Timeout/enabled=true";
 
-        return ShrinkWrap.create(JavaArchive.class, SECOND_DEPLOYMENT_JAR + ".jar")
+        return ShrinkWrap.create(WebArchive.class, SECOND_DEPLOYMENT + ".war")
                 .addClasses(HelloService.class, MyContext.class, HelloFallback.class, FallbackHandler.class)
-                .addClasses(MultipleJarDeploymentTest.class, LogChecker.class)
+                .addClasses(MultipleWarDeploymentTest.class, LogChecker.class)
                 .addAsManifestResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
                 .addAsManifestResource(new StringAsset(mpConfig), "microprofile-config.properties");
     }
@@ -65,7 +66,7 @@ public class MultipleJarDeploymentTest {
      * @tpSince EAP 7.4.0.CD19
      */
     @Test
-    @OperateOnDeployment(SECOND_DEPLOYMENT_JAR) // enrich this deployment by test
+    @OperateOnDeployment(SECOND_DEPLOYMENT) // enrich this deployment by test
     public void testFaultToleranceTimeoutOnSecondDeployment() throws Exception {
         MatcherAssert.assertThat("Microprofile Fault Tolerance does not work on 2nd deployment.",
                 helloService.timeout(true), containsString("Fallback Hello, context = foobar"));
