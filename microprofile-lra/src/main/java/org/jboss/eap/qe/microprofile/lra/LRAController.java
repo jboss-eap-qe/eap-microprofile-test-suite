@@ -28,14 +28,18 @@ public class LRAController {
     public static final String END_LRA_PATH = "end-lra";
     public static final String PROPAGATE_MANUAL = "propagate-manual";
     public static final String PROPAGATE_CHAIN = "propagate-chain";
-    public static final String BASE_URI = "Base-URL";
+    public static final String MANUAL_PARTICIPANT_URI = "Manual-Participant-URL";
+    public static final String CHAIN_PARTICIPANT_1_URI = "Chain-Participant-1-URL";
+    public static final String CHAIN_PARTICIPANT_2_URI = "Chain-Participant-2-URL";
     public static final String FAIL_LRA = "fail-lra";
     public static final String DELAYED_FAIL = "delayed-fail";
 
     private static final Logger LOG = Logger.getLogger(LRAController.class);
 
     private Client client;
-    private URI baseURI;
+    private URI manualParticipantURI;
+    private URI chainParticipant1URI;
+    private URI chainParticipant2URI;
 
     @PostConstruct
     public void init() {
@@ -52,8 +56,12 @@ public class LRAController {
     @LRA(end = false)
     @GET
     public Response start(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
-            @HeaderParam(BASE_URI) URI baseURI) {
-        this.baseURI = baseURI;
+            @HeaderParam(MANUAL_PARTICIPANT_URI) URI manualParticipantURI,
+            @HeaderParam(CHAIN_PARTICIPANT_1_URI) URI chainParticipant1URI,
+            @HeaderParam(CHAIN_PARTICIPANT_2_URI) URI chainParticipant2URI) {
+        this.manualParticipantURI = manualParticipantURI;
+        this.chainParticipant1URI = chainParticipant1URI;
+        this.chainParticipant2URI = chainParticipant2URI;
         return Response.ok(lraId).build();
     }
 
@@ -62,7 +70,7 @@ public class LRAController {
     @GET
     public void propagateManual(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @QueryParam(FAIL_LRA) boolean failParticipant) {
-        try (Response ignored = client.target(baseURI)
+        try (Response ignored = client.target(manualParticipantURI)
                 .path(LRAManualPropagationParticipant.PATH)
                 .queryParam(FAIL_LRA, failParticipant)
                 .request()
@@ -76,11 +84,11 @@ public class LRAController {
     @GET
     public void propagateChain(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @QueryParam(FAIL_LRA) boolean failParticipant) {
-        try (Response ignored = client.target(baseURI)
+        try (Response ignored = client.target(chainParticipant1URI)
                 .path(LRAChainPropagationParticipant1.PATH)
                 .queryParam(FAIL_LRA, failParticipant)
                 .request()
-                .header(LRAController.BASE_URI, baseURI)
+                .header(LRAController.CHAIN_PARTICIPANT_2_URI, chainParticipant2URI)
                 .header(LRA.LRA_HTTP_CONTEXT_HEADER, lraId)
                 .get()) {
         }

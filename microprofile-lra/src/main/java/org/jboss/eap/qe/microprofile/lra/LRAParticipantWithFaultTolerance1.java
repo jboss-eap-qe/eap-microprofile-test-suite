@@ -10,10 +10,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
 import java.time.Duration;
@@ -41,11 +39,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
     public static final String RESET_COUNTER_PATH = "reset-counter";
     public static final String CIRCUIT_BREAKER_PATH = "work-with-circuit-breaker";
     public static final String FALLBACK_PATH = "work-with-fallback";
+    public static final String LRA_PROPAGATION_BASE_URL_HEADER = "Lra-Propagation-Base-Url";
 
     private final AtomicInteger retryCount = new AtomicInteger(0);
-
-    @Context
-    UriInfo uriInfo;
 
     @LRA(value = LRA.Type.REQUIRED)
     @GET
@@ -53,6 +49,7 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
     @Retry(maxRetries = 3, delay = 100)
     public Response workWithRetry(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+            @HeaderParam(LRAParticipantWithFaultTolerance1.LRA_PROPAGATION_BASE_URL_HEADER) URI lraPropagationBaseUrl,
             @QueryParam(LRAParticipantWithFaultTolerance1.FAIL_LRA) boolean failLRA) throws Exception {
 
         LOGGER.infof("Executing action of LRAParticipantWithFaultTolerance1 enlisted in LRA %s " +
@@ -75,8 +72,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
 
         // call Participant 2 to propagate the LRA
         try (Client client = ClientBuilder.newClient()) {
-            client.target(uriInfo.getBaseUri() + "/" + LRAParticipantWithFaultTolerance2.PATH)
-                    .request().get();
+            client.target(lraPropagationBaseUrl + LRAParticipantWithFaultTolerance2.PATH)
+                    .request()
+                    .get();
         }
 
         if (failLRA) {
@@ -91,7 +89,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
     @Path(TIMEOUT_PATH)
     @Timeout(1000)
     public Response workWithRetry(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
-            @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId) throws Exception {
+            @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+            @HeaderParam(LRAParticipantWithFaultTolerance1.LRA_PROPAGATION_BASE_URL_HEADER) URI lraPropagationBaseUrl)
+            throws Exception {
 
         LOGGER.infof("Executing action of LRAParticipantWithFaultTolerance1 enlisted in LRA %s " +
                 "that was assigned %s participant Id. Retried: %s", lraId, recoveryId, retryCount.incrementAndGet());
@@ -101,8 +101,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
 
         // call Participant 2 to propagate the LRA
         try (Client client = ClientBuilder.newClient()) {
-            client.target(uriInfo.getBaseUri() + "/" + LRAParticipantWithFaultTolerance2.PATH)
-                    .request().get();
+            client.target(lraPropagationBaseUrl + LRAParticipantWithFaultTolerance2.PATH)
+                    .request()
+                    .get();
         }
 
         // Cause timeout of this method so exception is thrown and LRA is compensated
@@ -121,6 +122,7 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
     @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.2, delay = 1000, successThreshold = 10)
     public Response workWithCircuitBreaker(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+            @HeaderParam(LRAParticipantWithFaultTolerance1.LRA_PROPAGATION_BASE_URL_HEADER) URI lraPropagationBaseUrl,
             @QueryParam(LRAParticipantWithFaultTolerance1.FAIL_LRA) boolean failLRA) throws Exception {
         LOGGER.infof("Executing action of LRAParticipantWithFaultTolerance1 enlisted in LRA %s " +
                 "that was assigned %s participant Id. Retried: %s", lraId, recoveryId, retryCount.incrementAndGet());
@@ -130,8 +132,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
 
         // call Participant 2 to propagate the LRA
         try (Client client = ClientBuilder.newClient()) {
-            client.target(uriInfo.getBaseUri() + "/" + LRAParticipantWithFaultTolerance2.PATH)
-                    .request().get();
+            client.target(lraPropagationBaseUrl + LRAParticipantWithFaultTolerance2.PATH)
+                    .request()
+                    .get();
         }
 
         if (failLRA) {
@@ -147,6 +150,7 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
     @Fallback(fallbackMethod = "fallback")
     public Response workWithFallback(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+            @HeaderParam(LRAParticipantWithFaultTolerance1.LRA_PROPAGATION_BASE_URL_HEADER) URI lraPropagationBaseUrl,
             @QueryParam(LRAParticipantWithFaultTolerance1.FAIL_LRA) boolean failLRA) throws Exception {
 
         LOGGER.infof("Executing action of LRAParticipantWithFaultTolerance1 enlisted in LRA %s " +
@@ -157,8 +161,9 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
 
         // call Participant 2 to propagate the LRA
         try (Client client = ClientBuilder.newClient()) {
-            client.target(uriInfo.getBaseUri() + "/" + LRAParticipantWithFaultTolerance2.PATH)
-                    .request().get();
+            client.target(lraPropagationBaseUrl + LRAParticipantWithFaultTolerance2.PATH)
+                    .request()
+                    .get();
         }
         if (failLRA) {
             throw new Exception("Throwing exception to fail participant so fallback method is called.");
@@ -168,6 +173,7 @@ public class LRAParticipantWithFaultTolerance1 extends LRAParticipant {
 
     public Response fallback(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
+            @HeaderParam(LRAParticipantWithFaultTolerance1.LRA_PROPAGATION_BASE_URL_HEADER) URI lraPropagationBaseUrl,
             @QueryParam(LRAParticipantWithFaultTolerance1.FAIL_LRA) boolean failLRA) {
         // check lraId and recoveryId is the same
         if (!lraId.equals(lraResult.getLraId())) {
