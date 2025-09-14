@@ -3,10 +3,10 @@ package org.jboss.eap.qe.microprofile.jwt.keycloak;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
+import org.arquillian.cube.docker.impl.client.config.Await;
+import org.arquillian.cube.docker.junit.rule.ContainerDslRule;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -16,7 +16,6 @@ import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.testapp.Endpoints;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.JaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
-import org.jboss.eap.qe.ts.common.docker.Docker;
 import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,6 +27,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test a high level scenario which includes deploying a container with Keycloak, setting it up and obtaining
@@ -41,40 +42,40 @@ public class KeycloakIntegrationHighLevelScenarioTest {
 
     private static final String KEYCLOAK_REALM_NAME = "foobar";
 
-    private static final String KEYCLOAK_INSTANCE_HOSTNAME = "localhost";
-
     private static final String KEYCLOAK_CONTAINER_NAME = KeycloakIntegrationHighLevelScenarioTest.class.getSimpleName()
             + "-container";
 
-    private static final int KEYCLOAK_EXPOSED_HTTP_PORT = 8179;
-    private static final int KEYCLOAK_EXPOSED_TOKEN_PORT = 8149;
-    private static final int KEYCLOAK_EXPOSED_MANAGEMENT_PORT = 9988;
-
     private static final String KEYCLOAK_ADMIN_USERNAME = "admin";
     private static final String KEYCLOAK_ADMIN_PASSWORD = "password";
+    private static final Logger log = LoggerFactory.getLogger(KeycloakIntegrationHighLevelScenarioTest.class);
 
-    public static Docker keycloakContainer = new Docker.Builder(KEYCLOAK_CONTAINER_NAME,
-            "quay.io/keycloak/keycloak:24.0")
-            .setContainerReadyTimeout(2, TimeUnit.MINUTES)
-            .setContainerReadyCondition(() -> isContainerReady(KEYCLOAK_EXPOSED_HTTP_PORT))
-            .withPortMapping(KEYCLOAK_EXPOSED_HTTP_PORT + ":8080")
-            .withEnvVar("KEYCLOAK_ADMIN", KEYCLOAK_ADMIN_USERNAME)
-            .withEnvVar("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
-            .withEnvVar("KC_HEALTH_ENABLED", "true")
-            .withCmdArg("start-dev")
-            .build();
+    public static ContainerDslRule keycloakContainerDslRule = new ContainerDslRule("quay.io/keycloak/keycloak:24.0",
+            KEYCLOAK_CONTAINER_NAME)
+            .withAwaitStrategy(keycloakContainerAwaitStrategy())
+            .withPortBinding(KeycloakConfigurator.KEYCLOAK_EXPOSED_HTTP_PORT + "->8080")
+            .withEnvironment("KEYCLOAK_ADMIN", KEYCLOAK_ADMIN_USERNAME)
+            .withEnvironment("KEYCLOAK_ADMIN_PASSWORD", KEYCLOAK_ADMIN_PASSWORD)
+            .withEnvironment("KC_HEALTH_ENABLED", "true")
+            .withCommand("start-dev");
 
     public static KeycloakConfigurator keycloakConfigurator = new KeycloakConfigurator.Builder(KEYCLOAK_REALM_NAME)
             .adminPassword(KEYCLOAK_ADMIN_PASSWORD)
             .adminUsername(KEYCLOAK_ADMIN_USERNAME)
             .clientId("client-custom-id")
-            .keycloakBindAddress(KEYCLOAK_INSTANCE_HOSTNAME)
-            .keycloakHttpPort(KEYCLOAK_EXPOSED_HTTP_PORT)
+            .keycloakBindAddress(KeycloakConfigurator.KEYCLOAK_INSTANCE_HOSTNAME)
+            .keycloakHttpPort(KeycloakConfigurator.KEYCLOAK_EXPOSED_HTTP_PORT)
             .build();
 
     @ClassRule
-    public static TestRule ruleChain = RuleChain.outerRule(keycloakContainer)
+    public static TestRule ruleChain = RuleChain.outerRule(keycloakContainerDslRule)
             .around(keycloakConfigurator);
+
+    private static Await keycloakContainerAwaitStrategy() {
+        Await await = new Await();
+        await.setStrategy(
+                "org.jboss.eap.qe.microprofile.jwt.keycloak.KeycloakContainerAwaitStrategy");
+        return await;
+    }
 
     @Deployment
     public static Archive<?> createDeployment() {
@@ -99,6 +100,7 @@ public class KeycloakIntegrationHighLevelScenarioTest {
      */
     @Test
     public void accessSecuredEndpointWithKeycloakProvidedJwt(@ArquillianResource URL url) {
+
         final String username = "qux";
         final String password = "foo";
         keycloakConfigurator.addUser(username, password);
@@ -110,23 +112,4 @@ public class KeycloakIntegrationHighLevelScenarioTest {
                 .body(equalTo(rawToken))
                 .statusCode(200);
     }
-
-    private static boolean isContainerReady(int port) {
-        try {
-            URL url = new URL("http://" + KEYCLOAK_INSTANCE_HOSTNAME + ":" + port + "/health/ready");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-
-            boolean ready = connection.getResponseCode() == HttpURLConnection.HTTP_OK;
-            if (ready) {
-                System.out.println(
-                        "Let's wait addional 10 seconds before the post-start tasks (like creation of admin user) on container are done.");
-                Thread.sleep(10000L);
-            }
-            return ready;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
 }
