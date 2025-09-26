@@ -74,6 +74,19 @@ public final class ModelNodeLogChecker implements LogChecker {
         }
     }
 
+    @Override
+    public long logCounts(String subString) {
+        try {
+            return readLogFileFromManagementModel().asList()
+                    .stream()
+                    .map(ModelNode::asString)
+                    .filter(line -> line.contains(subString))
+                    .count();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private ModelNode readLogFileFromManagementModel() throws IOException {
         final Operations ops = new Operations(this.client);
 
