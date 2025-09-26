@@ -8,7 +8,7 @@ import org.eclipse.microprofile.openapi.models.info.Info;
 /**
  * Generates a base model to be used by the OpenAPI.
  */
-public class OpenApiModelReader implements OASModelReader {
+public class AnotherOpenApiModelReader implements OASModelReader {
     /**
      * Creates a new {@link Info} instance, modifying the output OpenAPI document in order to add local router
      * information

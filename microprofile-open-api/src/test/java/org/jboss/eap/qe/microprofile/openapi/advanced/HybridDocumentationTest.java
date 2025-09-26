@@ -30,6 +30,8 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictO
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.LocalServiceRouterInfoResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.RouterDistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
+import org.jboss.eap.qe.microprofile.openapi.model.AnotherOpenApiFilter;
+import org.jboss.eap.qe.microprofile.openapi.model.AnotherOpenApiModelReader;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
@@ -62,11 +64,12 @@ public class HybridDocumentationTest {
 
     private final static String PROVIDER_DEPLOYMENT_NAME = "serviceProviderDeployment";
     private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
+    private final static String ANOTHER_ROUTER_DEPLOYMENT_NAME = "anotherLocalServicesRouterDeployment";
     private final static String CONFIGURATION_TEMPLATE = "mp.openapi.scan.exclude.packages=org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed"
             + "\n" +
-            "mp.openapi.model.reader=org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader"
+            "mp.openapi.model.reader=org.jboss.eap.qe.microprofile.openapi.model.%s"
             + "\n" +
-            "mp.openapi.filter=org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter"
+            "mp.openapi.filter=org.jboss.eap.qe.microprofile.openapi.model.%s"
             + "\n" +
             "mp.openapi.scan.disable=false"
             + "\n" +
@@ -81,8 +84,9 @@ public class HybridDocumentationTest {
      * Builds a deployment archive with MP OpenAPI disabled to reflect the real life scenario in which the
      * OpenAPI documentation for each Local Service Router app should be generated starting from the static file
      * provided as a deliverable by the Service Provider staff.
-     * In this scenario the Service Provider app would sit on another server so we're disabling it to be sure an
-     * {@code openapi} andpoint is not registered for it.
+     * In this scenario the Service Provider app represented by this deployment would sit on another server so we're
+     * disabling it to be sure an {@code openapi} endpoint is not registered for it.
+     * The current test only deploys this Service Provider app as a backend for the Local Service Router REST calls.
      *
      * @return {@link WebArchive} instance for the Service provider app deployment
      */
@@ -104,7 +108,7 @@ public class HybridDocumentationTest {
 
     /**
      * MP Config is used to tell MP OpenAPI to skip doc generation for exposed "routed" JAX-RS endpoints as service
-     * consumers must rely to the original documentation (META-INF/openapi.yaml), plus annotations from Local Service
+     * consumers must rely on the original documentation (META-INF/openapi.yaml), plus annotations from Local Service
      * Provider "non-routed" JAX-RS endpoints, edited through an OASModelReader implementation and eventually filtered
      * through a OASFilter one.
      * Here we also add config properties to reach the Services Provider.
@@ -114,14 +118,17 @@ public class HybridDocumentationTest {
      * @throws ConfigurationException Arquillian container configuration exception
      * @throws IOException Management client disposal
      */
-    private static String buildMicroProfileConfigProperties()
+    private static String buildMicroProfileConfigProperties(final String openApiModelReader, final String openApiFilter)
             throws ManagementClientRelatedException, ConfigurationException, IOException {
 
         int configuredHTTPPort;
         try (OnlineManagementClient client = ManagementClientProvider.onlineStandalone()) {
             configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
         }
-        return String.format(CONFIGURATION_TEMPLATE, arquillianContainerProperties.getDefaultManagementAddress(),
+        return String.format(CONFIGURATION_TEMPLATE,
+                openApiModelReader,
+                openApiFilter,
+                arquillianContainerProperties.getDefaultManagementAddress(),
                 configuredHTTPPort);
     }
 
@@ -129,7 +136,8 @@ public class HybridDocumentationTest {
     public static Archive<?> localServicesRouterDeployment()
             throws ConfigurationException, IOException, ManagementClientRelatedException {
 
-        String mpConfigProperties = buildMicroProfileConfigProperties();
+        String mpConfigProperties = buildMicroProfileConfigProperties(
+                OpenApiModelReader.class.getSimpleName(), OpenApiFilter.class.getSimpleName());
 
         return ShrinkWrap.create(
                 WebArchive.class, ROUTER_DEPLOYMENT_NAME + ".war")
@@ -141,6 +149,28 @@ public class HybridDocumentationTest {
                         DistrictServiceClient.class,
                         OpenApiModelReader.class,
                         OpenApiFilter.class)
+                .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
+                .addAsResource("META-INF/openapi.yaml")
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
+    }
+
+    @Deployment(name = ANOTHER_ROUTER_DEPLOYMENT_NAME, order = 3, testable = false)
+    public static Archive<?> anotherLocalServicesRouterDeployment()
+            throws ConfigurationException, IOException, ManagementClientRelatedException {
+
+        String mpConfigProperties = buildMicroProfileConfigProperties(
+                AnotherOpenApiModelReader.class.getSimpleName(), AnotherOpenApiFilter.class.getSimpleName());
+
+        return ShrinkWrap.create(
+                WebArchive.class, ANOTHER_ROUTER_DEPLOYMENT_NAME + ".war")
+                .addClasses(
+                        RouterApplication.class,
+                        LocalServiceRouterInfoResource.class,
+                        DistrictObject.class,
+                        RouterDistrictsResource.class,
+                        DistrictServiceClient.class,
+                        AnotherOpenApiModelReader.class,
+                        AnotherOpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsResource("META-INF/openapi.yaml")
                 .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
