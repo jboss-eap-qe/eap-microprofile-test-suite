@@ -40,6 +40,19 @@ public class MicrometerServerConfiguration {
      * @throws Exception exception thrown by the internal operation executed by {@link OnlineManagementClient} API
      */
     public static void enableMicrometer(OnlineManagementClient client, final String otlpHttpEndpoint) throws Exception {
+        enableMicrometer(client, otlpHttpEndpoint, false);
+    }
+
+    /**
+     * Enable Micrometer extension and subsystem.
+     *
+     * @param client {@link OnlineManagementClient} instance used to execute the command
+     * @param otlpHttpEndpoint OTel collector endpoint
+     * @param skipReload Allow to skip reload at the end of the configuration
+     * @throws Exception exception thrown by the internal operation executed by {@link OnlineManagementClient} API
+     */
+    public static void enableMicrometer(OnlineManagementClient client, final String otlpHttpEndpoint, boolean skipReload)
+            throws Exception {
         Operations operations = new Operations(client);
         operations.writeAttribute(UNDERTOW_SUBSYSTEM_ADDRESS, "statistics-enabled", "true");
         if (!micrometerExtensionExists(operations)) {
@@ -53,7 +66,9 @@ public class MicrometerServerConfiguration {
             operations.writeAttribute(MICROMETER_SUBSYSTEM_ADDRESS, "step", "1");
         }
         client.execute("/subsystem=logging/logger=io.micrometer:add(level=TRACE)");
-        new Administration(client).reloadIfRequired();
+        if (!skipReload) {
+            new Administration(client).reloadIfRequired();
+        }
     }
 
     /**
@@ -74,6 +89,17 @@ public class MicrometerServerConfiguration {
      * @throws Exception exception thrown by the internal operation executed by {@link OnlineManagementClient} API
      */
     public static void disableMicrometer(OnlineManagementClient client) throws Exception {
+        disableMicrometer(client, false);
+    }
+
+    /**
+     * Disable Micrometer subsystem and extension
+     *
+     * @param client {@link OnlineManagementClient} instance used to execute the command
+     * @param skipReload Allow to skip reload at the end of the configuration
+     * @throws Exception exception thrown by the internal operation executed by {@link OnlineManagementClient} API
+     */
+    public static void disableMicrometer(OnlineManagementClient client, boolean skipReload) throws Exception {
         Operations operations = new Operations(client);
         if (micrometerSubsystemExists(operations)) {
             operations.remove(MICROMETER_SUBSYSTEM_ADDRESS);
@@ -82,7 +108,9 @@ public class MicrometerServerConfiguration {
             operations.remove(MICROMETER_EXTENSION_ADDRESS);
         }
         operations.undefineAttribute(UNDERTOW_SUBSYSTEM_ADDRESS, "statistics-enabled");
-        new Administration(client).reloadIfRequired();
+        if (!skipReload) {
+            new Administration(client).reloadIfRequired();
+        }
     }
 
     /**
@@ -104,6 +132,5 @@ public class MicrometerServerConfiguration {
      */
     public static Boolean micrometerSubsystemExists(Operations operations) throws Exception {
         return operations.exists(MICROMETER_SUBSYSTEM_ADDRESS);
-
     }
 }
