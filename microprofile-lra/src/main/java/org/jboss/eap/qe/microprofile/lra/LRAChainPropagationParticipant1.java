@@ -42,12 +42,12 @@ public class LRAChainPropagationParticipant1 extends LRAParticipant {
     @GET
     public void doInLRA(@HeaderParam(LRA.LRA_HTTP_CONTEXT_HEADER) URI lraId,
             @HeaderParam(LRA.LRA_HTTP_RECOVERY_HEADER) URI recoveryId,
-            @HeaderParam(LRAController.BASE_URI) URI baseURI,
+            @HeaderParam(LRAController.CHAIN_PARTICIPANT_2_URI) URI chainParticipant2URI,
             @QueryParam(LRAController.FAIL_LRA) boolean delayedFail) {
         lraResult.setLraId(lraId);
         lraResult.setRecoveryId(recoveryId);
 
-        try (Response ignored = client.target(baseURI)
+        try (Response ignored = client.target(chainParticipant2URI)
                 .path(LRAChainPropagationParticipant2.PATH)
                 .queryParam(LRAController.FAIL_LRA, delayedFail)
                 .request()
