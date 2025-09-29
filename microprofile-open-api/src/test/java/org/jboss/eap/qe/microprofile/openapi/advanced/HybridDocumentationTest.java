@@ -3,6 +3,7 @@ package org.jboss.eap.qe.microprofile.openapi.advanced;
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.not;
 
 import jakarta.ws.rs.core.MediaType;
 
@@ -11,12 +12,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.microprofile.openapi.models.OpenAPI;
+import org.hamcrest.Matcher;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.openapi.OpenApiServerConfiguration;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.ProviderApplication;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.provider.RoutingServiceConstants;
@@ -30,8 +27,6 @@ import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.model.DistrictO
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.LocalServiceRouterInfoResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed.RouterDistrictsResource;
 import org.jboss.eap.qe.microprofile.openapi.apps.routing.router.services.DistrictServiceClient;
-import org.jboss.eap.qe.microprofile.openapi.model.AnotherOpenApiFilter;
-import org.jboss.eap.qe.microprofile.openapi.model.AnotherOpenApiModelReader;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiFilter;
 import org.jboss.eap.qe.microprofile.openapi.model.OpenApiModelReader;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.ConfigurationException;
@@ -45,26 +40,23 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 
 /**
- * Test to assess that the process of generating OpenAPI document is properly executed by following all the
- * MicroProfile OpenAPI spec processing rules - i.e. starting from static file and performing customization and
- * filtering.
- * The real world scenario for Local Services Router app is implemented here: the OpenAPI document is provided as
- * deliverable by Service Provider staff to Local Services Router staff so that it can be used as official documentation
- * once proper customization is applied.
+ * Base class providing deployments and test cases to assess that the process of generating OpenAPI document is
+ * executed correctly, by following all the MicroProfile OpenAPI spec processing rules - i.e. starting from a static
+ * file and then performing customization and filtering.
+ * The real world scenario for Local Services Router app is implemented: the OpenAPI document is provided as
+ * deliverable by the Service Provider staff to Local Services Router staff so that it can be used as official
+ * documentation once proper customization is applied.
+ *
+ * {@link SingleDeploymentHybridDocumentationTest} and {@link MultipleDeploymentsHybridDocumentationTest} cover the
+ * single deployment and multiple deployment scenarios respectively.
  */
-@RunWith(Arquillian.class)
-@ServerSetup({ HybridDocumentationTest.OpenApiExtensionSetup.class })
-@RunAsClient
 public class HybridDocumentationTest {
 
     private final static String PROVIDER_DEPLOYMENT_NAME = "serviceProviderDeployment";
-    private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
-    private final static String ANOTHER_ROUTER_DEPLOYMENT_NAME = "anotherLocalServicesRouterDeployment";
+    protected final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
     private final static String CONFIGURATION_TEMPLATE = "mp.openapi.scan.exclude.packages=org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed"
             + "\n" +
             "mp.openapi.model.reader=org.jboss.eap.qe.microprofile.openapi.model.%s"
@@ -77,7 +69,7 @@ public class HybridDocumentationTest {
             + "\n" +
             "services.provider.port=%d";
 
-    private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
+    private final static ArquillianContainerProperties ARQUILLIAN_CONTAINER_PROPERTIES = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
 
     /**
@@ -91,7 +83,7 @@ public class HybridDocumentationTest {
      * @return {@link WebArchive} instance for the Service provider app deployment
      */
     @Deployment(name = PROVIDER_DEPLOYMENT_NAME, order = 1, testable = false)
-    public static Archive<?> serviceProviderDeployment() {
+    static Archive<?> serviceProviderDeployment() {
         return ShrinkWrap.create(
                 WebArchive.class, PROVIDER_DEPLOYMENT_NAME + ".war")
                 .addClasses(
@@ -118,7 +110,7 @@ public class HybridDocumentationTest {
      * @throws ConfigurationException Arquillian container configuration exception
      * @throws IOException Management client disposal
      */
-    private static String buildMicroProfileConfigProperties(final String openApiModelReader, final String openApiFilter)
+    static String buildMicroProfileConfigProperties(final String openApiModelReader, final String openApiFilter)
             throws ManagementClientRelatedException, ConfigurationException, IOException {
 
         int configuredHTTPPort;
@@ -128,12 +120,12 @@ public class HybridDocumentationTest {
         return String.format(CONFIGURATION_TEMPLATE,
                 openApiModelReader,
                 openApiFilter,
-                arquillianContainerProperties.getDefaultManagementAddress(),
+                ARQUILLIAN_CONTAINER_PROPERTIES.getDefaultManagementAddress(),
                 configuredHTTPPort);
     }
 
     @Deployment(name = ROUTER_DEPLOYMENT_NAME, order = 2, testable = false)
-    public static Archive<?> localServicesRouterDeployment()
+    static Archive<?> localServicesRouterDeployment()
             throws ConfigurationException, IOException, ManagementClientRelatedException {
 
         String mpConfigProperties = buildMicroProfileConfigProperties(
@@ -149,28 +141,6 @@ public class HybridDocumentationTest {
                         DistrictServiceClient.class,
                         OpenApiModelReader.class,
                         OpenApiFilter.class)
-                .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
-                .addAsResource("META-INF/openapi.yaml")
-                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
-    }
-
-    @Deployment(name = ANOTHER_ROUTER_DEPLOYMENT_NAME, order = 3, testable = false)
-    public static Archive<?> anotherLocalServicesRouterDeployment()
-            throws ConfigurationException, IOException, ManagementClientRelatedException {
-
-        String mpConfigProperties = buildMicroProfileConfigProperties(
-                AnotherOpenApiModelReader.class.getSimpleName(), AnotherOpenApiFilter.class.getSimpleName());
-
-        return ShrinkWrap.create(
-                WebArchive.class, ANOTHER_ROUTER_DEPLOYMENT_NAME + ".war")
-                .addClasses(
-                        RouterApplication.class,
-                        LocalServiceRouterInfoResource.class,
-                        DistrictObject.class,
-                        RouterDistrictsResource.class,
-                        DistrictServiceClient.class,
-                        AnotherOpenApiModelReader.class,
-                        AnotherOpenApiFilter.class)
                 .addAsManifestResource(new StringAsset(mpConfigProperties), "microprofile-config.properties")
                 .addAsResource("META-INF/openapi.yaml")
                 .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
@@ -194,13 +164,13 @@ public class HybridDocumentationTest {
     }
 
     /**
-     * @tpTestDetails Integration test to verify MP Rest Client usage by Local Service Router JAX-RS resource
-     * @tpPassCrit One of the Local Service Router endpoints is called to retrieve data from Service Provider,
-     *             verifying the HTTP response code and content type
-     * @tpSince EAP 7.4.0.CD19
+     * Integration test to verify MP Rest Client usage by Local Service Router JAX-RS resource
+     * One of the Local Service Router endpoints is called to retrieve data from Service Provider,
+     * verifying the HTTP response code and content type
+     *
+     * @since EAP 7.4.0.CD19
      */
-    @Test
-    public void testRoutedEndpoint(@ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) {
+    protected void verifyRoutedEndpoint(final URL baseURL) {
         get(baseURL.toExternalForm() + "districts/all")
                 .then()
                 .statusCode(200)
@@ -208,16 +178,14 @@ public class HybridDocumentationTest {
     }
 
     /**
-     * @tpTestDetails Verifies proper processing by assessing that information stored in non-routed services
-     *                annotations is preserved in final document
-     * @tpPassCrit The generated document contains a string that uniquely identifies one of the Local Service Router
-     *             endpoints URL and that was generated from local JAX-RS resources annotation
-     * @tpSince EAP 7.4.0.CD19
+     * Verifies proper processing by assessing that information stored in non-routed services
+     * annotations is preserved in final document
+     * The generated document contains a string that uniquely identifies one of the Local Service Router
+     * endpoints URL and that was generated from local JAX-RS resources annotation
+     *
+     * @since EAP 7.4.0.CD19
      */
-    @Test
-    public void testNonRoutedEndpoint(
-            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL)
-            throws URISyntaxException {
+    protected void verifyNonRoutedEndpoint(final URL baseURL) {
         get(baseURL.toExternalForm() + "info/fqdn")
                 .then()
                 .statusCode(200)
@@ -228,14 +196,13 @@ public class HybridDocumentationTest {
     }
 
     /**
-     * @tpTestDetails Test to verify that static file has been used for OpenAPI document generation
-     * @tpPassCrit The generated document does contain a string which uniquely identifies one of the routed Service
-     *             Provider endpoints URL
-     * @tpSince EAP 7.4.0.CD19
+     * Test to verify that static file has been used for OpenAPI document generation
+     * The generated document does contain a string which uniquely identifies one of the routed Service
+     * Provider endpoints URL
+     *
+     * @since EAP 7.4.0.CD19
      */
-    @Test
-    public void testExpectedStaticFileInformationInOpenApiDoc(
-            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) throws URISyntaxException {
+    protected void verifyExpectedStaticFileInformationInOpenApiDoc(final URL baseURL) throws URISyntaxException {
         get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
@@ -244,34 +211,38 @@ public class HybridDocumentationTest {
     }
 
     /**
-     * @tpTestDetails Verifies proper processing by using MP OpenAPI programming model to create a custom base document
-     * @tpPassCrit Verifies that {@link OpenAPI#getInfo()} has been successfully modified by {@link OpenApiModelReader}
-     * @tpSince EAP 7.4.0.CD19
+     * Verifies proper processing by using MP OpenAPI programming model to create a custom base document
+     * Verifies that {@link OpenAPI#getInfo()} has been successfully modified by {@link OpenApiModelReader}
+     *
+     * @since EAP 7.4.0.CD19
      */
-    @Test
-    public void testOpenApiDocumentForOpenApiInfoChange(
-            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) throws URISyntaxException {
+    protected void verifyOpenApiDocumentForOpenApiInfoChange(final URL baseURL, final boolean shouldContainGeneratedInfo)
+            throws URISyntaxException {
+        Matcher<String> matcher = containsString("Generated by router: ");
+        if (!shouldContainGeneratedInfo) {
+            matcher = not(matcher);
+        }
         get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
-                .body(containsString("Generated"));
+                .body(matcher);
     }
 
     /**
-     * @tpTestDetails Verifies proper processing by using MP OpenAPI programming model to filter the generated document
-     * @tpPassCrit Verifies that {@link RoutingServiceConstants#OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME)} extension
-     *             value has been successfully modified by {@link OpenApiFilter}
-     * @tpSince EAP 7.4.0.CD19
+     * Verifies proper processing by using MP OpenAPI programming model to filter the generated document
+     * Verifies that {@link RoutingServiceConstants#OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME)} extension
+     * value has been successfully modified by {@link OpenApiFilter}
+     *
+     * @since EAP 7.4.0.CD19
      */
-    @Test
-    public void testOpenApiDocumentForRouterFqdnExtensionModification(
-            @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL)
+    protected void verifyOpenApiDocumentForRouterFqdnExtensionModification(final URL baseURL, final String localRouterFqdn)
             throws URISyntaxException {
         get(baseURL.toURI().resolve("/openapi"))
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
-                .body(containsString(OpenApiFilter.LOCAL_TEST_ROUTER_FQDN));
+                .body(containsString(String.format("%s: %s",
+                        RoutingServiceConstants.OPENAPI_OPERATION_EXTENSION_PROXY_FQDN_NAME, localRouterFqdn)));
     }
 }
