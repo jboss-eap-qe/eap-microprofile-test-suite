@@ -26,6 +26,8 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClientEngine;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,15 +45,26 @@ public class MicrometerPrometheusTestCase {
     ArquillianContainerProperties server = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
 
+    private static boolean serverTypeCheck() {
+        return System.getProperty("jboss.home").toLowerCase().contains("eap");
+    }
+
+    @Before
+    public void testServerTypeCheck() {
+        Assume.assumeTrue(serverTypeCheck());
+    }
+
     /**
      * Enable micrometer and prometheus registry before first test execution
      */
     @BeforeClass
     public static void enableMicrometer() throws Exception {
+        if (!serverTypeCheck()) {
+            return;
+        }
         client = ManagementClientProvider.onlineStandalone();
         MicrometerServerConfiguration.enableMicrometer(client, null, true);
         MicrometerPrometheusSetup.enable(client);
-        Thread.sleep(1000);
     }
 
     /**
@@ -59,6 +72,9 @@ public class MicrometerPrometheusTestCase {
      */
     @AfterClass
     public static void disableMicrometer() throws Exception {
+        if (!serverTypeCheck()) {
+            return;
+        }
         try {
             MicrometerServerConfiguration.disableMicrometer(client, true);
             MicrometerPrometheusSetup.disable(client);
