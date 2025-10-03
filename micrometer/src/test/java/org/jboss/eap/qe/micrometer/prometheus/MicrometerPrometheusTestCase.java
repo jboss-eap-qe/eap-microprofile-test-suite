@@ -7,12 +7,16 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.eap.qe.microprofile.common.setuptasks.MicrometerServerConfiguration;
 import org.jboss.eap.qe.microprofile.tooling.server.configuration.arquillian.ArquillianContainerProperties;
@@ -28,13 +32,20 @@ import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 import org.wildfly.extras.creaper.core.online.operations.Address;
 import org.wildfly.extras.creaper.core.online.operations.Operations;
+import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
+/**
+ * Test for prometheus micrometer registry.
+ */
 @RunWith(Arquillian.class)
 public class MicrometerPrometheusTestCase {
     private static OnlineManagementClient client = null;
     ArquillianContainerProperties server = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
 
+    /**
+     * Enable micrometer and prometheus registry before first test execution
+     */
     @BeforeClass
     public static void enableMicrometer() throws Exception {
         client = ManagementClientProvider.onlineStandalone();
@@ -43,6 +54,9 @@ public class MicrometerPrometheusTestCase {
         Thread.sleep(1000);
     }
 
+    /**
+     * Disable micrometer and prometheus registry after last test execution
+     */
     @AfterClass
     public static void disableMicrometer() throws Exception {
         try {
@@ -53,6 +67,9 @@ public class MicrometerPrometheusTestCase {
         }
     }
 
+    /**
+     * Get prometheus metrics from unsecured end-point, check that JVM/System metrics are in the list
+     */
     @Test
     public void basicPrometheusTest() throws Exception {
         String response = fetchPrometheusMetricsRequireStatusCode(false, 200);
@@ -60,6 +77,9 @@ public class MicrometerPrometheusTestCase {
         MatcherAssert.assertThat(response, containsString("cpu_available_processors "));
     }
 
+    /**
+     * Map prometheus output to the end-point that WF Metrics is using. Startup-error is expected.
+     */
     @Test
     public void wfMetricsEnabledTest() throws Exception {
         try {
@@ -73,6 +93,10 @@ public class MicrometerPrometheusTestCase {
         }
     }
 
+    /**
+     * Test disables WF Metrics, configure prometheus to use same end-point that is by default used by WF-metrics. Checks that
+     * Micrometer metrics are available.
+     */
     @Test
     public void wfMetricsDisabledTest() throws Exception {
         try {
@@ -90,6 +114,15 @@ public class MicrometerPrometheusTestCase {
         }
     }
 
+    /**
+     * More security checks are in one test method in order to avoid unnecessary reloads.
+     *
+     * Keep prometheus end-point unsecure, try to get metrics with authorization. Metrics should be available.
+     *
+     * Secure end-point, try to get metrics without authorization. Metrics should not be available.
+     *
+     * Keep end-point secure, try to get metrics with authorization. Metrics should be available.
+     */
     @Test
     public void securityTest() throws Exception {
         try {
@@ -114,15 +147,60 @@ public class MicrometerPrometheusTestCase {
         }
     }
 
+    /**
+     * Check that micrometer shows real values of restricted metrics if proper user with proper RBAC role is used
+     */
+    @Test
+    public void rbacTest() throws Exception {
+        try {
+            MgmtUsersSetup.setup();
+            MicrometerPrometheusSetup.set(client, true);
+            // Create the Monitor role mapping and associate the group Monitor with it
+            client.execute("/core-service=management/access=authorization/role-mapping=Monitor:add");
+            client.execute(
+                    "/core-service=management/access=authorization/role-mapping=Monitor/include=group-monitors:add(name=Monitor, type=GROUP)");
+            // enable RBAC
+            client.execute("/core-service=management/access=authorization:write-attribute(name=provider,value=rbac)");
+            new Administration(client).reload();
+
+            // get metrics with user without Monitor RBAC role
+            List<String> response = fetchPrometheusMetricsRequireStatusCode(true, 200).lines().collect(Collectors.toList());
+            MatcherAssert.assertThat(response, Matchers.hasItem(Matchers.allOf(
+                    Matchers.startsWith("io_max_pool_size"),
+                    Matchers.endsWith("0.0"))));
+
+            // get metrics with user with Monitor RBAC role
+            response = fetchPrometheusMetricsWithRbacRequireStatusCode(200).lines().collect(Collectors.toList());
+            MatcherAssert.assertThat(response, Matchers.hasItem(Matchers.allOf(
+                    Matchers.startsWith("io_max_pool_size"),
+                    Matchers.endsWith("256.0"))));
+        } finally {
+            client.execute("/core-service=management/access=authorization/role-mapping=Monitor:remove");
+            client.execute("/core-service=management/access=authorization:write-attribute(name=provider,value=simple)");
+            MgmtUsersSetup.tearDown();
+            MicrometerPrometheusSetup.set(client, false);
+        }
+    }
+
     private String fetchPrometheusMetricsRequireStatusCode(boolean authenticate, int requiredStatusCode) throws Exception {
+        return fetchPrometheusMetricsRequireStatusCode(authenticate, requiredStatusCode, MgmtUsersSetup.USER_NAME,
+                MgmtUsersSetup.USERS_PASSWORD);
+    }
+
+    private String fetchPrometheusMetricsWithRbacRequireStatusCode(int requiredStatusCode) throws Exception {
+        return fetchPrometheusMetricsRequireStatusCode(true, requiredStatusCode, MgmtUsersSetup.RBAC_USER_NAME,
+                MgmtUsersSetup.USERS_PASSWORD);
+    }
+
+    private String fetchPrometheusMetricsRequireStatusCode(boolean authenticate, int requiredStatusCode, String userName,
+            String password) throws Exception {
         String url = "http://" + server.getDefaultManagementAddress() + ":" + server.getDefaultManagementPort()
                 + MicrometerPrometheusSetup.getPrometheusContext();
         try {
             Client client;
             if (authenticate) {
                 CredentialsProvider credentials = new BasicCredentialsProvider();
-                credentials.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(MgmtUsersSetup.USER_NAME, MgmtUsersSetup.PASSWORD));
+                credentials.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
                 client = ((ResteasyClientBuilder) ClientBuilder.newBuilder())
                         .httpEngine(ApacheHttpClientEngine
                                 .create(HttpClients.custom().setDefaultCredentialsProvider(credentials).build()))
@@ -131,7 +209,8 @@ public class MicrometerPrometheusTestCase {
                 client = ClientBuilder.newClient();
             }
             try (Response response = client.target(url).request().get()) {
-                MatcherAssert.assertThat("Unexpected status of HTTP response", response.getStatus(), equalTo(requiredStatusCode));
+                MatcherAssert.assertThat("Unexpected status of HTTP response", response.getStatus(),
+                        equalTo(requiredStatusCode));
                 return response.readEntity(String.class);
             }
         } finally {
