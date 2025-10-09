@@ -46,6 +46,7 @@ import org.yaml.snakeyaml.Yaml;
 public class MicroProfileOpenApi11Test {
 
     private final static String DEPLOYMENT_NAME = MicroProfileOpenApi11Test.class.getSimpleName();
+    public static final String DISTRICTS_BY_CODE_OPERATION_PATH = String.format("/%s/districts/{code}", DEPLOYMENT_NAME);
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
@@ -130,34 +131,39 @@ public class MicroProfileOpenApi11Test {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get("/districts/{code}");
-        Assert.assertFalse("\"/districts/{code}\" property is empty", getDistrictByCodePath.isEmpty());
+        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get(DISTRICTS_BY_CODE_OPERATION_PATH);
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" property is empty", getDistrictByCodePath.isEmpty());
 
         // 1.1 the addition of the JAXRS 2.1 PATCH method
         Map<String, Object> patchMethod = (Map<String, Object>) getDistrictByCodePath.get("patch");
-        Assert.assertFalse("\"/districts/{code}\" \"patch\" property is empty", patchMethod.isEmpty());
-        Assert.assertEquals("\"/districts/{code}\" \"patch\" property should have exactly 13 keys",
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"patch\" property is empty", patchMethod.isEmpty());
+        Assert.assertEquals("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"patch\" property should have exactly 13 keys",
                 patchMethod.keySet().size(), 13);
 
         // 1.1 @Content now supports a singular example field
         Map<String, Object> responses = (Map<String, Object>) patchMethod.get("responses");
-        Assert.assertFalse("\"/districts/{code}\" \"responses\" for PATCH verb is empty", responses.isEmpty());
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"responses\" for PATCH verb is empty",
+                responses.isEmpty());
 
         Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
-        Assert.assertFalse("\"/districts/{code}\" \"response\" for PATCH verb and HTTP status 200 is empty",
+        Assert.assertFalse(
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"response\" for PATCH verb and HTTP status 200 is empty",
                 http200Response.isEmpty());
 
         Map<String, Object> contentAnnotation = (Map<String, Object>) http200Response.get("content");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for PATCH verb and HTTP status 200 has empty \"content\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for PATCH verb and HTTP status 200 has empty \"content\" property",
                 contentAnnotation.isEmpty());
 
         Map<String, Object> contentTypeJson = (Map<String, Object>) contentAnnotation.get("application/json");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
                 contentTypeJson.isEmpty());
         Assert.assertTrue(
-                "\"/districts/{code}\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but unexpected value for \"example\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but unexpected value for \"example\" property",
                 contentTypeJson.get("example").equals("{'code': 'DW', 'name': 'Western district', 'obsolete': false}"));
 
         // 1.1 @Extension now has a parseValue field for complex values

@@ -62,6 +62,7 @@ public class JWTSecurityAnnotationsTest {
             "services.provider.host=%s"
             + "\n" +
             "services.provider.port=%d";
+    public static final String INFO_FQDN_OPERATION_PATH = String.format("/%s/info/fqdn", ROUTER_DEPLOYMENT_NAME);
 
     private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
@@ -182,21 +183,22 @@ public class JWTSecurityAnnotationsTest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> operationPath = (Map<String, Object>) paths.get("/info/fqdn");
-        Assert.assertFalse("\"/info/fqdn\" property is empty", operationPath.isEmpty());
+        Map<String, Object> operationPath = (Map<String, Object>) paths.get(INFO_FQDN_OPERATION_PATH);
+        Assert.assertFalse("\"" + INFO_FQDN_OPERATION_PATH + "\" property is empty", operationPath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) operationPath.get("get");
-        Assert.assertFalse("\"/info/fqdn\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertFalse("\"" + INFO_FQDN_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
 
         List<Object> securitySchemes = (List<Object>) getMethod.get("security");
-        Assert.assertTrue("\"/info/fqdn\" operation for GET verb should have exactly 1 security scheme",
+        Assert.assertTrue("\"" + INFO_FQDN_OPERATION_PATH + "\" operation for GET verb should have exactly 1 security scheme",
                 securitySchemes.size() == 1);
 
         Map<String, Object> httpSecuredSecurityScheme = (Map<String, Object>) securitySchemes.get(0);
-        Assert.assertFalse("Security scheme item [0] for \"/info/fqdn\" operation for GET verb is empty",
+        Assert.assertFalse("Security scheme item [0] for \"" + INFO_FQDN_OPERATION_PATH + "\" operation for GET verb is empty",
                 httpSecuredSecurityScheme.isEmpty());
         Assert.assertNotNull(
-                "Security requirement named \"http_secured\" belonging to Security scheme item [0] for \"/info/fqdn\" operation (GET verb) should be present",
+                "Security requirement named \"http_secured\" belonging to Security scheme item [0] for \""
+                        + INFO_FQDN_OPERATION_PATH + "\" operation (GET verb) should be present",
                 httpSecuredSecurityScheme.get("http_secured"));
     }
 }

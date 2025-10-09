@@ -41,6 +41,7 @@ import org.yaml.snakeyaml.Yaml;
 public class MicroProfileOpenApi20Test {
 
     private final static String DEPLOYMENT_NAME = MicroProfileOpenApi20Test.class.getSimpleName();
+    public static final String DISTRICTS_BY_CODE_OPERATION_PATH = String.format("/%s/districts/{code}", DEPLOYMENT_NAME);
 
     @Deployment(testable = false)
     public static Archive<?> deployment() {
@@ -101,73 +102,87 @@ public class MicroProfileOpenApi20Test {
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
         // 2.0 The @SchemaProperty annotation has been added to allow the properties for a schema to be defined inline
-        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get("/districts/{code}");
-        Assert.assertFalse("\"/districts/{code}\" property is empty", getDistrictByCodePath.isEmpty());
+        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get(DISTRICTS_BY_CODE_OPERATION_PATH);
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" property is empty", getDistrictByCodePath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) getDistrictByCodePath.get("get");
-        Assert.assertFalse("\"/districts/{code}\" \"get\" property is empty", getMethod.isEmpty());
-        Assert.assertEquals("\"/districts/{code}\" \"get\" property should have exactly 6 keys",
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertEquals("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"get\" property should have exactly 6 keys",
                 6, getMethod.keySet().size());
 
         Map<String, Object> responses = (Map<String, Object>) getMethod.get("responses");
-        Assert.assertFalse("\"/districts/{code}\" \"responses\" for GET verb is empty", responses.isEmpty());
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"responses\" for GET verb is empty",
+                responses.isEmpty());
 
         Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
-        Assert.assertFalse("\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 is empty",
+        Assert.assertFalse(
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"response\" for GET verb and HTTP status 200 is empty",
                 http200Response.isEmpty());
 
         Map<String, Object> contentAnnotation = (Map<String, Object>) http200Response.get("content");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has empty \"content\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has empty \"content\" property",
                 contentAnnotation.isEmpty());
 
         Map<String, Object> contentTypeJson = (Map<String, Object>) contentAnnotation.get("application/json");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
                 contentTypeJson.isEmpty());
 
         Map<String, Object> schema = (Map<String, Object>) contentTypeJson.get("schema");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has \"application/json\" but empty \"schema\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"application/json\" but empty \"schema\" property",
                 schema.isEmpty());
 
         Map<String, Object> schemaProperties = (Map<String, Object>) schema.get("properties");
         Assert.assertFalse(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has \"schema\" but empty \"properties\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"schema\" but empty \"properties\" property",
                 schemaProperties.isEmpty());
 
         Assert.assertTrue(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has \"properties\" but missing \"alias\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"properties\" but missing \"alias\" property",
                 schemaProperties.containsKey("alias"));
 
         Assert.assertTrue("", ((LinkedHashMap) schemaProperties.get("alias")).containsValue("Alias of district"));
 
         // 2.0 The @RequestBodySchema annotation has been added to provide a shorthand mechanism to specify the schema for a request body
-        Map<String, Object> getDistrictByCode20Path = (Map<String, Object>) paths.get("/districts/{code}/v20");
-        Assert.assertFalse("\"/districts/{code}/v20\" property is empty", getDistrictByCode20Path.isEmpty());
+        Map<String, Object> getDistrictByCode20Path = (Map<String, Object>) paths
+                .get(DISTRICTS_BY_CODE_OPERATION_PATH + "/v20");
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" property is empty",
+                getDistrictByCode20Path.isEmpty());
 
         Map<String, Object> patchMethod = (Map<String, Object>) getDistrictByCodePath.get("patch");
-        Assert.assertFalse("\"/districts/{code}/v20\" \"patch\" property is empty", patchMethod.isEmpty());
-        Assert.assertEquals("\"/districts/{code}/v20\" \"patch\" property should have exactly 13 keys",
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" \"patch\" property is empty",
+                patchMethod.isEmpty());
+        Assert.assertEquals("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" \"patch\" property should have exactly 13 keys",
                 13, patchMethod.keySet().size());
 
         Map<String, Object> requestBody = (Map<String, Object>) patchMethod.get("requestBody");
-        Assert.assertFalse("\"/districts/{code}/v20\" \"requestBody\" for PATCH verb is empty", requestBody.isEmpty());
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" \"requestBody\" for PATCH verb is empty",
+                requestBody.isEmpty());
 
         Map<String, Object> patchRequestContentAnnotation = (Map<String, Object>) requestBody.get("content");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"requestBody\" for PATCH verb has empty \"content\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"requestBody\" for PATCH verb has empty \"content\" property",
                 patchRequestContentAnnotation.isEmpty());
 
         Map<String, Object> patchRequestContentTypeJson = (Map<String, Object>) patchRequestContentAnnotation
                 .get("application/json");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"response\" for PATCH verb has \"content\" but empty \"application/json\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"response\" for PATCH verb has \"content\" but empty \"application/json\" property",
                 patchRequestContentTypeJson.isEmpty());
 
         Map<String, Object> requestBodySchema = (Map<String, Object>) patchRequestContentTypeJson.get("schema");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"response\" for GET verb has \"application/json\" but empty \"schema\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"response\" for GET verb has \"application/json\" but empty \"schema\" property",
                 requestBodySchema.isEmpty());
 
         Assert.assertEquals("Specified schema for the request body is not equal to DistrictEntity",
@@ -175,26 +190,31 @@ public class MicroProfileOpenApi20Test {
 
         // 2.0 The @APIResponseSchema annotation has been added to provide a shorthand mechanism to specify the schema for a response body
         Map<String, Object> patchResponses = (Map<String, Object>) patchMethod.get("responses");
-        Assert.assertFalse("\"/districts/{code}/v20\" \"responses\" for PATCH verb is empty", patchResponses.isEmpty());
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" \"responses\" for PATCH verb is empty",
+                patchResponses.isEmpty());
 
         Map<String, Object> patchHttp200Response = (Map<String, Object>) patchResponses.get("200");
-        Assert.assertFalse("\"/districts/{code}/v20\" \"response\" for PATCH verb and HTTP status 200 is empty",
+        Assert.assertFalse(
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "/v20\" \"response\" for PATCH verb and HTTP status 200 is empty",
                 patchHttp200Response.isEmpty());
 
         Map<String, Object> patchResponseContentAnnotation = (Map<String, Object>) patchHttp200Response.get("content");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"response\" for PATCH verb and HTTP status 200 has empty \"content\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"response\" for PATCH verb and HTTP status 200 has empty \"content\" property",
                 patchResponseContentAnnotation.isEmpty());
 
         Map<String, Object> patchResponseContentTypeJson = (Map<String, Object>) patchResponseContentAnnotation
                 .get("application/json");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"response\" for PATCH verb and HTTP status 200 has \"content\" but empty \"application/json\" property",
                 patchResponseContentTypeJson.isEmpty());
 
         Map<String, Object> responseSchema = (Map<String, Object>) patchResponseContentTypeJson.get("schema");
         Assert.assertFalse(
-                "\"/districts/{code}/v20\" \"response\" for PATCH verb has \"application/json\" but empty \"schema\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "/v20\" \"response\" for PATCH verb has \"application/json\" but empty \"schema\" property",
                 responseSchema.isEmpty());
 
         Assert.assertEquals("Specified schema for the response body is not equal to DistrictEntity",
@@ -219,7 +239,8 @@ public class MicroProfileOpenApi20Test {
         Map<String, Object> codeProperty = (Map<String, Object>) schemaProperties.get("code");
 
         Assert.assertEquals(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has unexpected value for schema \"code\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has unexpected value for schema \"code\" property",
                 "#/components/schemas/MockString",
                 codeProperty.get("$ref"));
     }

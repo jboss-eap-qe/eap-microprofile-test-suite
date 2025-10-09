@@ -36,6 +36,8 @@ import org.yaml.snakeyaml.Yaml;
 @RunAsClient
 public class IntegrationWithCDITest {
     private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
+    public static final String CONTACT_BY_ID_DETAILS_OPERATION_PATH = String.format("/%s/contact/{id}/details",
+            ROUTER_DEPLOYMENT_NAME);
 
     @Deployment(testable = false)
     public static Archive<?> localServicesRouterDeployment() {
@@ -105,41 +107,51 @@ public class IntegrationWithCDITest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> getContactIdDetailsPath = (Map<String, Object>) paths.get("/contact/{id}/details");
-        Assert.assertFalse("\"/contact/{id}/details\" property is empty", getContactIdDetailsPath.isEmpty());
+        Map<String, Object> getContactIdDetailsPath = (Map<String, Object>) paths.get(CONTACT_BY_ID_DETAILS_OPERATION_PATH);
+        Assert.assertFalse("\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" property is empty",
+                getContactIdDetailsPath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) getContactIdDetailsPath.get("get");
-        Assert.assertFalse("\"/contact/{id}/details\" \"get\" property is empty", getMethod.isEmpty());
-        Assert.assertNotNull("\"/contact/{id}/details\" \"responses\" for GET verb is null", getMethod.get("responses"));
+        Assert.assertFalse("\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertNotNull("\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" \"responses\" for GET verb is null",
+                getMethod.get("responses"));
 
         Map<String, Object> responses = (Map<String, Object>) getMethod.get("responses");
-        Assert.assertNotNull("\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 is null",
+        Assert.assertNotNull(
+                "\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" \"response\" for GET verb and HTTP status 200 is null",
                 responses.get("200"));
 
         Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
         Assert.assertNotNull(
-                "\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 has null \"content\" property",
+                "\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has null \"content\" property",
                 http200Response.get("content"));
 
         Map<String, Object> http200ResponseContent = (Map<String, Object>) http200Response.get("content");
         Assert.assertNotNull(
-                "\"/contact/{id}/details\" \"response\" for GET verb and HTTP status 200 has \"content\" but null \"application/json\" property",
+                "\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"content\" but null \"application/json\" property",
                 http200ResponseContent.get("text/plain"));
 
         List<Object> parameters = (List<Object>) getContactIdDetailsPath.get("parameters");
-        Assert.assertEquals("\"/contact/{id}/details\" operation for GET verb should have exactly 1 parameters",
+        Assert.assertEquals(
+                "\"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" operation for GET verb should have exactly 1 parameters",
                 parameters.size(), 1);
 
         Map<String, Object> pathParam = (Map<String, Object>) parameters.get(0);
-        Assert.assertFalse("Parameter [0] for \"/contact/{id}/details\" operation for GET verb is empty", pathParam.isEmpty());
+        Assert.assertFalse("Parameter [0] for \"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH + "\" operation for GET verb is empty",
+                pathParam.isEmpty());
         Assert.assertEquals(
-                "\"name\" property of parameter [0] for \"/contact/{id}/details\" operation (GET verb) should be set to \"id\"",
+                "\"name\" property of parameter [0] for \"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"id\"",
                 pathParam.get("name"), "id");
         Assert.assertEquals(
-                "\"in\" property of parameter [0] for \"/contact/{id}/details\" operation (GET verb) should be set to \"path\"",
+                "\"in\" property of parameter [0] for \"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"path\"",
                 pathParam.get("in"), "path");
         Assert.assertEquals(
-                "\"required\" property of parameter [0] for \"/contact/{id}/details\" operation (GET verb) should be set to \"true\"",
+                "\"required\" property of parameter [0] for \"" + CONTACT_BY_ID_DETAILS_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"true\"",
                 pathParam.get("required"), Boolean.TRUE);
     }
 }
