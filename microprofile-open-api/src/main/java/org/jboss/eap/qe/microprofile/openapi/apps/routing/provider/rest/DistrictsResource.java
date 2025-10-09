@@ -155,7 +155,7 @@ public class DistrictsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @APIResponseSchema(value = DistrictEntity.class, responseCode = "200", responseDescription = "Updated district")
     @APIResponse(responseCode = "404", description = "Requested district was not found")
-    @Operation(summary = "Updates a district data", description = "Retrieves, updates and returns the requested district data", operationId = "updateDistrict")
+    @Operation(summary = "Updates a district data", description = "Retrieves, updates and returns the requested district data", operationId = "updateDistrictV20")
     public Response updateDistrictV20(@PathParam("code") String code,
             @RequestBodySchema(DistrictEntity.class) DistrictEntity district) {
         District result = districtService.getByCode(code);
