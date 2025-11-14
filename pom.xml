@@ -95,6 +95,8 @@
         <channel-manifest.version></channel-manifest.version>
 
         <version.slf4j>2.0.16</version.slf4j>
+        <version.jakarta.ws.rs>4.0.0</version.jakarta.ws.rs>
+        <version.resteasy>6.2.12.Final</version.resteasy>
 
         <!-- Modular JDK JPMS options -->
         <server.jvm.jpms.args>--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.security=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.management/javax.management=ALL-UNNAMED --add-opens=java.naming/javax.naming=ALL-UNNAMED</server.jvm.jpms.args>
@@ -321,6 +323,16 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${version.slf4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                <version>${version.jakarta.ws.rs}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-client</artifactId>
+                <version>${version.resteasy}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -35,7 +35,7 @@ public class MultipleDeploymentsMetricsTest {
 
     public static final String PING_ONE_SERVICE = "ping-one-service";
     public static final String PING_TWO_SERVICE = "ping-two-service";
-    private static final String DEFAULT_MP_CONFIG = "otel.sdk.disabled=false\n" +
+    public static final String DEFAULT_MP_CONFIG = "otel.sdk.disabled=false\n" +
             "otel.metric.export.interval=100";
 
     @Deployment(name = PING_ONE_SERVICE, order = 1)

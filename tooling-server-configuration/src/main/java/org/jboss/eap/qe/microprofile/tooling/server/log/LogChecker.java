@@ -23,4 +23,12 @@ public interface LogChecker {
      */
     boolean logContains(final String subString);
 
+    /**
+     * Perform search in log or its excerpt and find how many lines contains a sub string.
+     *
+     * @param subString a sub string which will be used to perform search among lines
+     * @return count of lines that contains subString
+     */
+    long logCounts(String subString);
+
 }
