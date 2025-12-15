@@ -4,18 +4,20 @@ A small standalone test suite for MicroProfile on WildFly/EAP.
 
 ## Supported MicroProfile version
 
-Tests have been executed against WildFly and EAP XP versions supporting 
-[MicroProfile 6.1 specs](https://microprofile.io/compatible/6-1/#overview) 
+Tests have been executed against WildFly and EAP XP versions supporting
+[MicroProfile 7.0 specs](https://microprofile.io/compatible/7-0/#overview) 
 
 ## Supported MicroProfile specs
 
 Currently, the following MicroProfile specs are supported:
 
 * [MicroProfile Config](https://github.com/eclipse/microprofile-config)
-* [MicroProfile JWT RBAC](https://github.com/eclipse/microprofile-jwt-auth)
-* [MicroProfile Health](https://github.com/eclipse/microprofile-health)
 * [MicroProfile Fault Tolerance](https://github.com/eclipse/microprofile-fault-tolerance)
+* [MicroProfile Health](https://github.com/eclipse/microprofile-health)
+* [MicroProfile JWT RBAC](https://github.com/eclipse/microprofile-jwt-auth)
+* [MicroProfile LRA](https://github.com/eclipse/microprofile-lra)
 * [MicroProfile OpenAPI](https://github.com/eclipse/microprofile-open-api)
+* [MicroProfile Telemetry](https://github.com/eclipse/microprofile-telemetry)
 
 ## Observability
 
@@ -47,8 +49,8 @@ There's one module per each supported MicroProfile specs, see [Supported MicroPr
 - [tooling-mp-jwt-auth-tool](./tooling-mp-jwt-auth-tool) - utilities required by security operations, e.g.: keys' 
   generation utilities, which are used by the [microprofile-jwt](./microprofile-jwt) module
 - [tooling-server-configuration](./tooling-server-configuration) - server configuration utilities, see the module [README](./tooling-server-configuration/README.md)
-- [tooling-observability](./tooling-observability) - tooling which is used for Observability related tasks, e.g.: 
-  Jaeger or OTel Docker containers
+- [tooling-observability](./tooling-observability) - tooling for observability related tasks, including Jaeger,
+  OpenTelemetry Collector Docker containers, and Prometheus metrics support
 
 ## Run the testsuite
 Just execute:
