@@ -42,6 +42,7 @@ import org.yaml.snakeyaml.Yaml;
 public class OpenApi10OnJaxRsAnnotationsTest {
 
     private final static String DEPLOYMENT_NAME = OpenApi10OnJaxRsAnnotationsTest.class.getSimpleName();
+    public static final String DISTRICTS_BY_CODE_OPERATION_PATH = String.format("/%s/districts/{code}", DEPLOYMENT_NAME);
 
     static OnlineManagementClient onlineManagementClient;
 
@@ -112,32 +113,39 @@ public class OpenApi10OnJaxRsAnnotationsTest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> restPath = (Map<String, Object>) paths.get("/districts/{code}");
-        Assert.assertFalse("\"/districts/{code}\" property is empty", restPath.isEmpty());
+        Map<String, Object> restPath = (Map<String, Object>) paths.get(DISTRICTS_BY_CODE_OPERATION_PATH);
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" property is empty", restPath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) restPath.get("get");
-        Assert.assertFalse("\"/districts/{code}\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
 
         List<Object> parameters = (List<Object>) getMethod.get("parameters");
-        Assert.assertTrue("\"/districts/{code}\" operation for GET verb should have exactly 2 parameters",
+        Assert.assertTrue(
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" operation for GET verb should have exactly 2 parameters",
                 parameters.size() == 2);
 
         Map<String, Object> pathParam = (Map<String, Object>) parameters.get(0);
-        Assert.assertFalse("Parameter [0] for \"/districts/{code}\" operation for GET verb is empty", pathParam.isEmpty());
+        Assert.assertFalse("Parameter [0] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" operation for GET verb is empty",
+                pathParam.isEmpty());
         Assert.assertTrue(
-                "\"name\" property of parameter [0] for \"/districts/{code}\" operation (GET verb) should be set to \"code\"",
+                "\"name\" property of parameter [0] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"code\"",
                 pathParam.get("name").equals("code"));
         Assert.assertTrue(
-                "\"in\" property of parameter [0] for \"/districts/{code}\" operation (GET verb) should be set to \"path\"",
+                "\"in\" property of parameter [0] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"path\"",
                 pathParam.get("in").equals("path"));
 
         Map<String, Object> queryParam = (Map<String, Object>) parameters.get(1);
-        Assert.assertFalse("Parameter [1] for \"/districts/{code}\" operation for GET verb is empty", queryParam.isEmpty());
+        Assert.assertFalse("Parameter [1] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" operation for GET verb is empty",
+                queryParam.isEmpty());
         Assert.assertTrue(
-                "\"name\" property of parameter [1] for \"/districts/{code}\" operation (GET verb) should be set to \"excludeObsolete\"",
+                "\"name\" property of parameter [1] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"excludeObsolete\"",
                 queryParam.get("name").equals("excludeObsolete"));
         Assert.assertTrue(
-                "\"in\" property of parameter [1] for \"/districts/{code}\" operation (GET verb) should be set to \"query\"",
+                "\"in\" property of parameter [1] for \"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \"query\"",
                 queryParam.get("in").equals("query"));
     }
 
@@ -163,30 +171,35 @@ public class OpenApi10OnJaxRsAnnotationsTest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get("/districts/{code}");
-        Assert.assertFalse("\"/districts/{code}\" property is empty", getDistrictByCodePath.isEmpty());
+        Map<String, Object> getDistrictByCodePath = (Map<String, Object>) paths.get(DISTRICTS_BY_CODE_OPERATION_PATH);
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" property is empty", getDistrictByCodePath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) getDistrictByCodePath.get("get");
-        Assert.assertFalse("\"/districts/{code}\" \"get\" property is empty", getMethod.isEmpty());
-        Assert.assertNotNull("\"/districts/{code}\" \"responses\" for GET verb is null", getMethod.get("responses"));
+        Assert.assertFalse("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertNotNull("\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"responses\" for GET verb is null",
+                getMethod.get("responses"));
 
         Map<String, Object> responses = (Map<String, Object>) getMethod.get("responses");
-        Assert.assertNotNull("\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 is null",
+        Assert.assertNotNull(
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH + "\" \"response\" for GET verb and HTTP status 200 is null",
                 responses.get("200"));
 
         Map<String, Object> http200Response = (Map<String, Object>) responses.get("200");
         Assert.assertNotNull(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has null \"content\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has null \"content\" property",
                 http200Response.get("content"));
 
         Map<String, Object> http200ResponseContent = (Map<String, Object>) http200Response.get("content");
         Assert.assertNotNull(
-                "\"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has \"content\" but null \"application/json\" property",
+                "\"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has \"content\" but null \"application/json\" property",
                 http200ResponseContent.get("application/json"));
 
         Map<String, Object> jsonContent = (Map<String, Object>) http200ResponseContent.get("application/json");
         Assert.assertNotNull(
-                "\"content\" property of \"/districts/{code}\" \"response\" for GET verb and HTTP status 200 has null \"schema\" property for \"application/json\" type",
+                "\"content\" property of \"" + DISTRICTS_BY_CODE_OPERATION_PATH
+                        + "\" \"response\" for GET verb and HTTP status 200 has null \"schema\" property for \"application/json\" type",
                 jsonContent.get("schema"));
 
         Assert.assertNotNull("\"components\" property is null", yamlMap.get("components"));

@@ -57,7 +57,7 @@
         <version.io.rest-assured>5.0.1</version.io.rest-assured>
         <version.junit>4.13.1</version.junit>
         <version.org.jboss.arquillian>1.7.2.Final</version.org.jboss.arquillian>
-        <version.org.jboss.wildfly.dist>35.0.1.Final</version.org.jboss.wildfly.dist>
+        <version.org.jboss.wildfly.dist>37.0.1.Final</version.org.jboss.wildfly.dist>
         <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.0.Alpha2</version.io.undertow.undertow-core>
