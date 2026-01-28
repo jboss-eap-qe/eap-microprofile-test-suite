@@ -38,12 +38,16 @@ public class RouterDistrictsResource {
     int servicesProviderPort;
 
     @PostConstruct
-    private void initializeRestClient() throws URISyntaxException {
-        serviceClient = RestClientBuilder.newBuilder()
-                .baseUri(new URI(
-                        String.format(
-                                "http://%s:%d/serviceProviderDeployment", servicesProviderHost, servicesProviderPort)))
-                .build(DistrictServiceClient.class);
+    private void initializeRestClient() {
+        try {
+            serviceClient = RestClientBuilder.newBuilder()
+                    .baseUri(new URI(
+                            String.format(
+                                    "http://%s:%d/serviceProviderDeployment", servicesProviderHost, servicesProviderPort)))
+                    .build(DistrictServiceClient.class);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("REST client creation failed" + e);
+        }
     }
 
     /**

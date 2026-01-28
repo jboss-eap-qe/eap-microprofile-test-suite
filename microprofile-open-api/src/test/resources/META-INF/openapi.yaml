@@ -1,9 +1,32 @@
 ---
 openapi: ${version.openapi}
+jsonSchemaDialect: https://spec.openapis.org/oas/3.1/dialect/base
 info:
   title: LSR App
   version: "1.0"
 paths:
+  # This path describes an example operation
+  /examples:
+    get:
+      summary: Retrieve all examples (Service Provider)
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: A list of examples (Service Provider)
+          headers:
+            # Reference the reusable RateLimitRemaining header
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/RateLimitRemaining'
+        '404':
+          # Reference the reusable NotFound response
+          $ref: '#/components/responses/NotFound'
+      callbacks:
+        # Reference the reusable callback
+        logListExamplesRequestCallback:
+          $ref: '#/components/callbacks/logListExamplesRequest'
+  /examples/all:
+    $ref: '#/components/pathItems/CrudGetOperation'
   /districts/all:
     get:
       summary: Get all districts
@@ -84,7 +107,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DistrictEntity'
-              example: '{"code": "DW", "name": "Western district", "obsolete": false}'
+              examples: '{"code": "DW", "name": "Western district", "obsolete": false}'
       x-routing-fqdn: provider.acme.unknown
       x-string-property: string-value
       x-boolean-property: true
@@ -113,3 +136,82 @@ components:
           type: string
         obsolete:
           type: boolean
+  responses:
+    NotFound:
+      description: The specified resource was not found (Service Provider).
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: The maximum number of items to return (Service Provider).
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 10
+  examples:
+    pojoExample:
+      value:
+        code: 1
+        name: MyServiceProviderPojo
+  headers:
+    RateLimitRemaining:
+      description: The number of requests remaining in the current rate limit window (Service Provider).
+      schema:
+        type: integer
+        format: int32
+        example: 9
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  links:
+    districtInformationLink:
+      # returns instance of '#/components/DistrictEntity'
+      operationId: getDistrictByCOde
+      description: Get the actual district data (Service provider)
+      parameters:
+        code: $response.body#/code
+        excludeObsolete: true
+  callbacks:
+    # Define a reusable callback named 'logListExamplesRequest'
+    logListExamplesRequest:
+      # The key is a runtime expression that evaluates to the callback URL
+      'https://notificationServer.com?timestamp={$timestamp}':
+        post:
+          summary: Log the timestamp of an incoming call to request a list of examples (Service Provider)
+          responses:
+            '200':
+              description: Callback received successfully
+  pathItems:
+    CrudGetOperation:
+      summary: Standard CRUD (GET, i.e. list all resources) operation
+      description: Reusable operation for listing all resources
+      get:
+        summary: List resources (Service Provider)
+        responses:
+          '200':
+            description: A list of resources
+security:
+  # a global security requirement declaration, must match a .components.securityScheme
+  - api_key: []
+webhooks:
+  # Each webhook needs a name
+  listExamples:
+    # This is a reference to a Path Item Object, the only difference is that the request is initiated by the API provider
+    get:
+      $ref: '#/paths/examples'
+      summary: Retrieve all examples (Service Provider), but triggered by a webhook
+tags:
+  # Tag definition with a description for documentation
+  - name: examples
+    description: Operations related to SP examples

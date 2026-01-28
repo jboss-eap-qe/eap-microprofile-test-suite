@@ -67,8 +67,9 @@ public class ServerContextRootTest {
     private final static String ROUTER_DEPLOYMENT_NAME = "localServicesRouterDeployment";
     public static final String SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_URL = "http://127.0.0.1:8080/serviceProviderDeployment";
     public static final String SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_DESCRIPTION = "Central Service Provider server";
+    public static final String ECHO_OPERATION_PATH = String.format("/%s/echo", ROUTER_DEPLOYMENT_NAME);
 
-    private static ArquillianContainerProperties arquillianContainerProperties = new ArquillianContainerProperties(
+    private static final ArquillianContainerProperties ARQUILLIAN_CONTAINER_PROPERTIES = new ArquillianContainerProperties(
             ArquillianDescriptorWrapper.getArquillianDescriptor());
 
     private final static String CONFIGURATION_TEMPLATE = "mp.openapi.scan.exclude.packages=org.jboss.eap.qe.microprofile.openapi.apps.routing.router.rest.routed"
@@ -120,7 +121,7 @@ public class ServerContextRootTest {
             configuredHTTPPort = OpenApiServerConfiguration.getHTTPPort(client);
         }
         String props = String.format("services.provider.host=%s\nservices.provider.port=%d",
-                arquillianContainerProperties.getDefaultManagementAddress(),
+                ARQUILLIAN_CONTAINER_PROPERTIES.getDefaultManagementAddress(),
                 configuredHTTPPort);
 
         return ShrinkWrap.create(
@@ -193,7 +194,7 @@ public class ServerContextRootTest {
                 .then()
                 .statusCode(200)
                 .contentType(equalToIgnoringCase("application/yaml"))
-                .body(containsString("/echo:"))
+                .body(containsString(ECHO_OPERATION_PATH + ":"))
                 .extract().asString();
 
         Yaml yaml = new Yaml();
@@ -203,25 +204,27 @@ public class ServerContextRootTest {
         Map<String, Object> paths = (Map<String, Object>) yamlMap.get("paths");
         Assert.assertFalse("\"paths\" property is empty", paths.isEmpty());
 
-        Map<String, Object> restPath = (Map<String, Object>) paths.get("/echo");
-        Assert.assertFalse("\"/echo\" property is empty", restPath.isEmpty());
+        Map<String, Object> restPath = (Map<String, Object>) paths.get(ECHO_OPERATION_PATH);
+        Assert.assertFalse("\"" + ECHO_OPERATION_PATH + "\" property is empty", restPath.isEmpty());
 
         Map<String, Object> getMethod = (Map<String, Object>) restPath.get("get");
-        Assert.assertFalse("\"/echo\" \"get\" property is empty", getMethod.isEmpty());
+        Assert.assertFalse("\"" + ECHO_OPERATION_PATH + "\" \"get\" property is empty", getMethod.isEmpty());
 
         List<Object> servers = (List<Object>) getMethod.get("servers");
-        Assert.assertTrue("\"/echo\" operation for GET verb should have exactly 1 server",
+        Assert.assertTrue("\"" + ECHO_OPERATION_PATH + "\" operation for GET verb should have exactly 1 server",
                 servers.size() == 1);
 
         Map<String, Object> pathItemServerDefinition = (Map<String, Object>) servers.get(0);
-        Assert.assertFalse("Server definition element [0] for \"/echo\" operation of GET verb is empty",
+        Assert.assertFalse("Server definition element [0] for \"" + ECHO_OPERATION_PATH + "\" operation of GET verb is empty",
                 pathItemServerDefinition.isEmpty());
         Assert.assertTrue(
-                "\"description\" property of server definition element [0] for \"/echo\" operation (GET verb) should be set to \""
+                "\"description\" property of server definition element [0] for \"" + ECHO_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \""
                         + SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_DESCRIPTION + "\"",
                 pathItemServerDefinition.get("description").equals(SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_DESCRIPTION));
         Assert.assertTrue(
-                "\"url\" property of server definition element [0] for \"/echo\" operation (GET verb) should be set to \""
+                "\"url\" property of server definition element [0] for \"" + ECHO_OPERATION_PATH
+                        + "\" operation (GET verb) should be set to \""
                         + SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_URL + "\"",
                 pathItemServerDefinition.get("url").equals(SERVER_ELEMENT_CENTRAL_SERVICE_PROVIDER_URL));
     }
