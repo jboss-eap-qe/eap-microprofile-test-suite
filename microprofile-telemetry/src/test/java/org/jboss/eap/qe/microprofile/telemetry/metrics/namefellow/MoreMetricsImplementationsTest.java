@@ -32,7 +32,6 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 @RunWith(Arquillian.class)
 @Category(DockerRequiredTests.class)
 @ServerSetup(MPTelemetryServerSetupTask.class)
-@Ignore("https://issues.redhat.com/browse/JBEAP-28665 - scenario doesn't work at all on bootable jar and is instable on standard server")
 public class MoreMetricsImplementationsTest {
     private static OnlineManagementClient client = null;
     private static final int GET_LAST_LOGS_COUNT = 40;
