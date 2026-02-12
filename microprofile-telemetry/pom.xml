@@ -141,7 +141,16 @@
                                     <layers>
                                         <layer>cloud-server</layer>
                                         <layer>undertow-https</layer>
+                                        <layer>micrometer</layer>
                                     </layers>
+                                    <cli-sessions>
+                                        <cli-session>
+                                            <resolve-expressions>false</resolve-expressions>
+                                            <script-files>
+                                                <script>${project.basedir}/src/test/resources/expose.management.interface.cli</script>
+                                            </script-files>
+                                        </cli-session>
+                                    </cli-sessions>
                                 </configuration>
                             </execution>
                         </executions>
