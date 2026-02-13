@@ -8,6 +8,7 @@ import org.jboss.as.arquillian.api.ServerSetup;
 import org.jboss.eap.qe.microprofile.jwt.EnableJwtSubsystemSetupTask;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.NonJwtJaxRsTestApplication;
 import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.SecuredJaxRsEndpoint;
+import org.jboss.eap.qe.microprofile.jwt.testapp.jaxrs.UnsetRealmNameJaxRsTestApplication;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -23,6 +24,7 @@ public class ActivationPropertiesUnsetTest {
 
     private static final String UNSET_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME = "PROPERTIES_UNSET_DEPLOYMENT";
     private static final String NON_JWT_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME = "OTHER_VALUE_DEPLOYMENT";
+    private static final String UNSET_REALM_NAME_DEPLOYMENT_NAME = "UNSET_REALM_NAME_DEPLOYMENT";
 
     @Deployment(name = UNSET_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME, managed = false)
     public static Archive<?> createDeploymentNoValue() {
@@ -57,6 +59,23 @@ public class ActivationPropertiesUnsetTest {
                         "key.public.pem");
     }
 
+    @Deployment(name = UNSET_REALM_NAME_DEPLOYMENT_NAME, managed = false)
+    public static Archive<?> createDeploymentUnsetRealmName() {
+        return ShrinkWrap
+                .create(WebArchive.class,
+                        ActivationPropertiesUnsetTest.class.getSimpleName() + UNSET_REALM_NAME_DEPLOYMENT_NAME
+                                + ".war")
+                .addClass(SecuredJaxRsEndpoint.class)
+                .addClass(UnsetRealmNameJaxRsTestApplication.class)
+                .setWebXML(ActivationPropertiesUnsetTest.class.getClassLoader().getResource("basic-auth-web.xml"))
+                .addAsManifestResource(
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("mp-config-basic.properties"),
+                        "microprofile-config.properties")
+                .addAsManifestResource(
+                        ActivationPropertiesUnsetTest.class.getClassLoader().getResource("pki/key.public.pem"),
+                        "key.public.pem");
+    }
+
     /**
      * @tpTestDetails Test that subsystem is not activated when there is not {@code MP-JWT} set as an
      *                {@code auth-method} anywhere (both web.xml and {@code @LoginConfig} annotation).
@@ -79,5 +98,18 @@ public class ActivationPropertiesUnsetTest {
     @Test(expected = org.jboss.arquillian.container.spi.client.container.DeploymentException.class)
     public void testDeploymentFailsAuthOtherValue(@ArquillianResource Deployer deployer) {
         deployer.deploy(NON_JWT_AUTH_ACTIVATION_PROPERTY_DEPLOYMENT_NAME);
+    }
+
+    /**
+     * @tpTestDetails Test that subsystem is not activated when the {@code auth-method} is set to {@code MP-JWT} but
+     *                the {@code realm-name} is not set..
+     * @tpPassCrit Deployment fails because classes required by deployment (MP-JWT API) are not loaded due to the fact
+     *             that the subsystem was not activated.
+     * @tpSince EAP 7.3.1.GA-CR1
+     *          See https://issues.redhat.com/browse/JBEAP-19164
+     */
+    @Test(expected = org.jboss.arquillian.container.spi.client.container.DeploymentException.class)
+    public void testDeploymentFailsRealmNameNotSet(@ArquillianResource Deployer deployer) {
+        deployer.deploy(UNSET_REALM_NAME_DEPLOYMENT_NAME);
     }
 }
