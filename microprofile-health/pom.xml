@@ -10,7 +10,7 @@
 
     <artifactId>microprofile-health</artifactId>
 
-    <!--Port of https://github.com/rhoar-qe/thorntail-test-suite/tree/master/microprofile/microprofile-health-check-2.0-->
+    <!--Port of microprofile/microprofile-health-check-2.0 from https://github.com/rhoar-qe/thorntail-test-suite -->
 
     <dependencies>
         <dependency>
