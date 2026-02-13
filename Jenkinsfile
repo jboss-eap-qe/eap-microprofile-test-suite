@@ -5,9 +5,9 @@ pipeline {
     }
     parameters {
         string(name: 'wfRepo', description: 'WildFly repository', defaultValue: "https://github.com/wildfly/wildfly.git" )
-        string(name: 'wfBranch', description: 'WildFly branch', defaultValue: "master" )
+        string(name: 'wfBranch', description: 'WildFly branch', defaultValue: "main" )
         string(name: 'tsRepo', description: 'WildFly repository', defaultValue: "https://github.com/jboss-eap-qe/eap-microprofile-test-suite.git" )
-        string(name: 'tsBranch', description: 'WildFly branch', defaultValue: "master" )
+        string(name: 'tsBranch', description: 'WildFly branch', defaultValue: "main" )
     }
     options {
         timestamps()
