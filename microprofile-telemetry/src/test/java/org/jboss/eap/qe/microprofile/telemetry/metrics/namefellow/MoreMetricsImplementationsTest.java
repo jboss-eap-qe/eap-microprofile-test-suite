@@ -20,7 +20,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -32,17 +31,23 @@ import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
 @RunWith(Arquillian.class)
 @Category(DockerRequiredTests.class)
 @ServerSetup(MPTelemetryServerSetupTask.class)
-@Ignore("https://issues.redhat.com/browse/JBEAP-28665 - scenario doesn't work at all on bootable jar and is instable on standard server")
 public class MoreMetricsImplementationsTest {
     private static OnlineManagementClient client = null;
     private static final int GET_LAST_LOGS_COUNT = 40;
 
+    /**
+     * Returns true in case of EAP, false in case of WF
+     */
     private static boolean serverTypeCheck() {
         String manifectArtifactId = System.getProperty("channel-manifest.artifactId");
         // standard distribution
-        return (System.getProperty("ts.bootable") == null && Paths.get(System.getProperty("jboss.home")).getFileName().toString().toLowerCase().contains("eap")) ||
-                // bootable jar distribution
-                (System.getProperty("ts.bootable") != null && manifectArtifactId != null && manifectArtifactId.toLowerCase().contains("eap"));
+        return (System.getProperty("ts.bootable") == null &&
+                System.getProperty("jboss.dist") != null &&
+                Paths.get(System.getProperty("jboss.dist")).getFileName().toString().toLowerCase().contains("eap")) ||
+        // bootable jar distribution
+                (System.getProperty("ts.bootable") != null &&
+                        manifectArtifactId != null &&
+                        manifectArtifactId.toLowerCase().contains("eap"));
     }
 
     @Deployment()
@@ -58,8 +63,9 @@ public class MoreMetricsImplementationsTest {
 
     @Before
     public void prepareMicroMeter() throws Exception {
+        client = ManagementClientProvider.onlineStandalone();
+        // so far Micrometer prometheus is implemented in community stability level only in WF, we need to skip the check for WF tests those are using default stability level
         if (serverTypeCheck()) {
-            client = ManagementClientProvider.onlineStandalone();
             MicrometerServerConfiguration.enableMicrometer(client, null, true);
             MicrometerPrometheusSetup.enable(client);
         }
@@ -68,6 +74,7 @@ public class MoreMetricsImplementationsTest {
     @After
     public void disableMicroMeter() throws Exception {
         try {
+            // so far Micrometer prometheus is implemented in community stability level only in WF, we need to skip the check for WF tests those are using default stability level
             if (serverTypeCheck()) {
                 MicrometerServerConfiguration.disableMicrometer(client, true);
                 MicrometerPrometheusSetup.disable(client);
@@ -83,7 +90,9 @@ public class MoreMetricsImplementationsTest {
     @Test
     @RunAsClient
     public void logTest() throws Exception {
+        // so far Micrometer prometheus is implemented in community stability level only in WF, we need to skip the check for WF tests those are using default stability level
         int metricsSubsystemsCount = serverTypeCheck() ? 3 : 2;
+
         ModelNodeLogChecker modelNodeLogChecker = new ModelNodeLogChecker(client, GET_LAST_LOGS_COUNT);
         MatcherAssert.assertThat(
                 "There are " + metricsSubsystemsCount + " metrics subsystems, there should be " + (metricsSubsystemsCount - 1)
