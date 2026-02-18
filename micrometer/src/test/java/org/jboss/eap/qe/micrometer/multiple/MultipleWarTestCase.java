@@ -22,6 +22,7 @@ import org.jboss.eap.qe.observability.containers.OpenTelemetryCollectorContainer
 import org.jboss.eap.qe.observability.prometheus.model.PrometheusMetric;
 import org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,11 +33,17 @@ import org.junit.runner.RunWith;
 @ServerSetup(MicrometerServerSetup.class)
 @Category(DockerRequiredTests.class)
 public class MultipleWarTestCase extends BaseMultipleTestCase {
+    // make sure that otel is not disabled, configure export interval
+    public static final int DEFAULT_OTEL_METRIC_EXPORT_INTERVAL = 100;
+    public static final String DEFAULT_MP_CONFIG = "otel.sdk.disabled=false\n" +
+            "otel.metric.export.interval=" + DEFAULT_OTEL_METRIC_EXPORT_INTERVAL;
+
     @Deployment(name = SERVICE_ONE, order = 1, testable = false)
     public static WebArchive createDeployment1() {
         return ShrinkWrap.create(WebArchive.class, SERVICE_ONE + ".war")
                 .addClasses(TestApplication.class, DuplicateMetricResource1.class, BaseMultipleTestCase.class)
-                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
+                .addAsManifestResource(new StringAsset(DEFAULT_MP_CONFIG), "microprofile-config.properties");
 
     }
 
@@ -44,7 +51,8 @@ public class MultipleWarTestCase extends BaseMultipleTestCase {
     public static WebArchive createDeployment2() {
         return ShrinkWrap.create(WebArchive.class, SERVICE_TWO + ".war")
                 .addClasses(TestApplication.class, DuplicateMetricResource2.class, BaseMultipleTestCase.class)
-                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml");
+                .addAsWebInfResource(ConfigurationUtil.BEANS_XML_FILE_LOCATION, "beans.xml")
+                .addAsManifestResource(new StringAsset(DEFAULT_MP_CONFIG), "microprofile-config.properties");
     }
 
     @Test
@@ -55,6 +63,9 @@ public class MultipleWarTestCase extends BaseMultipleTestCase {
             throws URISyntaxException, InterruptedException {
         makeRequests(new URI(String.format("%s/%s", serviceOne, DuplicateMetricResource1.TAG)));
         makeRequests(new URI(String.format("%s/%s", serviceTwo, DuplicateMetricResource2.TAG)));
+
+        // reports are send to otel collector in 100ms, we may need to wait a little bit for it
+        Thread.sleep(DEFAULT_OTEL_METRIC_EXPORT_INTERVAL * 10);
 
         List<PrometheusMetric> results = getMetricsByName(
                 OpenTelemetryCollectorContainer.getInstance().fetchMetrics(DuplicateMetricResource1.METER_NAME),
