@@ -66,6 +66,9 @@ public class EarDeploymentTestCase extends BaseMultipleTestCase {
         makeRequests(new URI(String.format("%s/%s/%s/%s", earUrl, ENTERPRISE_APP, SERVICE_ONE, DuplicateMetricResource1.TAG)));
         makeRequests(new URI(String.format("%s/%s/%s/%s", earUrl, ENTERPRISE_APP, SERVICE_TWO, DuplicateMetricResource2.TAG)));
 
+        // reports are send to otel collector in 100ms, we may need to wait a little bit for it
+        Thread.sleep(MultipleWarTestCase.DEFAULT_OTEL_METRIC_EXPORT_INTERVAL * 10);
+
         List<PrometheusMetric> results = getMetricsByName(
                 OpenTelemetryCollectorContainer.getInstance().fetchMetrics(DuplicateMetricResource1.METER_NAME),
                 DuplicateMetricResource1.METER_NAME + "_total"); // Adjust for Prometheus naming conventions
