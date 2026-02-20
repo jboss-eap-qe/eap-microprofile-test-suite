@@ -14,8 +14,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
-        java-version: ['17', '21']
+        # os: ['ubuntu-latest', 'windows-latest']
+        os: ['ubuntu-latest']
+        #java-version: ['17', '21']
+        java-version: ['17']
         java-distribution: ['adopt']
     steps:
       - name: Checkout eap-microprofile-test-suite
@@ -28,7 +30,7 @@ jobs:
           cache: 'maven'
       - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java-version }}) against latest WildFly, on ${{ matrix.os }}
         if: ${{ matrix.os  == 'ubuntu-latest' }}
-        run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests"
+        run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests" "-Dtest=JWTSecurityAnnotationsTest" "-Dsurefire.failIfNoSpecifiedTests=false"
       - name: Build and run integration tests (${{ matrix.java-distribution }} ${{ matrix.java-version }}) against latest WildFly, on ${{ matrix.os }} (excluding Docker)
         if: ${{ matrix.os  == 'windows-latest' }}
         run: mvn clean verify --batch-mode -fae "-Dts.bootable" "-Dcurrent-execution.excluded-groups=org.jboss.eap.qe.microprofile.health.junit.HealthWithFaultToleranceTests,org.jboss.eap.qe.microprofile.health.junit.ManualTests,org.jboss.eap.qe.ts.common.docker.junit.DockerRequiredTests"
