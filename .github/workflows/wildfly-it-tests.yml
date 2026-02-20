@@ -14,9 +14,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest']
-        java-version: ['17', '21']
-        java-distribution: ['adopt']
+        include:
+          - os: ubuntu-latest
+            java-version: '21'
+            java-distribution: 'adopt'
+          - os: windows-latest
+            java-version: '17'
+            java-distribution: 'adopt'
     steps:
       - name: Checkout eap-microprofile-test-suite
         uses: actions/checkout@v4
@@ -37,5 +41,5 @@ jobs:
         with:
           name: surefire-reports-server-logs-jdk-${{ matrix.java-distribution }}-${{ matrix.java-version }}
           path: |
-            **/target/surefire-reports/*
-            **/standalone/log/*
+            ./*/target/surefire-reports/*
+            ./*/target/jboss-as/standalone/log/*

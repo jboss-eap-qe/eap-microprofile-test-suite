@@ -95,12 +95,13 @@ public class DatabaseCrashTest {
     public static void startDatabase() throws Exception {
         // create data dir for postgres database
         postgresDataDir = Files.createTempDir();
-        // This is needed to run on SELinux enabled RHEL 9 Docker hosts, which is where internal runs are executed,
+        // This is needed to run on SELinux enabled
+        // The following command sets permissions to posgresDataDir so any user can write to this folder
+        //    Postgres image uses different user than user that starts this maven
         // otherwise the following error will prevent the container from starting successfully:
         //   mkdir: cannot create directory '/var/lib/pgsql/data/userdata': Permission denied
-        // Will keep working on RHEL 8 Docker hosts as well.
         java.nio.file.Files.setPosixFilePermissions(Path.of(postgresDataDir.toURI()),
-                PosixFilePermissions.fromString("rwxrwxr-x"));
+                PosixFilePermissions.fromString("rwxrwxrwx"));
 
         // https://github.com/sclorg/postgresql-container/tree/generated/13
         postgresDB = new Docker.Builder("postgres", "quay.io/centos7/postgresql-13-centos7:centos7")
