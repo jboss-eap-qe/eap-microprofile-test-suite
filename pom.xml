@@ -68,7 +68,7 @@
         <version.org.wildfly.launcher>1.0.0.Final</version.org.wildfly.launcher>
         <version.org.wildfly.extras.creaper>2.0.3</version.org.wildfly.extras.creaper>
         <version.org.yaml.snakeyaml>1.33</version.org.yaml.snakeyaml>
-        <version.com.google.code.gson>2.8.6</version.com.google.code.gson>
+        <version.com.google.code.gson>2.8.9</version.com.google.code.gson>
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.4</version.org.jboss.shrinkwrap.resolver>
