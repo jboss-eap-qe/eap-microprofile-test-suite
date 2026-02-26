@@ -72,7 +72,7 @@
         <version.com.fasterxml.jackson.core.jackson-databind>2.9.9.1</version.com.fasterxml.jackson.core.jackson-databind>
         <version.org.awaitility>3.1.6</version.org.awaitility>
         <version.org.jboss.shrinkwrap.resolver>3.1.4</version.org.jboss.shrinkwrap.resolver>
-        <version.org.postgresql>42.2.8</version.org.postgresql>
+        <version.org.postgresql>42.3.9</version.org.postgresql>
         <version.io.jaegertracing.jaeger-client>1.0.0</version.io.jaegertracing.jaeger-client>
         <container.qualifier.manual.mode>jboss-manual</container.qualifier.manual.mode>
         <container.base.dir.manual.mode>${project.build.directory}${file.separator}${container.qualifier.manual.mode}</container.base.dir.manual.mode>
