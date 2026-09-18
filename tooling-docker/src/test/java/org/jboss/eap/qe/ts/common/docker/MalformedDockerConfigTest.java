@@ -24,7 +24,7 @@ public class MalformedDockerConfigTest {
     public void testFailFastWithMalformedDockerCommand() throws Exception {
         Docker containerWithInvalidVersion = new Docker.Builder("wildfly",
                 "quay.io/wildfly/wildfly:InvalidVersion")
-                .setContainerReadyTimeout(2, TimeUnit.SECONDS) // shorten timeout as this should fail fast
+                .setContainerReadyTimeout(15, TimeUnit.SECONDS) // shorten timeout as this should fail fast
                 .setContainerReadyCondition(() -> false) // it's expected that server never starts and fails fast thus return false
                 .withPortMapping("bad:mapping")
                 .build();

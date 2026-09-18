@@ -56,12 +56,13 @@
 
         <version.io.rest-assured>5.0.1</version.io.rest-assured>
         <version.junit>4.13.1</version.junit>
-        <version.org.jboss.arquillian>1.7.2.Final</version.org.jboss.arquillian>
+        <version.org.jboss.arquillian>1.9.1.Final</version.org.jboss.arquillian>
         <version.org.jboss.wildfly.dist>40.0.1.Final</version.org.jboss.wildfly.dist>
-        <version.org.wildfly.arquillian>5.0.1.Final</version.org.wildfly.arquillian>
+        <version.org.wildfly.arquillian>5.1.0.Final</version.org.wildfly.arquillian>
         <version.org.fusesource.jansi>1.18</version.org.fusesource.jansi>
         <version.io.undertow.undertow-core>2.3.21.Final</version.io.undertow.undertow-core>
-        <version.org.jboss.threads.jboss-threads>2.4.0.Final</version.org.jboss.threads.jboss-threads>
+        <version.org.jboss.threads.jboss-threads>3.9.2</version.org.jboss.threads.jboss-threads>
+        <version.org.wildfly.common>2.0.1</version.org.wildfly.common>
         <!-- wildfly-core update needed to have the launcher version with BootableJarCommandBuilder used to start
         the server up -->
         <version.org.wildfly.core>32.0.2.Final</version.org.wildfly.core>
@@ -314,6 +315,12 @@
                 <groupId>org.jboss.threads</groupId>
                 <artifactId>jboss-threads</artifactId>
                 <version>${version.org.jboss.threads.jboss-threads}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.common</groupId>
+                <artifactId>wildfly-common</artifactId>
+                <version>${version.org.wildfly.common}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
