@@ -57,6 +57,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.CliException;
@@ -277,6 +278,7 @@ public class MultipleWarsAffectingRootAndComponentReferencesTest {
      * @throws URISyntaxException
      */
     @Test
+    @Ignore("Only supported since MP OpenAPI 4.1")
     public void testConflictingJsonSchemaDialect(
             @ArquillianResource @OperateOnDeployment(ROUTER_DEPLOYMENT_NAME) URL baseURL) throws URISyntaxException {
         deployer.deploy(ANOTHER_ROUTER_DEPLOYMENT_NAME);
