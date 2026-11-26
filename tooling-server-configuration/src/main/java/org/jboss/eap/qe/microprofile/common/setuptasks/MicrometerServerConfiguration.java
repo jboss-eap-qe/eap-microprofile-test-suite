@@ -53,6 +53,21 @@ public class MicrometerServerConfiguration {
      */
     public static void enableMicrometer(OnlineManagementClient client, final String otlpHttpEndpoint, boolean skipReload)
             throws Exception {
+        enableMicrometer(client, otlpHttpEndpoint, skipReload, true);
+    }
+
+    /**
+     * Enable Micrometer extension and subsystem.
+     *
+     * @param client {@link OnlineManagementClient} instance used to execute the command
+     * @param otlpHttpEndpoint OTel collector endpoint
+     * @param skipReload Allow to skip reload at the end of the configuration
+     * @param showTraceLogs Configure server to show micrometer trace logs
+     * @throws Exception exception thrown by the internal operation executed by {@link OnlineManagementClient} API
+     */
+    public static void enableMicrometer(OnlineManagementClient client, final String otlpHttpEndpoint, boolean skipReload,
+            boolean showTraceLogs)
+            throws Exception {
         Operations operations = new Operations(client);
         operations.writeAttribute(UNDERTOW_SUBSYSTEM_ADDRESS, "statistics-enabled", "true");
         if (!micrometerExtensionExists(operations)) {
@@ -65,7 +80,9 @@ public class MicrometerServerConfiguration {
             operations.writeAttribute(MICROMETER_SUBSYSTEM_ADDRESS, "endpoint", otlpHttpEndpoint + "/v1/metrics");
             operations.writeAttribute(MICROMETER_SUBSYSTEM_ADDRESS, "step", "1");
         }
-        client.execute("/subsystem=logging/logger=io.micrometer:add(level=TRACE)");
+        if (showTraceLogs) {
+            client.execute("/subsystem=logging/logger=io.micrometer:add(level=TRACE)");
+        }
         if (!skipReload) {
             new Administration(client).reloadIfRequired();
         }
