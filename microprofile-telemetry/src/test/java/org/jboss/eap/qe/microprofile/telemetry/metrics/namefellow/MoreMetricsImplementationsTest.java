@@ -66,7 +66,7 @@ public class MoreMetricsImplementationsTest {
         client = ManagementClientProvider.onlineStandalone();
         // so far Micrometer prometheus is implemented in community stability level only in WF, we need to skip the check for WF tests those are using default stability level
         if (serverTypeCheck()) {
-            MicrometerServerConfiguration.enableMicrometer(client, null, true);
+            MicrometerServerConfiguration.enableMicrometer(client, null, true, false);
             MicrometerPrometheusSetup.enable(client);
         }
     }

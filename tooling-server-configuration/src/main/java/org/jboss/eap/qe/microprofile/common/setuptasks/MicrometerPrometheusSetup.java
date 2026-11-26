@@ -11,15 +11,19 @@ import org.wildfly.extras.creaper.core.online.operations.Values;
 import org.wildfly.extras.creaper.core.online.operations.admin.Administration;
 
 /**
- * Utility class enabling and disabling Micrometer Prometheus registry
+ * Utility class enabling and disabling Micrometer Prometheus registry. The registry is configured as a
+ * <code>/subsystem=micrometer/registry=prometheus</code> resource, so the Micrometer subsystem must exist before
+ * {@link #enable(OnlineManagementClient)} is called.
  */
 public class MicrometerPrometheusSetup {
     public static final String DEFAULT_PROMETHEUS_CONTEXT = "/prometheus";
     private static String prometheusContext = null;
-    public static final Address SYSPROP_PROMETHEUS_CONTEXT = Address.of("system-property",
-            "org.jboss.eap.xp.micrometer.prometheus.context");
-    public static final Address SYSPROP_SECURITY_ENABLED = Address.of("system-property",
-            "org.jboss.eap.xp.micrometer.prometheus.security-enabled");
+    public static final Address PROMETHEUS_REGISTRY_ADDRESS = Address.subsystem("micrometer")
+            .and("registry", "prometheus");
+    /** Name of the registry attribute holding the end-point path */
+    public static final String ATTR_CONTEXT = "context";
+    /** Name of the registry attribute enabling/disabling security of the end-point */
+    public static final String ATTR_SECURITY_ENABLED = "security-enabled";
 
     /**
      * Enable prometheus with most used configuration in this testsuite ("/prometheus" end-point with disabled security)
@@ -28,9 +32,9 @@ public class MicrometerPrometheusSetup {
      */
     public static void enable(OnlineManagementClient client) throws IOException, InterruptedException, TimeoutException {
         Operations ops = new Operations(client);
-        ops.add(SYSPROP_PROMETHEUS_CONTEXT, Values.of("value", DEFAULT_PROMETHEUS_CONTEXT));
+        ops.add(PROMETHEUS_REGISTRY_ADDRESS,
+                Values.of(ATTR_CONTEXT, DEFAULT_PROMETHEUS_CONTEXT).and(ATTR_SECURITY_ENABLED, false));
         prometheusContext = DEFAULT_PROMETHEUS_CONTEXT;
-        ops.add(SYSPROP_SECURITY_ENABLED, Values.of("value", "false"));
         new Administration(client).reload();
     }
 
@@ -44,9 +48,9 @@ public class MicrometerPrometheusSetup {
     public static void set(OnlineManagementClient client, String context, boolean security)
             throws IOException, InterruptedException, TimeoutException {
         Operations ops = new Operations(client);
-        ops.writeAttribute(SYSPROP_PROMETHEUS_CONTEXT, "value", context);
+        ops.writeAttribute(PROMETHEUS_REGISTRY_ADDRESS, ATTR_CONTEXT, context);
         prometheusContext = context;
-        ops.writeAttribute(SYSPROP_SECURITY_ENABLED, "value", security);
+        ops.writeAttribute(PROMETHEUS_REGISTRY_ADDRESS, ATTR_SECURITY_ENABLED, security);
         new Administration(client).reload();
     }
 
@@ -69,11 +73,9 @@ public class MicrometerPrometheusSetup {
     public static void disable(OnlineManagementClient client)
             throws IOException, OperationException, InterruptedException, TimeoutException {
         Operations ops = new Operations(client);
-        if (ops.exists(SYSPROP_PROMETHEUS_CONTEXT)) {
-            ops.remove(SYSPROP_PROMETHEUS_CONTEXT);
-        }
-        if (ops.exists(SYSPROP_SECURITY_ENABLED)) {
-            ops.remove(SYSPROP_SECURITY_ENABLED);
+        // the registry is already gone if the whole Micrometer subsystem was removed before
+        if (ops.exists(PROMETHEUS_REGISTRY_ADDRESS)) {
+            ops.remove(PROMETHEUS_REGISTRY_ADDRESS);
         }
         new Administration(client).reload();
     }

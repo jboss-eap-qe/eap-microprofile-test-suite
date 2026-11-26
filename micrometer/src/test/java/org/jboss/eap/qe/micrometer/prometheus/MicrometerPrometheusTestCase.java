@@ -36,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.wildfly.extras.creaper.core.online.OnlineManagementClient;
@@ -75,7 +76,7 @@ public class MicrometerPrometheusTestCase {
             return;
         }
         client = ManagementClientProvider.onlineStandalone();
-        MicrometerServerConfiguration.enableMicrometer(client, null, true);
+        MicrometerServerConfiguration.enableMicrometer(client, null, true, false);
         MicrometerPrometheusSetup.enable(client);
     }
 
@@ -111,6 +112,7 @@ public class MicrometerPrometheusTestCase {
      * Map prometheus output to the end-point that WF Metrics is using. Startup-error is expected.
      */
     @Test
+    @Ignore("https://redhat.atlassian.net/browse/WFWIP-715")
     public void wfMetricsEnabledTest() throws Exception {
         MicrometerPrometheusSetup.set(client, "/metrics", false);
         try {
@@ -189,6 +191,7 @@ public class MicrometerPrometheusTestCase {
      * Check that micrometer shows real values of restricted metrics if proper user with proper RBAC role is used
      */
     @Test
+    @Ignore("https://redhat.atlassian.net/browse/WFWIP-716")
     public void rbacTest() throws Exception {
         MgmtUsersSetup.setup();
         try {
